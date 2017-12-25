@@ -38,5 +38,5 @@ script:
   # Display resulting tree
   #- ls -l release-archives
 
-deploy:
-  skip_cleanup: true
+#deploy:
+  #skip_cleanup: true
