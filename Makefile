@@ -1,4 +1,11 @@
-
+ifndef VERBOSE
+  VERBOSE=no
+endif
+ifneq (yes,$(VERBOSE))
+  Q=@
+else
+  Q=
+endif
 
 ifneq ($(DEVKITMINT),)
 export PATH		:=	$(DEVKITMINT)/../devkitMINT/bin:$(PATH)
@@ -96,13 +103,13 @@ libs: $(LIBS) $(LIBSIIO)
 startups: $(STARTUPS)
 
 tests:
-	@echo make tests
-	@for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i || { exit 1;} fi; done;
+	$(Q)echo make tests
+	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i || { exit 1;} fi; done;
 
 
 clean:
-	@ rm -rf $(LIBS) $(LIBSIIO) $(patsubst %,%/objs/*.o,$(LIBDIRS)) $(patsubst %,%/objs/*.d,$(LIBDIRS)) $(patsubst %,%/objs/iio,$(LIBDIRS)) $(STARTUPS) $(STARTUPS:.o=.d) depend
-	@for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
+	$(Q)rm -rf $(LIBS) $(LIBSIIO) $(patsubst %,%/objs/*.o,$(LIBDIRS)) $(patsubst %,%/objs/*.d,$(LIBDIRS)) $(patsubst %,%/objs/iio,$(LIBDIRS)) $(STARTUPS) $(STARTUPS:.o=.d) depend
+	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
 
 #
 # multilib flags
@@ -130,16 +137,20 @@ endif
 #
 define CC_TEMPLATE
 $(1)/objs/iio/%.o:$(SRCDIR)/iio/%.c
-	$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$@"
+	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/objs/%.o:$(SRCDIR)/%.c
-	$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$@"
+	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/objs/%.o:$(SRCDIR)/%.S
-	$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$@"
+	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/%.o:$(SRCDIR)/%.S
-	$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $@"
+	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
@@ -149,16 +160,18 @@ $(foreach DIR,$(LIBDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 define ARC_TEMPLATE
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(LIBC): $$($(1)_OBJS)
-	$(AR) rv $$@ $$?
-	$(RANLIB) $$@
+	$(Q)echo "AR $$?"
+	$(Q)$(AR) rv $$@ $$?
+	$(Q)$(RANLIB) $$@
 LIBDEPEND+=$$($1_OBJS)
 LIBSE+=$(1)/$(LIBC)
 
 $(shell mkdir -p $(1)/objs/iio)
 $(1)_IIO_OBJS=$(patsubst %,$(1)/objs/iio/%,$(IIO_OBJS))
 $(1)/$(LIBIIO): $$($(1)_IIO_OBJS)
-	$(AR) rv $$@ $$?
-	$(RANLIB) $$@
+	$(Q)echo "AR $$?"
+	$(Q)$(AR) rv $$@ $$?
+	$(Q)$(RANLIB) $$@
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call ARC_TEMPLATE,$(DIR))))
 
