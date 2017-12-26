@@ -24,7 +24,7 @@ deploy:
   provider: releases
   api_key:
     secure: $SECURE_KEY
-  file: release.tar.gz
+  file: libcmini*.tar.gz
   on:
     tags: true
     repo: mfro0/libcmini
