@@ -20,11 +20,9 @@ script:
 - make release
 before_deploy: 
 deploy:
-  skip_cleanup: true
   provider: releases
   api_key:
-    secure: ${SECURE_KEY}
+    secure: JJmcRyP2TadAm7KrjzRga/N022Bq0KiLMD8b7/Ho/Y7ctwxcoGpq9VqUih0wDupPnjw/50rT7Ige6UwehOKxzsTk+dPLklqzBlAH1n1DT00hHHe216s8p0GAfsCe3y09dfFUdynyy2zniH6//hB+ZyC1DGmZflg5x5mnTKjSGwrtbjLhUCSs5yO20Oo3HSpeuhEhqy33/5E0G0WaR5rYS7LNjIqvC7Vl5ovMhWuNdelfcPC2g2hFIcfKpy3GTVhOk88pF+aB3ZgcjnvMie2zNotWpKlDQMtIOUl/AF+z+PehevEgbfa63Y9We41KnHfOdPHdYxA/x9IyHf22uMGfldN6r08aXzjoCFE3fcqRs6c/fkMZd3WqWhtYYSuF539eaZFq16bUIiAsXYLgtbrWZjzpYhfuw2ESanr29LLP9w9O5enZfBIRSenRStX9V42Xl8Dwbo6DRWIel9Q32VsDynKXtlskhpi/lqHaTIILWvX8DiZ1ZWRTuUwIkDwDtzybt5AxQccphQzZMNg9AjqWlmELEYjsEefqTuBtWXfRDWogql+sMMvhlLLC/e87mDqPCyiw04QdQWElweczeBgkMEduxI69wM3MW5o2IVrww9ZTfPzzGbjlO+lYwAgYLT/3ER/JWcc3duitXdgRZ7mrUSF6hn6/1x9g8a7B549m64M=
   file: libcmini*.tar.gz
   on:
-    tags: true
     repo: mfro0/libcmini
