@@ -38,6 +38,10 @@ m68k-atari-mint-gcc -nostdlib $LIBCMINI/startup.o hello.c -o hello.tos -s -L$LIB
 
 creates a binary with 11794 byts. About a tenth of the size.
 
+## what's that libcmini.creator stuff about?
+
+I'm using the QtCreator IDE for my Atari cross development work (most of the time, if I'm not in vi mode). The `libcmini.config`, `libcmini.creator`, `libcmini.files` and `libcmini.includes` files are used by QtCreator to keep track of the project.
+If you are not using QtCreator (I would recommend it), just ignore these files.
 
 ## Fastcall?
 (contributed by Frederik Olsson)
