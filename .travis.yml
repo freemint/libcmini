@@ -23,7 +23,7 @@ deploy:
   skip_cleanup: true
   provider: releases
   api_key:
-    secure: $SECURE_KEY
+    secure: ${SECURE_KEY}
   file: libcmini*.tar.gz
   on:
     tags: true
