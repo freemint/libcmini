@@ -182,7 +182,7 @@ $(foreach DIR,$(LIBDIRS),$(eval $(call ARC_TEMPLATE,$(DIR))))
 
 .PHONY: release
 release: all
-	RELEASETAG=$(shell git tag --contains | sed -e 's/v//') ;\
+	RELEASETAG=$$(git tag --contains | sed -e 's/v//') ;\
     RELEASEDIR=libcmini-$$RELEASETAG ;\
 	if [ "x$$RELEASETAG" != "x" ] ; then\
 	    mkdir -p $$RELEASEDIR/lib ;\
@@ -194,7 +194,9 @@ release: all
 	    done ;\
 	    cp startup.o libcmini.a $$RELEASEDIR/lib ;\
 	fi ;\
-    tar -C $$RELEASEDIR -cvzf $$RELEASEDIR.tar.gz .
+	tar -C $$RELEASEDIR -cvzf $$RELEASEDIR.tar.gz . ;\
+	ls -l
+
 
 DEPENDS := $(foreach dir,$(LIBDIRS), $(wildcard $(dir)/objs/*.d) $(wildcard $(dir)/objs/iio/*.d))
 
