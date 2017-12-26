@@ -194,7 +194,9 @@ release: all
 	    done ;\
 	    cp startup.o libcmini.a $$RELEASEDIR/lib ;\
 	fi ;\
+    chown -R 0:0 $$RELEASEDIR/* ;\
 	tar -C $$RELEASEDIR -cvzf $$RELEASEDIR.tar.gz . ;\
+    chmod 644 $$RELEASEDIR.tar.gz ;\
 	ls -l
 
 
