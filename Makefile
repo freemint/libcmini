@@ -182,7 +182,7 @@ $(foreach DIR,$(LIBDIRS),$(eval $(call ARC_TEMPLATE,$(DIR))))
 
 .PHONY: release
 release: all
-	RELEASETAG=$$(git tag --contains | sed -e 's/v//') ;\
+	RELEASETAG=$$(git tag --contains | sed -e 's/v//' | sed -e 's/ //g') ;\
     RELEASEDIR=libcmini-$$RELEASETAG ;\
 	if [ "x$$RELEASETAG" != "x" ] ; then\
 	    mkdir -p $$RELEASEDIR/lib ;\
