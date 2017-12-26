@@ -114,6 +114,7 @@ tests:
 clean:
 	$(Q)rm -rf $(LIBS) $(LIBSIIO) $(patsubst %,%/objs/*.o,$(LIBDIRS)) $(patsubst %,%/objs/*.d,$(LIBDIRS)) $(patsubst %,%/objs/iio,$(LIBDIRS)) $(STARTUPS) $(STARTUPS:.o=.d) depend
 	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
+	$(Q) rm -rf release
 
 #
 # multilib flags
@@ -179,6 +180,17 @@ $(1)/$(LIBIIO): $$($(1)_IIO_OBJS)
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call ARC_TEMPLATE,$(DIR))))
 
+RELEASEDIR=release
+.PHONY: release
+release: all
+	- mkdir -p $(RELEASEDIR)/lib 
+	cp -r include release 
+	for i in m5475 m68020-60 mshort m5475/mshort m68020-60/mshort; do \
+		mkdir -p $(RELEASEDIR)/lib/$$i ; \
+	    cp $$i/libcmini.a $(RELEASEDIR)/lib/$$i ; \
+	    cp $$i/startup.o $(RELEASEDIR)/lib/$$i ; \
+	done
+	cp startup.o libcmini.a release/lib
 
 DEPENDS := $(foreach dir,$(LIBDIRS), $(wildcard $(dir)/objs/*.d) $(wildcard $(dir)/objs/iio/*.d))
 
