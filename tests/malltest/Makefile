@@ -1,3 +1,9 @@
+ifneq (yes,$(VERBOSE))
+	Q=@
+else
+	Q=
+endif
+
 CROSS=Y
 
 CROSSBINDIR_IS_Y=m68k-atari-mint-
@@ -106,20 +112,23 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 define CC_TEMPLATE
 $(1)/objs/%.o:$(SRCDIR)/%.c
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$(@)"
+	$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/%.o:$(SRCDIR)/%.S
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$(@)"
+	$$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(APP): ../../libcmini.a $$($(1)_OBJS)
-	$(CC) $$(CFLAGS) -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
+	$$(Q)echo "CC $$(@)"
+	$$(Q)$(CC) $$(CFLAGS) -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
 $(DEPEND): $(ASRCS) $(CSRCS)
-	-rm -f $(DEPEND)
-	for d in $(TRGTDIRS);\
+	$(Q)-rm -f $(DEPEND)
+	$(Q)for d in $(TRGTDIRS);\
 		do $(CC) $(CFLAGS) $(INCLUDE) -M $(ASRCS) $(CSRCS) | sed -e "s#^\(.*\).o:#$$d/objs/\1.o:#" >> $(DEPEND); \
     done
 

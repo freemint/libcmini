@@ -1,14 +1,18 @@
+# disable verbose builds by default
+# If you want to see all the gory details of the build process,
+# run "VERBOSE=yes make <target>"
+
 ifndef VERBOSE
-  VERBOSE=no
+  	VERBOSE=no
 endif
 ifneq (yes,$(VERBOSE))
-  Q=@
+  	Q=@
 else
-  Q=
+  	Q=
 endif
 
 ifneq ($(DEVKITMINT),)
-export PATH		:=	$(DEVKITMINT)/../devkitMINT/bin:$(PATH)
+	export PATH		:=	$(DEVKITMINT)/../devkitMINT/bin:$(PATH)
 endif
 
 #
@@ -24,9 +28,9 @@ COMPILE_ELF=N
 STDIO_WITH_LONG_LONG=N
 
 ifeq (Y,$(COMPILE_ELF))
-PREFIX=m68k-elf-
+	PREFIX=m68k-elf-
 else 
-PREFIX=m68k-atari-mint-
+  	PREFIX=m68k-atari-mint-
 endif
 
 -include Make.config
@@ -44,13 +48,13 @@ CFLAGS=\
 	   -fomit-frame-pointer
 
 ifneq ($(MINTLIB_COMPATIBLE),Y)
-INCLUDE=-Iinclude
+	INCLUDE=-Iinclude
 else
-CFLAGS+=-D__MINTLIB_COMPATIBLE
+	CFLAGS+=-D__MINTLIB_COMPATIBLE
 endif
 
 ifeq ($(STDIO_WITH_LONG_LONG),Y)
-CFLAGS+=-DSTDIO_WITH_LONG_LONG
+	CFLAGS+=-DSTDIO_WITH_LONG_LONG
 endif
 
 
@@ -63,21 +67,21 @@ ASRCS= $(wildcard $(SRCDIR)/*.S)
 
 SRCDIR=sources
 ifeq ($(ONLY_68K),Y)
-LIBDIRS=.
+	LIBDIRS=.
 else
-ifeq ($(BUILD_FAST), Y)
-ifeq ($(BUILD_CF),Y)
-LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./m5475/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall ./m5475/mshort/mfastcall
-else
-LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
-endif
-else
-ifeq ($(BUILD_CF),Y)
-LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
-else
-LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
-endif
-endif
+	ifeq ($(BUILD_FAST), Y)
+		ifeq ($(BUILD_CF),Y)
+			LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./m5475/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall ./m5475/mshort/mfastcall
+		else
+			LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
+		endif
+	else
+		ifeq ($(BUILD_CF),Y)
+			LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
+		else
+			LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
+		endif
+	endif
 endif
 OBJDIRS=$(patsubst %,%/objs,$(LIBDIRS))
 
@@ -137,19 +141,19 @@ endif
 #
 define CC_TEMPLATE
 $(1)/objs/iio/%.o:$(SRCDIR)/iio/%.c
-	$(Q)echo "CC $$@"
+	$(Q)echo "CC $$(@)"
 	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/objs/%.o:$(SRCDIR)/%.c
-	$(Q)echo "CC $$@"
+	$(Q)echo "CC $$(@)"
 	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/objs/%.o:$(SRCDIR)/%.S
-	$(Q)echo "CC $$@"
+	$(Q)echo "CC $$(@)"
 	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/%.o:$(SRCDIR)/%.S
-	$(Q)echo "CC $@"
+	$(Q)echo "CC $$(@)"
 	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
@@ -160,8 +164,8 @@ $(foreach DIR,$(LIBDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 define ARC_TEMPLATE
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(LIBC): $$($(1)_OBJS)
-	$(Q)echo "AR $$?"
-	$(Q)$(AR) rv $$@ $$?
+	$(Q)echo "AR $$@"
+	$(Q)$(AR) cr $$@ $$?
 	$(Q)$(RANLIB) $$@
 LIBDEPEND+=$$($1_OBJS)
 LIBSE+=$(1)/$(LIBC)
@@ -169,8 +173,8 @@ LIBSE+=$(1)/$(LIBC)
 $(shell mkdir -p $(1)/objs/iio)
 $(1)_IIO_OBJS=$(patsubst %,$(1)/objs/iio/%,$(IIO_OBJS))
 $(1)/$(LIBIIO): $$($(1)_IIO_OBJS)
-	$(Q)echo "AR $$?"
-	$(Q)$(AR) rv $$@ $$?
+	$(Q)echo "AR $$@"
+	$(Q)$(AR) cr $$@ $$?
 	$(Q)$(RANLIB) $$@
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call ARC_TEMPLATE,$(DIR))))

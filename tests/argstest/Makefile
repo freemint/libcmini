@@ -1,3 +1,8 @@
+ifneq (yes,$(VERBOSE))
+	Q=@
+else
+	Q=
+endif
 CROSS=Y
 
 CROSSBINDIR_IS_Y=m68k-atari-mint-
@@ -10,15 +15,15 @@ CROSSBINDIR=$(CROSSBINDIR_IS_$(CROSS))
 
 UNAME := $(shell uname)
 ifeq ($(CROSS), Y)
-ifeq ($(UNAME),Linux)
-PREFIX=m68k-atari-mint
-HATARI=hatari
+	ifeq ($(UNAME),Linux)
+		PREFIX=m68k-atari-mint
+		HATARI=hatari
+	else
+		PREFIX=m68k-atari-mint
+		HATARI=/usr/local/bin/hatari
+	endif
 else
-PREFIX=m68k-atari-mint
-HATARI=/usr/local/bin/hatari
-endif
-else
-PREFIX=/usr
+	PREFIX=/usr
 endif
 
 DEPEND=depend
@@ -51,17 +56,17 @@ AOBJS=$(patsubst $(SRCDIR)/%.o,%.o,$(patsubst %.S,%.o,$(ASRCS)))
 OBJS=$(COBJS) $(AOBJS)
 
 ifeq ($(BUILD_FAST), Y)
-ifeq ($(BUILD_CF), Y)
-TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
+	ifeq ($(BUILD_CF), Y)
+		TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
+	else
+		TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
+	endif
 else
-TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
-endif
-else
-ifeq ($(BUILD_CF), Y)
-TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
-else
-TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
-endif
+	ifeq ($(BUILD_CF), Y)
+		TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
+	else
+		TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
+	endif
 endif
 OBJDIRS=$(patsubst %,%/objs,$(TRGTDIRS))
 
@@ -74,16 +79,16 @@ mshort/$(APP):CFLAGS += -mshort
 m68020-60/mshort/$(APP): CFLAGS += -m68020-60 -mshort
 m5475/mshort/$(APP): CFLAGS += -mcpu=5475 -mshort
 ifeq ($(BUILD_FAST), Y)
-mfastcall/$(APP):CFLAGS += -mfastcall
-m68020-60/mfastcall/$(APP):CFLAGS += -m68020-60 -mfastcall
-mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
-m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
+	mfastcall/$(APP):CFLAGS += -mfastcall
+	m68020-60/mfastcall/$(APP):CFLAGS += -m68020-60 -mfastcall
+	mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
+	m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
 endif
 
 ifneq ($(DEVKITMINT),) 
-# ardi's toolchain stuff
-APP := $(APP:.ttp=.elf)
-STRIP := @echo "dont strip ELF-file befor tostool is done --> skip stripping of "
+	# ardi's toolchain stuff
+	APP := $(APP:.ttp=.elf)
+	STRIP := @echo "dont strip ELF-file befor tostool is done --> skip stripping of "
 
 ctest: $(TEST_APP:.elf=.ttp)
 
@@ -102,21 +107,24 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 define CC_TEMPLATE
 $(1)/objs/%.o:$(SRCDIR)/%.c
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$$(Q)echo "CC $$(@)"
+	$$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/%.o:$(SRCDIR)/%.S
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$$(Q)echo "CC $$(@)"
+	$$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(APP): ../../libcmini.a $$($(1)_OBJS)
-	$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
-	$(STRIP) $$@
+	$$(Q)echo "CC $$(@)"
+	$$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
+	$$(Q)$(STRIP) $$@
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
 $(DEPEND): $(ASRCS) $(CSRCS)
-	-rm -f $(DEPEND)
-	for d in $(TRGTDIRS);\
+	$(Q)-rm -f $(DEPEND)
+	$(Q)for d in $(TRGTDIRS);\
 		do $(CC) $(CFLAGS) $(INCLUDE) -M $(ASRCS) $(CSRCS) | sed -e "s#^\(.*\).o:#$$d/objs/\1.o:#" >> $(DEPEND); \
     done
 

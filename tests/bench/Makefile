@@ -1,3 +1,9 @@
+ifneq (yes,$(VERBOSE))
+	Q=@
+else
+	Q=
+endif
+
 CROSS=Y
 
 CROSSBINDIR_IS_Y=m68k-atari-mint-
@@ -10,15 +16,15 @@ CROSSBINDIR=$(CROSSBINDIR_IS_$(CROSS))
 
 UNAME := $(shell uname)
 ifeq ($(CROSS), Y)
-ifeq ($(UNAME),Linux)
-PREFIX=m68k-atari-mint
-HATARI=hatari
+	ifeq ($(UNAME),Linux)
+		PREFIX=m68k-atari-mint
+		HATARI=hatari
+	else
+		PREFIX=m68k-atari-mint
+		HATARI=/usr/local/bin/hatari
+	endif
 else
-PREFIX=m68k-atari-mint
-HATARI=/usr/local/bin/hatari
-endif
-else
-PREFIX=/usr
+	PREFIX=/usr
 endif
 
 DEPEND=depend
@@ -103,21 +109,24 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 define CC_TEMPLATE
 $(1)/objs/%.o:$(SRCDIR)/%.c
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$(@)"
+	$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)/%.o:$(SRCDIR)/%.S
-	$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
+	$(Q)echo "CC $$(@)"
+	$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(APP): ../../libcmini.a $$($(1)_OBJS)
-	$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
-	$(STRIP) $$@
+	$(Q)echo "CC $$(@)"
+	$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
+	$(Q)$(STRIP) $$@
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
 $(DEPEND): $(ASRCS) $(CSRCS)
-	-rm -f $(DEPEND)
-	for d in $(TRGTDIRS);\
+	@-rm -f $(DEPEND)
+	@for d in $(TRGTDIRS);\
 		do $(CC) $(CFLAGS) $(INCLUDE) -M $(ASRCS) $(CSRCS) | sed -e "s#^\(.*\).o:#$$d/objs/\1.o:#" >> $(DEPEND); \
     done
 

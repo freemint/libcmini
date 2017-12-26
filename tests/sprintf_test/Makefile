@@ -1,3 +1,8 @@
+ifneq (yes,$(VERBOSE))
+	Q=@
+else
+	Q=
+endif
 
 CC=m68k-atari-mint-gcc
 APP=sprinttst.tos
@@ -24,10 +29,11 @@ $(APP) :
 else
 
 $(APP): ../../libcmini.a $(OBJS)
-	$(CC) ../../startup.o -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
-	m68k-atari-mint-strip $(APP)
+	$(Q)echo "CC $(@)"
+	$(Q)$(CC) ../../startup.o -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
+	$(Q)m68k-atari-mint-strip $(APP)
 
 endif
 	
 clean:
-	- rm -f $(APP) $(OBJS) 
+	- $(Q)rm -f $(APP) $(OBJS) 
