@@ -52,6 +52,7 @@ sources/putc.c
 sources/puts.c
 sources/read.c
 sources/realloc.c
+sources/scanf.c
 sources/setjmp.c
 sources/setvbuf.c
 sources/snprintf.c
