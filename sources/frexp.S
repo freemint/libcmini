@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 #if !defined (__M68881__) && !defined (sfp004)
 #
  |-----------------------------------------------------------------------------
@@ -23,7 +21,9 @@ BIAS8	=	0x3ff - 1
 	.text; .even
 	.globl _frexp
 _frexp:
+#ifndef __FASTCALL__
 	movel	sp@(12),a0	| initialize exponent for loop
+#endif
 #ifdef __MSHORT__
 	clrw	a0@
 #else
@@ -132,7 +132,9 @@ L0:				| norm_df does not affect a0 or a1
 .globl _frexp
 
 _frexp:
-	moveal	a7@(12),a1		| address of n
+#ifndef __FASTCALL__
+	moveal	a7@(12),a0		| address of n
+#endif
 	fmoved	a7@(4),fp0		| load first_argument to fp0
 	fcmpd	#0r0.0,fp0		| 1st arg == 0 ?
 	fjeq	null_			| both parts of result are 0
@@ -140,11 +142,11 @@ _frexp:
 	fgetmanx fp0,fp0		| get mantissa
 	fscaleb #-1,fp0			|
 #ifdef __MSHORT__
-	fmovew	fp1,a1@			| fetch exp (fmovew from fp1)
-	addqw	#1,a1@			| correct result
+	fmovew	fp1,a0@			| fetch exp (fmovew from fp1)
+	addqw	#1,a0@			| correct result
 #else
-	fmovel	fp1,a1@			| fetch exp (fmovel from fp1)
-	addql	#1,a1@			| correct result
+	fmovel	fp1,a0@			| fetch exp (fmovel from fp1)
+	addql	#1,a0@			| correct result
 #endif
 	fmoved	fp0,a7@-		| now fetch significand
 	moveml	a7@+,d0-d1
@@ -152,9 +154,9 @@ _frexp:
 null_:
 	moveml	a7@(4),d0-d1
 #ifdef __MSHORT__
-	clrw	a1@
+	clrw	a0@
 #else
-	clrl	a1@
+	clrl	a0@
 #endif
 	rts
 
@@ -203,7 +205,9 @@ _frexp:
 	jne	nonzero
 	tstl	sp@(8)
 	jne	nonzero
+#ifndef __FASTCALL__
 	movel	sp@(12),a0
+#endif
 #ifdef __MSHORT__
 	clrw	a0@
 #else
@@ -213,41 +217,38 @@ _frexp:
 	clrl	d1
 	rts
 nonzero:
-	lea	0xfffffa50:w,a0
-	movew	#0x5418,a0@(comm)	| load first argument to fp0
-	cmpiw	#0x8900,a0@(resp)	| check
-	movel	a7@(4),a0@
-	movel	a7@(8),a0@
+	lea	0xfffffa50:w,a1
+	movew	#0x5418,a1@(comm)	| load first argument to fp0
+	cmpiw	#0x8900,a1@(resp)	| check
+	movel	a7@(4),a1@
+	movel	a7@(8),a1@
 
-	movew	#0x009f,a0@(comm)	| fgetman fp0,fp1
+	movew	#0x009f,a1@(comm)	| fgetman fp0,fp1
 	.word	0x4a68,0xfff0,0x6bfa	| test
 
-	movew	#0x001e,a0@(comm)	| fgetexp fp0,fp0
-	moveal	a7@(12),a1		| address of n while the fpu is active
+	movew	#0x001e,a1@(comm)	| fgetexp fp0,fp0
 	.word	0x4a68,0xfff0,0x6bfa	| test
 
-	movew	#5026,a0@(comm)		| fscalew #-1,fp0
+	movew	#5026,a1@(comm)		| fscalew #-1,fp0
 	.long	0x0c688900, 0xfff067f8
-	movew	#-1,a0@
+	movew	#-1,a1@
 
 #ifdef __MSHORT__
-	movew	#0x7080,a0@(comm)	| fetch exp (fmovew from fp1)
+	movew	#0x7080,a1@(comm)	| fetch exp (fmovew from fp1)
 	.long	0x0c688900, 0xfff067f8
-	movew	a0@,a1@			| return exp
+	movew	a1@,a0@			| return exp
 #else
 	movew	#0x6080,a0@(comm)	| fetch exp (fmovel from fp1)
 	.long	0x0c688900, 0xfff067f8
-	movel	a0@,a1@			| return exp
+	movel	a1@,a0@			| return exp
 #endif
 	movew	#0x7400,a0@(comm)	| now fetch significand
 	.long	0x0c688900, 0xfff067f8
-	movel	a0@,d0
-	movel	a0@,d1
+	movel	a1@,d0
+	movel	a1@,d1
 	btst	#31,a7@(4)		| test sign of 1st arg
 	jge	fini			| arg neg ?
 	bset	#31,d0			| =>  negate result
 fini:	rts
 
 #endif	/* sfp004 */
-
-#endif /* __FASTCALL__ */
