@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 |	new version of bcopy and memset
 |	uses movem to set 256 bytes blocks faster.
 |	Alexander Lehmann	alexlehm@iti.informatik.th-darmstadt.de
@@ -8,6 +6,8 @@
 
 	.text
 	.even
+
+#ifndef __FASTCALL__
 
 #ifdef Lmemset
 	.globl _memset
@@ -63,6 +63,43 @@ scommon:
 	jeq	exit		| length==0? (size_t)
 	clrb	d0		| value
 #endif /* Lbzero */
+
+#else /* __FASTCALL__ */
+
+#ifdef Lmemset
+	.globl _memset
+
+|	void *memset( void *dest, int val, size_t len );
+|	returns dest
+|	two versions for 16/32 bits
+
+_memset:
+	tstl	d1
+	jeq	exit		| length==0? (size_t)
+#ifndef Lmemset
+	jra	do_set
+#endif
+#endif /* Lmemset */
+
+#ifndef Lmemset
+	.globl _bzero
+	.globl __bzero
+	.globl ___bzero
+
+|	void bzero( void *dest, size_t length );
+|	void _bzero( void *dest, unsigned long length );
+|	return value not used (returns dest)
+
+___bzero:
+_bzero:
+__bzero:
+	movel	d0,d1
+scommon:
+	jeq	exit		| length==0? (size_t)
+	clrb	d0		| value
+#endif /* Lbzero */
+
+#endif /* __FASTCALL__ */
 
 do_set: 			| a0 dest, d0.b byte, d1.l length
 	movel	d2,sp@-
@@ -179,7 +216,5 @@ none:
 exit_d2:
 	movl	sp@+,d2
 exit:
-	movl sp@(4),d0		| return dest (for memset only)
+	movl a0,d0		| return dest (for memset only), in a0 by predec now
 	rts
-
-#endif /* __FASTCALL__
