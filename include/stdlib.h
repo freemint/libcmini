@@ -34,14 +34,14 @@ extern void abort(void);
 
 extern int rand(void);
 extern long lrand(void);
-extern void srand48(unsigned int seed);
+extern void srand48(long int seed);
 
 extern long strtol(const char*, char**, int);
 extern unsigned long strtoul(const char*, char**, int);
 extern long long strtoll(const char*, char**, int);
 extern unsigned long long strtoull(const char*, char**, int);
 
-#define abs(j)  ((j) > 0 ? j : -j)
+#define abs(j)  ((j) > 0 ? (j) : -(j))
 
 #define NULL	((void *) 0)
 #endif /* _STDLIB_H_ */
