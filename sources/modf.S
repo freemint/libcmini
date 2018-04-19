@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 #if !defined (__M68881__) && !defined (sfp004)
 
  | take floating point to integer and fractional pieces
@@ -24,17 +22,19 @@ BIAS8	=	0x3ff - 1
 	.text; .even
 	.globl _modf
 _modf:
-	lea	sp@(4),a0	| a0 -> float argument
+	lea	sp@(4),a1	| a1 -> float argument
 #ifdef __mcoldfire__
 	lea	sp@(-24),sp
 	moveml	d2-d7,sp@	| save d2-d7
-	movel	a0@+,d0
-	movel	a0@+,d1
+	movel	a1@+,d0
+	movel	a1@+,d1
 #else
 	moveml	d2-d7,sp@-	| save d2-d7
-	moveml	a0@+,d0-d1
+	moveml	a1@+,d0-d1
 #endif
-	movel   a0@,a1		| a1 -> ipart result
+#ifndef __FASTCALL__
+	movel   a1@,a0		| a0 -> ipart result
+#endif
 
 	movel	d0,d2		| calculate exponent
 	swap	d2
@@ -49,8 +49,8 @@ _modf:
 	cmpw	#BIAS8,d2
 	jgt	1f		| fabs(value) >= 1.0
 |				| return entire value as fractional part
-	clrl	a1@+		| d0, d1 already ok
-	clrl	a1@		| make integer part 0
+	clrl	a0@+		| d0, d1 already ok
+	clrl	a0@		| make integer part 0
 
 0:
 #ifdef __mcoldfire__
@@ -71,7 +71,7 @@ _modf:
 #endif
 	jgt	2f		| branch if we do have fractional part
 
-	moveml  d0-d1,a1@	| store entire value as the integer part
+	moveml  d0-d1,a0@	| store entire value as the integer part
 	moveq	#0,d0		| return zero as fractional part
 	movel	d0,d1
 	jra	0b
@@ -104,7 +104,7 @@ _modf:
 	notl	d6
 	andl	d6,d5		| and clear those unneded bits
 4:
-	moveml	d0-d1,a1@	| store computed integer part
+	moveml	d0-d1,a0@	| store computed integer part
 
 	swap	d0
 #ifdef __mcoldfire__
@@ -138,7 +138,9 @@ _modf:
 
 _modf:
 	fmoved	sp@(4),fp0	| load arg
+#ifndef __FASTCALL__
 	movel	sp@(12),a0	| get pointer to IP
+#endif
 	fintrzx	fp0,fp1		| get int part
 	fmoved	fp1,a0@		| return it to IP
 	fsubx 	fp1,fp0		| get remainder
@@ -158,34 +160,34 @@ zahl =	  0
 	.globl _modf
 .even
 _modf:
-	lea	0xfffffa50:w,a0
-	movew	#0x5403,a0@(comm)	| fintrz X -> fp0
-	cmpiw	#0x8900,a0@(resp)	| check
-	movel	a7@(4),a0@		| load X_hi
-	movel	a7@(8),a0@		| load X_low
+	lea	0xfffffa50:w,a1
+	movew	#0x5403,a1@(comm)	| fintrz X -> fp0
+	cmpiw	#0x8900,a1@(resp)	| check
+	movel	a7@(4),a1@		| load X_hi
+	movel	a7@(8),a1@		| load X_low
 
 	movew	#0x5480,a0@(comm)	| X -> fp1
 	.long	0x0c688900, 0xfff067f8
-	movel	a7@(4),a0@		| load X_hi
-	movel	a7@(8),a0@		| load X_low
+	movel	a7@(4),a1@		| load X_hi
+	movel	a7@(8),a1@		| load X_low
 
 |	000 000 001 0101000		| sub fp0 -> fp1
-	movew	#0x00a8,a0@(comm)	| sub fp0 -> fp1
+	movew	#0x00a8,a1@(comm)	| sub fp0 -> fp1
 	.word	0x4a68,0xfff0,0x6bfa	| test
 
-	movew	#0x7400,a0@(comm)	| fp0 to IntPart
-	moveal	a7@(12),a1		| address of IntPart while the fpu is active
+	movew	#0x7400,a1@(comm)	| fp0 to IntPart
+#ifndef __FASTCALL__
+	moveal	a7@(12),a0		| address of IntPart while the fpu is active
+#endif
 | wait
 	.long	0x0c688900, 0xfff067f8
-	movel	a0@,a1@+
-	movel	a0@,a1@+
-	movew	#0x7480,a0@(comm)	| Rest to d0/d1
+	movel	a1@,a0@+
+	movel	a1@,a0@+
+	movew	#0x7480,a1@(comm)	| Rest to d0/d1
 | wait
 	.long	0x0c688900, 0xfff067f8
-	movel	a0@,d0
-	movel	a0@,d1
+	movel	a1@,d0
+	movel	a1@,d1
  	rts
 
 #endif	/* sfp004 */
-
-#endif /* __FASTCALL__ */
