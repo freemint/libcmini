@@ -5,6 +5,8 @@
  *      Author: ardi
  */
 
+#define _GNU_SOURCE
+
 #include <string.h>
 
 char* strerror_r (int errnum, char *buf, size_t bufsize) {
