@@ -27,14 +27,13 @@
 | be accessible!
 | destroys a0 and a7
 
-#ifndef __FASTCALL__
-
 	.globl	__setstack
 __setstack:
-	movel	sp@+, a0	| save return address
-	movel	sp@, sp		| new stack pointer
+	movel	sp@+, a1	| save return address
+#ifndef __FASTCALL__
+	movel	sp@, a0		| new stack pointer
+#endif
+	movel	a0, sp		| new stack pointer
 	subl	#64+4, sp	| push some unused space for buggy OS and a
 				| fake parameter to be popped by the caller
-	jmp	a0@		| back to caller
-
-#endif
+	jmp	a1@		| back to caller
