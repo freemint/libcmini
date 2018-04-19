@@ -8,7 +8,7 @@
 
 | void _checkcpu(void);
 |
-| No need for __FASTCALL_ as long as we call _Getcookie not _getcookie.
+| No need for __FASTCALL__ as long as we call _Getcookie not _getcookie.
 |
 | Check if the actual CPU is compatible with this binary.
 | If it is compatible, the function returns silently.
@@ -29,10 +29,9 @@ __checkcpu:
 #ifdef __M68020__
 	subql	#4,sp			| Local variable for cookie value
 
-	pea	sp@
-	movl	#0x5f435055,sp@-	| "_CPU"
+	lea	sp@,a0
+	movl	#0x5f435055,d0	| "_CPU"
 	jsr	_Getcookie
-	addql	#8,sp
 
 	movel	sp@+,d1			| Cookie value
 
@@ -57,10 +56,9 @@ __checkcpu:
 #ifdef __mcoldfire__
 	subql	#4,sp			| Local variable for cookie value
 
-	pea	sp@
-	movl	#0x5f43465f,sp@-	| "_CF_"
+	lea	sp@,a0
+	movl	#0x5f43465f,d0	| "_CF_"
 	jsr	_Getcookie
-	addql	#8,sp
 
 	movel	sp@+,d1			| Cookie value
 
@@ -81,10 +79,9 @@ __checkcpu:
 #ifdef __M68881__
 	subql	#4,sp			| Local variable for cookie value
 
-	pea	sp@
-	movl	#0x5f465055,sp@-	| "_FPU"
+	lea	sp@,a0
+	movl	#0x5f465055,d0	| "_FPU"
 	jsr	_Getcookie
-	addql	#8,sp
 
 	movel	sp@+,d1			| Cookie value
 
