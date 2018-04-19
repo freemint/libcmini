@@ -24,7 +24,6 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 ONLY_68K=N
 BUILD_CF=Y
-BUILD_FAST=N
 MINTLIB_COMPATIBLE=N
 COMPILE_ELF=N
 STDIO_WITH_LONG_LONG=N
@@ -43,6 +42,8 @@ CPP=$(PREFIX)cpp
 OBJCOPY=$(PREFIX)objcopy
 AR=$(PREFIX)ar
 RANLIB=$(PREFIX)ranlib
+
+BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
 
 CFLAGS=\
 	   -Wall\

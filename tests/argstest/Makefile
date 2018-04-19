@@ -9,7 +9,6 @@ CROSSBINDIR_IS_Y=m68k-atari-mint-
 CROSSBINDIR_IS_N=
 
 BUILD_CF=N
-BUILD_FAST=N
 
 CROSSBINDIR=$(CROSSBINDIR_IS_$(CROSS))
 
@@ -28,9 +27,10 @@ endif
 
 DEPEND=depend
 
+BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
+
 INCLUDE=-I../../include -nostdlib
 LIBS=-lcmini -nostdlib -lgcc -lcmini
-CC=$(PREFIX)/bin/gcc
 
 CC=$(CROSSBINDIR)gcc
 STRIP=$(CROSSBINDIR)strip
