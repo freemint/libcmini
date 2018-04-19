@@ -216,6 +216,12 @@ DEPENDS := $(foreach dir,$(LIBDIRS), $(wildcard $(dir)/objs/*.d) $(wildcard $(di
 printvars:
 	@$(foreach V,$(.VARIABLES),	$(if $(filter-out environment% default automatic, $(origin $V)),$(warning $V=$($V))))
 		
+install::
+	for i in $(LIBDIRS); do \
+		mkdir -p $(DESTDIR)/usr/lib/$$i; \
+		cp -a $$i/$(LIBC) $$i/$(LIBIIO) $(DESTDIR)/usr/lib/$$i; \
+	done
+	cp -a startup.o $(DESTDIR)/usr/lib
 
 ifneq (clean,$(MAKECMDGOALS))
 -include $(DEPENDS)
