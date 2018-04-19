@@ -16,9 +16,9 @@ int setjmp(jmp_buf *buf)
 {
 	__asm__ __volatile__(
 #ifndef __FASTCALL__
-		"	movem.l	d2-d7/a2-a7,(%[regs])	\n\t"
+		"	movem.l	%%d2-%%d7/%%a2-%%a7,(%[regs])	\n\t"
 #else
-		"	movem.l	d3-d7/a2-a7,(%[regs])	\n\t"
+		"	movem.l	%%d3-%%d7/%%a2-%%a7,(%[regs])	\n\t"
 #endif
 		:							/* output */
 		: [regs] "a" (&buf->regs[0])	/* input */
@@ -29,24 +29,22 @@ int setjmp(jmp_buf *buf)
 
 void longjmp(jmp_buf *buf, int val)
 {
+	register int d0 asm("%d0") = val;
+	register long *a0 asm("%a0") = &buf->regs[0];
+	
 	if (val == 0)	/* avoid infinite loop */
 		val = 1;
 
 	__asm__ __volatile__(
 #ifndef __FASTCALL__
-		"	movem.l	(%[regs]),d2-d7/a2-a7	\n\t"
+		"	movem.l	(%%a0),%%d2-%%d7/%%a2-%%a7	\n\t"
 #else
-		"	movem.l	(%[regs]),d3-d7/a2-a7	\n\t"
+		"	movem.l	(%%a0),%%d3-%%d7/%%a2-%%a7	\n\t"
 #endif
-		"	move.l	%[val],d0				\n\t"
 		"	rts								\n\t"
 		:							/* output */
-		: [regs] "a" (&buf->regs[0]), [val] "d" (val)
-#ifndef __FASTCALL__
-		: "d2", "d3", "d4", "d5", "d6", "d7", "a2", "a3", "a4", "a5", "a6"
-#else
-		: "d3", "d4", "d5", "d6", "d7", "a2", "a3", "a4", "a5", "a6"
-#endif
+		: "a" (a0), "d" (d0)
+		: /* not reached; so no need to declare any clobbered regs */
 	);
 };
 
