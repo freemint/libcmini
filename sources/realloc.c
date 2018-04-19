@@ -1,8 +1,10 @@
 #include <stddef.h>	/* for size_t */
 #include <stdlib.h>
+#ifdef __MINTLIB_COMPATIBLE
 #include <memory.h>
-#include <string.h>
 #include <unistd.h>
+#endif
+#include <string.h>
 #include "lib.h"
 
 
