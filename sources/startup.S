@@ -62,7 +62,7 @@ __start:
 	bnes	__startprg	| for accs, it must be 0
 	movel	a0, __base	| acc basepage is in A0
 	lea	a0@(252), sp	| use the command line as a temporary stack
-	jsr	.early_init	| early initialization
+	jbsr	.early_init	| early initialization
 	jsr	__checkcpu	| check for correct CPU or exit
 	jmp	__acc_main	| function is in crtinit.c
 |
@@ -76,7 +76,7 @@ __startprg:
 	bclr	#0, d0		| round off
 	movel	d0, sp		| set stack (temporarily)
 	subl	#64, sp		| see note in mintlib/setstack.S
-	jsr	.early_init	| early initialization
+	jbsr	.early_init	| early initialization
 	jsr	__checkcpu	| check for correct CPU or exit
 	jmp	__crtinit	| in crtinit.c
 
