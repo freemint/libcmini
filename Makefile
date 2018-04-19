@@ -50,6 +50,7 @@ CFLAGS=\
 ifneq ($(MINTLIB_COMPATIBLE),Y)
 	INCLUDE=-Iinclude
 else
+	INCLUDE=
 	CFLAGS+=-D__MINTLIB_COMPATIBLE
 endif
 
