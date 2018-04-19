@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 	.text
 	.globl _ldexp
 	.globl __infinitydf
@@ -54,6 +52,15 @@ _ldexp:
 #else
 	moveml	d2-d7,sp@-	| save d2-d7
 #endif
+#ifdef __FASTCALL__
+	movel	d0,d4
+#else
+#ifdef __MSHORT__
+	movew	a1@(8),d4
+#else
+	movew	a1@(10),d4
+#endif
+#endif
 
 	movew	a1@,d0		| extract value.exp
 	movew	d0,d2		| extract value.sign
@@ -81,13 +88,12 @@ _ldexp:
 #endif
 	bclr	#4,d3		| nah, we do not need stinkin leadin 1
 1:	movew	d3,a1@		| save results of our efforts
-#if defined(__MSHORT__) && ! defined(__mcoldfire__)
-	addw	a1@(8),d0	| add in exponent
-	extl	d0
+#ifdef __mcoldfire__
+	addl	d4,d0	| add in exponent
 #else
-	extl	d0
-	addl	a1@(8),d0	| add in exponent
+	addw	d4,d0	| add in exponent
 #endif
+	extl	d0
 	cmpl	#-53,d0		| hmm. works only if 1 in implied position...
 	jle	retz		| range error - underflow
 	cmpl	#0x7ff,d0
@@ -115,10 +121,16 @@ rangerr:
 #ifdef ERROR_CHECK
 	moveq	#Erange,d0
 	Emove	d0,Errno
+#ifdef __FASTCALL__
+	lea	pc@(_Overflow),a1	| for printf
+	lea	Stderr,a0		|
+	jbsr	_fprintf	|
+#else
 	pea	pc@(_Overflow)	| for printf
 	pea	Stderr		|
 	jbsr	_fprintf	|
 	addql	#8,a7		|
+#endif
 #endif /* ERROR_CHECK */
 
 #ifdef __mcoldfire__
@@ -155,11 +167,17 @@ L0:
 |# ported fromt sfp004 to real coprocessor, mjr, August 1991
 |##############################################################################
 
+#ifdef __FASTCALL__
+#ifdef __MSHORT__
+	extl	d0
+#endif
+#else
 #ifdef __MSHORT__
 	movew	a7@(12),d0		| get exponent
 	extl	d0
 #else
 	movel	a7@(12),d0		| get exponent
+#endif
 #endif
 	fgetexpd a7@(4),fp1		| extract exponent of 1st arg
 	fmovel	fp1,d1			| d1 serves as accumulator
@@ -200,11 +218,17 @@ zahl =	  0	|	fpu data reg
 |	or
 |	.long	0x0c6889000, 0x000067f8			(a0)
 
+#ifdef __FASTCALL__
+#ifdef __MSHORT__
+	extl	d0
+#endif
+#else
 #ifdef __MSHORT__
 	movew	sp@(12),d0		| get exponent
 	extl	d0
 #else
 	movel	sp@(12),d0		| get exponent
+#endif
 #endif
 	lea	0xfffffa50:w,a0		| fpu address
 	movew	#0x549e,a0@(comm)	| fgetexpd sp@(4),fp1
@@ -242,22 +266,26 @@ error_plus:
 	moveml	d0-d1,a7@-	| print error message
 	moveq	#Erange,d0	| Overflow: errno = ERANGE
 	Emove	d0,Errno
-	pea	pc@(_Domain)	| for printf
+	lea	pc@(_Domain),a1	| for printf
 	jra	error_exit	|
 error_nan:
 	moveq	#Edom,d0	| NAN => errno = EDOM
 	Emove	d0,Errno
 	moveml	a0@(24),d0-d1	| result = +inf
 	moveml	d0-d1,a7@-	| print error message
-	pea	pc@(_Overflow)	| for printf
+	lea	pc@(_Overflow),a1	| for printf
 error_exit:
+#ifdef __FASTCALL__
+	lea	Stderr,a0		|
+	jbsr	_fprintf	|
+#else
+    movel   a1,-(sp)
 	pea	Stderr		|
 	jbsr	_fprintf	|
 	addql	#8,a7		|
+#endif
 	moveml	a7@+,d0-d1
 #endif	/* ERROR_CHECK */
 	rts
 
 #endif	/* !__M68881__ && !sfp004	*/
-
-#endif /* __FASTCALL__ */
