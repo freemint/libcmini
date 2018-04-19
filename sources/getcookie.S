@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 | getcookie.S -- MiNTLib.
 |
 | This file is part of the MiNTLib project, and may only be used
@@ -8,7 +6,7 @@
 | this file you indicate that you have read the license and
 | understand and accept it fully.
 
-| int Getcookie(long cookie, long *p_value);
+| int __CDECL Getcookie(long cookie, long *p_value);
 |
 | Get the value of a system Cookie.
 |
@@ -20,24 +18,34 @@
 | be translated to unsupported jump instructions.
 
 	.extern	___has_no_ssystem	| int __has_no_ssystem;
-	.extern	_get_sysvar		| long get_sysvar(void *var);
+	.extern	_get_sysvar		| long __CDECL get_sysvar(void *var);
 
-	.globl	_Getcookie
-_Getcookie:
 	.globl	_getcookie		| getcookie() available to libcflib
 _getcookie:
+#ifndef __FASTCALL__
+	movel	sp@(4),d0		| cookie
+	movel	sp@(8),a0		| p_value
+#endif
+	.globl	_Getcookie
+_Getcookie:
+
 	lea	sp@(-16),sp
 	movml	d2/d3/a2/a3,sp@		| ColdFire compatibility
 
-	movel	sp@(16+4),d3		| cookie
-	movel	sp@(16+8),a3		| p_value
+	movel	d0,d3			| cookie
+	movel	a0,a3			| p_value
 
 	tstl	___has_no_ssystem
 	beqs	.get_with_ssystem
 
+#ifdef __FASTCALL__
+	lea	0x5a0,a0			| _p_cookies
+	jsr	_get_sysvar
+#else
 	pea	0x5a0			| _p_cookies
 	jsr	_get_sysvar
 	addql	#4,sp
+#endif
 
 	tstl	d0
 	beqs	.error			| No cookie jar
@@ -96,5 +104,3 @@ _getcookie:
 	movl	d0,d1			| Get value from return value
 
 	bras	.return
-
-#endif /* __FASTCALL__ */
