@@ -8,8 +8,6 @@
 
 | long get_sysvar(void *var);
 |
-| No need for __FASTCALL__ version, make sure getcookie_fast use std call!
-|
 | Read an OS variable.
 |
 | WARNING: This function is called from the startup code before knowing the
@@ -26,7 +24,11 @@ _get_sysvar:
 	lea	sp@(-16),sp
 	movml	d2/d3/a2/a3,sp@		| ColdFire compatibility
 
+#ifdef __FASTCALL__
+	movel	a0,a3		| var
+#else
 	movel	sp@(16+4),a3		| var
+#endif
 
 	tstl	___has_no_ssystem
 	beqs	.get_with_ssystem
