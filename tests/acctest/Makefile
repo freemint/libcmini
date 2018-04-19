@@ -70,6 +70,11 @@ endif
 endif
 OBJDIRS=$(patsubst %,%/objs,$(TRGTDIRS))
 
+all: dirs $(APP)
+
+dirs::
+	mkdir -p $(TRGTDIRS) $(OBJDIRS)
+
 #
 # multilib flags. These must match m68k-atari-mint-gcc -print-multi-lib output
 #
