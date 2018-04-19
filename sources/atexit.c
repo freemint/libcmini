@@ -4,7 +4,9 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#ifdef __MINTLIB_COMPATIBLE
 #include <memory.h>
+#endif
 
 #include "lib.h"
 
