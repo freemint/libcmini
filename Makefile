@@ -15,6 +15,8 @@ ifneq ($(DEVKITMINT),)
 	export PATH		:=	$(DEVKITMINT)/../devkitMINT/bin:$(PATH)
 endif
 
+all:$(patsubst %,%/$(APP),$(TRGTDIRS))
+
 #
 # ONLY_68K: for faster developing; set to Y to build only the 68000 library
 # BUILD_CF: Build ColfFire binaries.
@@ -102,9 +104,13 @@ STARTUPS=$(patsubst %,%/$(START_OBJ),$(LIBDIRS))
 
 TESTS:= $(shell ls tests | egrep -v '^(CVS)$$')
 
-all: libs startups tests
+all: dirs libs startups tests
 libs: $(LIBS) $(LIBSIIO)
 	
+dirs::
+	mkdir -p $(LIBDIRS) $(OBJDIRS)
+
+
 startups: $(STARTUPS)
 
 tests:
@@ -116,6 +122,8 @@ clean:
 	$(Q)rm -rf $(LIBS) $(LIBSIIO) $(patsubst %,%/objs/*.o,$(LIBDIRS)) $(patsubst %,%/objs/*.d,$(LIBDIRS)) $(patsubst %,%/objs/iio,$(LIBDIRS)) $(STARTUPS) $(STARTUPS:.o=.d) depend
 	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
 	$(Q) rm -rf libcmini-*
+
+all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 
 #
 # multilib flags

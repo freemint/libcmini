@@ -15,7 +15,9 @@ CFLAGS=\
 	-fomit-frame-pointer\
 	-Os\
 	$(INCLUDE)
-	
+
+all: $(APP)
+
 ifneq ($(DEVKITMINT),) 
 # ardi's toolchain stuff
 $(APP) :

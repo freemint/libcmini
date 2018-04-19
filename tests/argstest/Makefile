@@ -85,6 +85,11 @@ ifeq ($(BUILD_FAST), Y)
 	m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
 endif
 
+all: dirs $(patsubst %,%/$(APP),$(TRGTDIRS))
+
+dirs::
+	mkdir -p $(TRGTDIRS) $(OBJDIRS)
+
 ifneq ($(DEVKITMINT),) 
 	# ardi's toolchain stuff
 	APP := $(APP:.ttp=.elf)
@@ -101,7 +106,6 @@ ctest: $(TEST_APP)
 
 endif
 
-all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # generate pattern rules for multilib object files.
 #
