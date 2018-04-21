@@ -12,7 +12,6 @@
 #include <mint/mintbind.h>
 #include "lib.h"
 
-extern void _monstartup(void *, void *);
 extern int main (int, char **, char **);
 void _main(int, char *[], char *[]);
 void __main();
@@ -45,32 +44,6 @@ char *program_invocation_short_name = "unknown application";
 
 long _pdomain;		/* Error code of Pdomain call */
 
-void _acc_main(void) {
-	static char *acc_argv[] = { "", NULL }; /* no name and no arguments */
-
-	if (_stksize == 0 || _stksize == -1L)
-		_stksize = MINKEEP;
-
-	if (_stksize < 0)
-		_stksize = -_stksize;
-
-//	if ((s = getenv("STACKSIZE")) != 0)
-//		_stksize = atoi(s);
-
-	/* stack on word boundary */
-	_stksize &= 0xfffffffeL;
-
-	if (_heapbase == 0) {
-		_heapbase = (void *)Malloc(_stksize);
-	}
-	_setstack((char *) _heapbase + _stksize);
-
-	/* this is an accessory */
-	_app = 0;
-
-	_main(1L, acc_argv, acc_argv);
-	/*NOTREACHED*/
-}
 #undef isspace
 #define isspace(c) ((c) == ' '||(c) == '\t')
 #undef isdigit

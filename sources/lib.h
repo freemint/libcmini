@@ -48,6 +48,10 @@ extern struct mem_chunk _mchunk_free_list;
 
 typedef void (*ExitFn)(void);
 extern char **environ;
+extern short _app;
+extern unsigned long _PgmSize;
+extern long __libc_argc;
+extern char **__libc_argv;
 
 struct _mem_stream { char *xstring; char *xestring; };
 
