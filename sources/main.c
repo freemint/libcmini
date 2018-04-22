@@ -19,13 +19,10 @@ void __main();
 static long parseargs(BASEPAGE *bp);
 
 extern long _stksize;
-extern long _initial_stack;
 
 /* globals */
 
-void *_heapbase = 0;
 short _app = 1;
-short _split_mem = 0;
 long __has_no_ssystem = 1;
 unsigned long _PgmSize;
 BASEPAGE *_base=0;
@@ -74,20 +71,8 @@ void _crtinit(void) {
 	if ((freemem = (long)bp->p_hitpa - (long)bp - MINFREE - m) <= 0L)
 	    goto notenough;
 
-	if (_initial_stack) {
-	    /* the primary use of _initial_stack will be in dumping */
-	    /* applications where only a heap for malloc makes sense */
-	    _heapbase = (void *)((long)bp + m);
-	    _stksize = _initial_stack;
-	} else {
-		if (_stksize >= -1L)
-			/* malloc from Malloc first, then from own heap */
-			_split_mem = 1;
-	}
-
 	if (_stksize == -1L) {
 		_stksize = freemem >> 1;
-		_heapbase = (void *)((long)bp + m);
 	} else if (_stksize == 0L) {	/* free all but MINKEEP */
 		_stksize = MINKEEP;
 	} else if (_stksize == 1L) { 	/* keep 1/4, free 3/4 */
@@ -99,7 +84,6 @@ void _crtinit(void) {
 	} else {
 		if(_stksize < -1L) {	/* keep |_stksize|, use heap for mallocs */
 			_stksize = -_stksize;
-			_heapbase = (void *)((long)bp + m);
 		}
 	}
 /*
