@@ -58,15 +58,6 @@ extern FILE *stdout;
 extern FILE *stdin;
 extern FILE *stderr;
 
-#define stdaux	(&_StdAuxF)
-#define stdprn	(&_StdPrnF)
-
-extern FILE _StdOutF;
-extern FILE _StdInF;
-extern FILE _StdErrF;
-extern FILE _StdAuxF;
-extern FILE _StdPrnF;
-
 #define _IONBF	2
 
 #ifndef NULL
