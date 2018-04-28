@@ -46,7 +46,7 @@ source is also available there.
 ## what's that libcmini.creator stuff about?
 
 I'm using the QtCreator IDE for my Atari cross development work (most of the time, if I'm not in vi mode). The `libcmini.config`, `libcmini.creator`, `libcmini.files` and `libcmini.includes` files are used by QtCreator to keep track of the project.
-If you are not using QtCreator (I would recommend it), just ignore these files.
+If you are not using QtCreator (I would recommend it since it adds a few nice features to Atari cross development), just ignore these files.
 
 ## Fastcall?
 (contributed by Frederik Olsson)
