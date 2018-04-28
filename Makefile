@@ -109,7 +109,7 @@ all: dirs libs startups tests
 libs: $(LIBS) $(LIBSIIO)
 	
 dirs::
-	mkdir -p $(LIBDIRS) $(OBJDIRS)
+	$(Q)mkdir -p $(LIBDIRS) $(OBJDIRS)
 
 
 startups: $(STARTUPS)
