@@ -1,6 +1,7 @@
 #include <time.h>
 #include <mint/osbind.h>
-#include <mint/sysvars.h>
+
+#define _hz_200                ((unsigned long *) 0x4baL)
 
 clock_t clock(void)
 {
