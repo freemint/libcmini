@@ -1,5 +1,5 @@
-
-extern unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base, int *sign);
+#include <stdlib.h>
+#include "lib.h"
 
 unsigned long long strtoull(const char *nptr, char **endptr, int base) {
 	int sign;

@@ -1,4 +1,6 @@
 #include <limits.h>
+#include <stdlib.h>
+#include "lib.h"
 
 # ifndef LLONG_MIN
 #  define LLONG_MIN	(-LLONG_MAX-1)
@@ -9,8 +11,6 @@
 # ifndef ULLONG_MAX
 #  define ULLONG_MAX	(LLONG_MAX * 2ULL + 1)
 # endif
-
-extern unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base, int *sign);
 
 long long strtoll(const char *nptr, char **endptr, int base) {
 	int sign;

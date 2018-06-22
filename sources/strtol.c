@@ -1,6 +1,6 @@
 #include <limits.h>
-
-extern unsigned long __strtoul_internal(const char *nptr, char **endptr, int base, int *sign);
+#include <stdlib.h>
+#include "lib.h"
 
 long strtol(const char *nptr, char **endptr, int base) {
 	int sign;

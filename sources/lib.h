@@ -56,5 +56,7 @@ int doprnt(int (*)(int, void *), void *stream, const char *fmt, va_list va);
 int __addchar(int c, void *stream);
 int unx2dos(const char *unx, char *dos);
 int dos2unx(const char *dos, char *unx);
+unsigned long __strtoul_internal(const char *nptr, char **endptr, int base, int *sign);
+unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base, int *sign);
 
 #endif /* LIB_H_ */

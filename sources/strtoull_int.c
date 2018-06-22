@@ -1,4 +1,6 @@
 #include <limits.h>
+#include <stdlib.h>
+#include "lib.h"
 
 # ifndef LLONG_MIN
 #  define LLONG_MIN	(-LLONG_MAX-1)
@@ -53,9 +55,9 @@ unsigned long long __add64 (long long in, long add, char *overflow) {
 	__asm__(
 	"	add.l		%3, %0		\n"
 	"	addx.l	%4, %1		\n"
-	"	bcc		.add64_end%=	\n"
+	"	bcc		1f	\n"
 	"	st			%2				\n"
-	".add64_end%=:				\n"
+	"1:				\n"
 	: "+d"(lo), "+d"(hi),"+g"(*overflow)
 	: "g"(add), "d"(zero)
 	);

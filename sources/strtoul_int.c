@@ -1,4 +1,6 @@
 #include <limits.h>
+#include <stdlib.h>
+#include "lib.h"
 
 #define ISSPACE(c) ((c) == ' '||(c) == '\t')
 #define ISDIGIT(c) ((c) >= '0' && (c) <= '9')
