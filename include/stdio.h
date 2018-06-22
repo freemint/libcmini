@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 
 /* The mode of I/O, as given in the MODE argument to fopen, etc.  */
 typedef struct
@@ -27,8 +27,8 @@ typedef struct
 typedef struct __stdio_file FILE;
 struct __stdio_file
 {
-    int __magic;
-#define _IOMAGIC ((int) 0xfedabeeb) /* Magic number to fill `__magic'.  */
+    long __magic;
+#define	_IOMAGIC (0xfedabeecL)	/* Magic number to fill `__magic'.  */
 
 #if 0
     char *__bufp;     /* next byte write */
@@ -71,7 +71,7 @@ extern FILE _StdPrnF;
 
 #ifndef NULL
 #define NULL        ((void *)0)
-#endif /* NULL */
+#endif
 
 #define OPEN_MAX        32
 #define FOPEN_MAX       32
@@ -98,14 +98,16 @@ extern FILE _StdPrnF;
 extern int errno;
 
 extern FILE *fopen(const char *path, const char *mode);
-extern FILE *freopen(const char *path, const char *mode, FILE* stream);
+extern FILE *freopen(const char *path, const char *mode, FILE *stream);
 extern int fclose(FILE *fp);
 extern int fcloseall(void);
 extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern int fseek(FILE *fp, long offset, int origin);
 extern long ftell(FILE *stream);
-extern void rewind(FILE* stream);
+extern void rewind(FILE *stream);
+
+int setvbuf(FILE *stream, char *buf, int mode, size_t size);
 
 extern int fputs(const char *s, FILE *stream);
 extern int puts(const char *s);
@@ -119,14 +121,14 @@ extern char* fgets(char *s, int n, FILE *stream);
 extern int getc(FILE *stream);
 /* No gets() anymore! */
 #define getchar()  fgetc(stdin)
-extern int ungetc(int c, FILE* stream);
+extern int ungetc(int c, FILE *stream);
 
 extern int scanf(const char *format, ...);
 extern int fscanf(FILE *stream, const char *format, ...);
-extern int sscanf(const char* str, const char* format, ...);
-extern int vscanf(const char*fmt, va_list list);
-extern int vfscanf(FILE* fp, const char* fmt, va_list list);
-extern int vsscanf(const char* str, const char* fmt, va_list list);
+extern int sscanf(const char *str, const char *format, ...);
+extern int vscanf(const char *format, va_list list);
+extern int vfscanf(FILE* fp, const char *format, va_list list);
+extern int vsscanf(const char* str, const char *format, va_list list);
 
 extern int fprintf(FILE *stream, const char *format, ...);
 extern int vfprintf(FILE *stream, const char *format, va_list ap);
@@ -139,20 +141,17 @@ extern int vsprintf(char *s, const char *format, va_list va);
 extern int asprintf(char** strp, const char* format, ...);
 extern int vasprintf(char** strp, const char* format, va_list ap);
 
-extern int fflush(FILE* stream);
-extern int feof(FILE* stream);
-extern int ferror(FILE* stream);
-extern void clearerr(FILE* stream);
+extern int fflush(FILE *stream);
+extern int feof(FILE *stream);
+extern int ferror(FILE *stream);
+extern void clearerr(FILE *stream);
 extern int fileno(FILE *stream);
 
 extern int open(const char *filename, int access, ...);
 extern int close(int fd);
 extern int unlink(const char *filename);
 
-extern int remove(const char* filename);
-extern int rename(const char* oldname, const char* newname);
-
-// static inline int fileno(FILE *stream) { return stream->Handle; }
-// static inline int getc(FILE *stream) { return fgetc(stream); }
+extern int remove(const char *filename);
+extern int rename(const char *oldname, const char *newname);
 
 #endif /* STDIO_H_ */
