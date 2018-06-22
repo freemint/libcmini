@@ -6,23 +6,41 @@
  */
 
 #include <string.h>
+#include <sys/types.h>
 
-int strncmp(const char *s1, const char *s2, size_t max)
+#if defined(__GNUC__) && __GNUC__ >= 7
+#pragma GCC diagnostic ignored "-Wnonnull-compare"
+#endif
+
+int strncmp(const char *scan1, const char *scan2, size_t n)
 {
-	int cmp = 0;
+	unsigned char c1, c2;
+	long count;  /* FIXME!!! Has to be size_t but that requires
+				a rewrite (Guido).  */
 
-	while (max-- > 0 && cmp == 0) {
-        cmp = (unsigned char)*s1 - (unsigned char)*s2;
-
-		if (*s1 == '\0' || *s2 == '\0') {
-			break;
-		} else {
-			++s1;
-			++s2;
-		}
+	if (!scan1) {
+		return scan2 ? -1 : 0;
 	}
+	if (!scan2) return 1;
+	count = n;
+	do {
+		c1 = (unsigned char) *scan1++;
+		c2 = (unsigned char) *scan2++;
+	} while (--count >= 0 && c1 && c1 == c2);
 
-	return cmp;
+	if (count < 0)
+		return 0;
+
+	/*
+	 * The following case analysis is necessary so that characters
+	 * which look negative collate low against normal characters but
+	 * high against the end-of-string NUL.
+	 */
+	if (c1 == c2)
+		return 0;
+	if (c1 == '\0')
+		return -1;
+	if (c2 == '\0')
+		return 1;
+	return c1 - c2;
 }
-
-
