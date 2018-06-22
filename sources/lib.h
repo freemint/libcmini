@@ -35,6 +35,8 @@ struct mem_chunk
 /* linked list of free blocks */
 extern struct mem_chunk _mchunk_free_list;
 
+void __mallocChunkSize(size_t siz);
+
 
 /* definitions needed in FILE related functions (fopen, fseek etc.) */
 
@@ -62,5 +64,7 @@ int unx2dos(const char *unx, char *dos);
 int dos2unx(const char *dos, char *unx);
 unsigned long __strtoul_internal(const char *nptr, char **endptr, int base, int *sign);
 unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base, int *sign);
+void _acc_main(void);
+void _crtinit(void);
 
 #endif /* LIB_H_ */

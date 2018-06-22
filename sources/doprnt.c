@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <ctype.h>
+#include "lib.h"
 
 /*
  * Lexical definitions.
