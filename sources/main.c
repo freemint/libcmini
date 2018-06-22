@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <mintbind.h>
+#include <mint/mintbind.h>
 #include "lib.h"
 
 extern void _monstartup(void *, void *);
@@ -81,11 +81,9 @@ void _acc_main(void) {
 #define S__LINE__ S_(__LINE__)
 
 void _crtinit(void) {
-	extern void etext();	/* a "function" to fake out pc-rel addressing */
-
-	register BASEPAGE *bp;
-	register long m;
-	register long freemem;
+	BASEPAGE *bp;
+	long m;
+	long freemem;
 
 	/* its an application */
 	_app = 1;
@@ -115,7 +113,7 @@ void _crtinit(void) {
 	}
 
 	if (_stksize == -1L) {
-		_stksize = freemem;
+		_stksize = freemem >> 1;
 		_heapbase = (void *)((long)bp + m);
 	} else if (_stksize == 0L) {	/* free all but MINKEEP */
 		_stksize = MINKEEP;
@@ -156,16 +154,13 @@ void _crtinit(void) {
 /*	_init_signal(); */
 
 	/* start profiling, if we were linked with gcrt0.o */
-	_monstartup((void *)bp->p_tbase, (void *)((long)etext - 1));
 
 	_main(__libc_argc, __libc_argv, environ);
-	/* not reached normally */
+	__builtin_unreachable();
 
 notenough:
-	(void) Cconws("Fatal error: insufficient memory\r\n");
-	(void) Cconws("Hint: either decrease stack size using 'stack' command (not recomended)\r\n" \
-		   "      or increase TPA_INITIALMEM value in mint.cnf.\r\n");
 	Pterm(-1);
+	__builtin_unreachable();
 }
 
 /*
