@@ -1,6 +1,10 @@
-#include <sys/ioctl.h>
 #include <mint/mintbind.h>
 #include <mint/errno.h>
+#include <unistd.h>
+
+#ifndef TIOCGPGRP
+#define TIOCGPGRP (('T'<< 8) | 6)
+#endif
 
 int isatty (int fd) {
 	long dummy, retval;
