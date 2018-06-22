@@ -1,7 +1,8 @@
 #include <mint/osbind.h>
 #include <stdio.h>
+#include <unistd.h>
 
-size_t read(int fd, void *buf, size_t nbytes)
+ssize_t read(int fd, void *buf, size_t nbytes)
 {
     long result;
 
