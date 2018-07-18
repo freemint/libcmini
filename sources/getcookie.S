@@ -20,7 +20,7 @@
 	.extern	___has_no_ssystem	| int __has_no_ssystem;
 	.extern	_get_sysvar		| long __CDECL get_sysvar(void *var);
 
-	.globl	_getcookie		| getcookie() available to libcflib
+	//.globl	_getcookie		| getcookie() available to libcflib
 _getcookie:
 #ifndef __FASTCALL__
 	movel	sp@(4),d0		| cookie

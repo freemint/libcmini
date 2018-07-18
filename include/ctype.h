@@ -16,5 +16,6 @@
 #define toupper(c)	(islower(c) ? ((c) - 'a' - 'A') : (c))
 
 #define isspace(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v'))
+#define isalnum(c)  (isalpha(c) || isdigit(c))
 
 #endif /* CTYPE_H_ */
