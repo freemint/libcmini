@@ -5,8 +5,26 @@
  *      Author: mfro
  */
 
-#ifndef _CTYPE_H_
-#define _CTYPE_H_
+#ifndef CTYPE_H
+#define CTYPE_H
+
+#define _Isbit(bit) (1 << (bit))
+enum
+{
+    _ISupper    = _Isbit(0),
+    _ISlower    = _Isbit(1),
+    _ISalpha    = _Isbit(2),
+    _ISdigit    = _Isbit(3),
+    _ISxdigit   = _Isbit(4),
+    _ISspace    = _Isbit(5),
+    _ISprint    = _Isbit(6),
+    _ISgraph    = _Isbit(7),
+    _ISblank    = _Isbit(8),
+    _IScntrl    = _Isbit(9),
+    _ISpunct    = _Isbit(10),
+    _ISalnum    = _Isbit(11)
+};
+
 
 #define isdigit(c)	(((c) >= '0') && ((c) <= '9'))
 #define isupper(c)	((c) >= 'A' && ((c) <= 'Z'))
