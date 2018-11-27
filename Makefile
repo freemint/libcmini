@@ -57,7 +57,7 @@ else
 	CFLAGS+=-D__MINTLIB_COMPATIBLE
 endif
 
-ifneq ($(filter $(STDIO_WITH_LONG_LONG),Y yes))
+ifneq (,$(filter $(STDIO_WITH_LONG_LONG),Y yes))
 	CFLAGS+=-DSTDIO_WITH_LONG_LONG
 endif
 
