@@ -5,7 +5,7 @@
 ifndef VERBOSE
   	VERBOSE=no
 endif
-ifneq (,$(filter $(VERBOSE),Y yes))
+ifeq (,$(filter $(VERBOSE),Y yes))
   	Q=@
 else
   	Q=
@@ -73,7 +73,7 @@ SRCDIR=sources
 ifneq (,$(filter $(ONLY_68K),Y yes))
 	# asume a multi-lib without flags ar m68000
 	# NOTE \s?$ is important - gcc on Windows outputs \r\n-lineendings but MSYS grep only accept \n -> \s matchs \r
-	LIBDIRS := $(shell $(CC) -print-multi-lib | grep -E';\s?$' | sed -e "s/;.*//")
+	LIBDIRS := $(shell $(CC) -print-multi-lib | grep -E ';\s?$$' | sed -e "s/;.*//")
 else
 	LIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/;.*//")
 	ifeq (,$(filter $(BUILD_FAST),Y yes))
@@ -128,7 +128,7 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # multilib flags
 #
-MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '$(shell echo "$(1)" | sed -e 's/\./\\./g');' | sed -e 's/^.*;//' -e 's/@/ -/g')
+MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '^$(1);' | sed -e 's/^.*;//' -e 's/@/ -/g')
 define MULTIFLAG_TEMPLATE
 $(1)/%.a $(1)/startup.o: CFLAGS += $(call MULTIFLAGS,$(1))
 endef
