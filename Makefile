@@ -128,7 +128,7 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # multilib flags
 #
-MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '$(1);' | sed -e 's/^.*;//' -e 's/@/ -/g')
+MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '$(subst .,\.,$(1));' | sed -e 's/^.*;//' -e 's/@/ -/g')
 define MULTIFLAG_TEMPLATE
 $(1)/%.a $(1)/startup.o: CFLAGS += $(call MULTIFLAGS,$(1))
 endef
