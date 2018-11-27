@@ -73,7 +73,7 @@ SRCDIR=sources
 ifneq (,$(filter $(ONLY_68K),Y yes))
 	# asume a multi-lib without flags ar m68000
 	# NOTE \s?$ is important - gcc on Windows outputs \r\n-lineendings but MSYS grep only accept \n -> \s matchs \r
-	LIBDIRS := $(shell $(CC) -print-multi-lib | grep -E';\s?$' | sed -e "s/;.*//")
+	LIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/\./\\\./g" | grep -E';\s?$' | sed -e "s/;.*//")
 else
 	LIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/;.*//")
 	ifeq (,$(filter $(BUILD_FAST),Y yes))
