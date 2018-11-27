@@ -48,7 +48,7 @@ int doprnt(int (*addchar)(int, void *), void *stream, const char *sfmt, va_list 
     float flt;
 #endif
     long l;
-    unsigned long u;
+    unsigned long u = 0;
 #ifdef STDIO_WITH_LONG_LONG
     long long ll;
     unsigned long long ull;

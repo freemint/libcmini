@@ -5,7 +5,7 @@
 ifndef VERBOSE
   	VERBOSE=no
 endif
-ifneq (yes,$(VERBOSE))
+ifneq (,$(filter $(VERBOSE),Y yes))
   	Q=@
 else
   	Q=
@@ -24,6 +24,8 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 ONLY_68K=N
 BUILD_CF=Y
+BUILD_FAST=Y
+BUILD_SOFT_FLOAT=Y
 MINTLIB_COMPATIBLE=N
 COMPILE_ELF=N
 STDIO_WITH_LONG_LONG=N
@@ -43,21 +45,19 @@ OBJCOPY=$(PREFIX)objcopy
 AR=$(PREFIX)ar
 RANLIB=$(PREFIX)ranlib
 
-BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
-
 CFLAGS=\
 	   -Wall\
 	   -Os \
 	   -fomit-frame-pointer
 
-ifneq ($(MINTLIB_COMPATIBLE),Y)
+ifeq (,$(filter $(MINTLIB_COMPATIBLE),Y yes))
 	INCLUDE=-Iinclude
 else
 	INCLUDE=
 	CFLAGS+=-D__MINTLIB_COMPATIBLE
 endif
 
-ifeq ($(STDIO_WITH_LONG_LONG),Y)
+ifneq ($(filter $(STDIO_WITH_LONG_LONG),Y yes))
 	CFLAGS+=-DSTDIO_WITH_LONG_LONG
 endif
 
@@ -67,24 +67,23 @@ STARTUP= \
 	
 CSRCS= $(wildcard $(SRCDIR)/*.c)
 	
-ASRCS= $(wildcard $(SRCDIR)/*.S)
+ASRCS= $(filter-out $(STARTUP),$(wildcard $(SRCDIR)/*.S))
 
 SRCDIR=sources
-ifeq ($(ONLY_68K),Y)
-	LIBDIRS=.
+ifneq (,$(filter $(ONLY_68K),Y yes))
+	# asume a multi-lib without flags ar m68000
+	# NOTE \s?$ is important - gcc on Windows outputs \r\n-lineendings but MSYS grep only accept \n -> \s matchs \r
+	LIBDIRS := $(shell $(CC) -print-multi-lib | grep -E';\s?$' | sed -e "s/;.*//")
 else
-	ifeq ($(BUILD_FAST), Y)
-		ifeq ($(BUILD_CF),Y)
-			LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./m5475/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall ./m5475/mshort/mfastcall
-		else
-			LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
-		endif
-	else
-		ifeq ($(BUILD_CF),Y)
-			LIBDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
-		else
-			LIBDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
-		endif
+	LIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/;.*//")
+	ifeq (,$(filter $(BUILD_FAST),Y yes))
+		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*fastcall\S*/ /g')
+	endif
+	ifeq (,$(filter $(BUILD_CF),Y yes))
+		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*m5475\S*/ /g')
+	endif
+	ifeq (,$(filter $(BUILD_SOFT_FLOAT),Y yes))
+		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*soft-float\S*/ /g')
 	endif
 endif
 OBJDIRS=$(patsubst %,%/objs,$(LIBDIRS))
@@ -103,7 +102,7 @@ LIBS=$(patsubst %,%/$(LIBC),$(LIBDIRS))
 LIBSIIO=$(patsubst %,%/$(LIBIIO),$(LIBDIRS))
 STARTUPS=$(patsubst %,%/$(START_OBJ),$(LIBDIRS))
 
-TESTS:= $(shell ls tests | egrep -v '^(CVS)$$')
+TESTS:= $(shell ls tests | grep -E -v '^(CVS)$$')
 
 all: dirs libs startups tests
 libs: $(LIBS) $(LIBSIIO)
@@ -129,23 +128,11 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # multilib flags
 #
-m68020-60/%.a m68020-60/startup.o: CFLAGS += -m68020-60
-mshort/%.a mshort/startup.o: CFLAGS += -mshort
-m68020-60/mshort/%.a m68020-60/mshort/startup.o: CFLAGS += -m68020-60 -mshort
-ifeq ($(BUILD_FAST), Y)
-mfastcall/%.a mfastcall/startup.o: CFLAGS +=  -mfastcall
-m68020-60/mfastcall/%.a m68020-60/mfastcall/startup.o: CFLAGS += -m68020-60 -mfastcall
-mshort/mfastcall/%.a mshort/mfastcall/startup.o: CFLAGS += -mshort -mfastcall
-m68020-60/mshort/mfastcall/%.a m68020-60/mshort/mfastcall/startup.o: CFLAGS += -m68020-60 -mshort -mfastcall
-endif
-ifeq ($(BUILD_CF),Y)
-m5475/%.a m5475/startup.o: CFLAGS += -mcpu=5475
-m5475/mshort/%.a m5475/mshort/startup.o: CFLAGS += -mcpu=5475 -mshort
-ifeq ($(BUILD_FAST), Y)
-m5475/mfastcall/%.a m5475/mfastcall/startup.o: CFLAGS += -mcpu=5475 -mfastcall
-m5475/mshort/mfastcall/%.a m5475/mshort/mfastcall/startup.o: CFLAGS += -mcpu=5475 -mshort -mfastcall
-endif
-endif
+MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '$(1);' | sed -e 's/^.*;//' -e 's/@/ -/g')
+define MULTIFLAG_TEMPLATE
+$(1)/%.a $(1)/startup.o: CFLAGS += $(call MULTIFLAGS,$(1))
+endef
+$(foreach DIR,$(LIBDIRS),$(eval $(call MULTIFLAG_TEMPLATE,$(DIR))))
 
 #
 # generate pattern rules for multilib object files
