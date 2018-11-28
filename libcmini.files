@@ -104,3 +104,4 @@ tests/acctest/ACCTEST.H
 tests/acctest/include/portab.h
 tests/acctest/include/aes.h
 Makefile
+sources/getc.c
