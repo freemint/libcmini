@@ -1,4 +1,4 @@
-/*
+﻿/*
  * stdio.h
  *
  *  Created on: 29.05.2013
@@ -137,6 +137,7 @@ int vsprintf(char *s, const char *format, va_list va);
 int puts(const char *s);
 
 int open(const char *filename, int access, ...);
+size_t read(int handle, void *buf, size_t nbyte);
 int close(int fd);
 int unlink(const char *filename);
 
