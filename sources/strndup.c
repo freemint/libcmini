@@ -11,8 +11,10 @@ char *strndup(const char *s1, size_t n)
 	if (len > n) len = n;
 	dup = malloc(len + 1);
 	
-	if (dup) strncpy(dup, s1, len);
-
+	if (dup) {
+		memcpy(dup, s1, len); // use memcpy to suppress warnings
+		dup[len] = '\0'; // unlike strncpy, strndup always appends '\0'
+	}
 	return dup;
 }
 

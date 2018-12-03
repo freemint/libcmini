@@ -90,6 +90,9 @@ mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
 m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
 endif
 
+MULTILIBDIRECTORY = `$(CC) $$(CFLAGS) -print-multi-directory`
+
+
 all: dirs $(patsubst %,%/$(APP),$(TRGTDIRS))
 
 dirs::
@@ -124,9 +127,9 @@ $(1)/%.o:$(SRCDIR)/%.S
 	$$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
-$(1)/$(APP): ../../libcmini.a $$($(1)_OBJS)
+$(1)/$(APP): $$($(1)_OBJS)
 	$$(Q)echo "CC $$(@)"
-	$$(Q)$(CC) $$(CFLAGS) -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
+	$$(Q)$(CC) $$(CFLAGS) -o $$@ ../../build/$(MULTILIBDIRECTORY)/startup.o $$($(1)_OBJS) -L../../build/$(MULTILIBDIRECTORY) $(LIBS)
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
