@@ -53,9 +53,9 @@ unsigned long long __add64 (long long in, long add, char *overflow) {
 	__asm__(
 	"	add.l		%3, %0		\n"
 	"	addx.l	%4, %1		\n"
-	"	bcc		.add64_end	\n"
+	"	bcc		.add64_end%=	\n"
 	"	st			%2				\n"
-	".add64_end:				\n"
+	".add64_end%=:				\n"
 	: "+d"(lo), "+d"(hi),"+g"(*overflow)
 	: "g"(add), "d"(zero)
 	);

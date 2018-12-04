@@ -79,10 +79,10 @@ mshort/$(APP):CFLAGS += -mshort
 m68020-60/mshort/$(APP): CFLAGS += -m68020-60 -mshort
 m5475/mshort/$(APP): CFLAGS += -mcpu=5475 -mshort
 ifeq ($(BUILD_FAST), Y)
-	mfastcall/$(APP):CFLAGS += -mfastcall
-	m68020-60/mfastcall/$(APP):CFLAGS += -m68020-60 -mfastcall
-	mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
-	m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
+mfastcall/$(APP):CFLAGS += -mfastcall
+m68020-60/mfastcall/$(APP):CFLAGS += -m68020-60 -mfastcall
+mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
+m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
 endif
 
 all: dirs $(patsubst %,%/$(APP),$(TRGTDIRS))
@@ -119,9 +119,9 @@ $(1)/%.o:$(SRCDIR)/%.S
 	$$(Q)$(CC) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
-$(1)/$(APP): ../../libcmini.a $$($(1)_OBJS)
+$(1)/$(APP): $$($(1)_OBJS)
 	$$(Q)echo "CC $$(@)"
-	$$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../$(1)/startup.o $$($(1)_OBJS) -L../../$(1) $(LIBS)
+	$$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../build/`$(CC) $$(CFLAGS) -print-multi-directory`/startup.o $$($(1)_OBJS) -L../../build/`$(CC) $$(CFLAGS) -print-multi-directory` $(LIBS)
 	$$(Q)$(STRIP) $$@
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
