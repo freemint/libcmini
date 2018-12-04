@@ -7,12 +7,10 @@ ifndef VERBOSE
 endif
 ifeq (,$(filter $(VERBOSE),Y yes))
   	Q=@
+	v=
 else
   	Q=
-endif
-
-ifneq ($(DEVKITMINT),)
-	export PATH		:=	$(DEVKITMINT)/../devkitMINT/bin:$(PATH)
+	v=v
 endif
 
 all:$(patsubst %,%/$(APP),$(TRGTDIRS))
@@ -26,24 +24,25 @@ ONLY_68K=N
 BUILD_CF=Y
 BUILD_FAST=Y
 BUILD_SOFT_FLOAT=Y
+BUILD_SHORT=Y
 MINTLIB_COMPATIBLE=N
 COMPILE_ELF=N
 STDIO_WITH_LONG_LONG=N
 
-ifeq (Y,$(COMPILE_ELF))
-	PREFIX=m68k-elf-
+ifneq (,$(filter $(COMPILE_ELF),Y yes))
+	CROSSPREFIX=m68k-elf-
 else 
-  	PREFIX=m68k-atari-mint-
+  	CROSSPREFIX=m68k-atari-mint-
 endif
 
 -include Make.config
 
-CC=$(PREFIX)gcc
-LD=$(PREFIX)ld
-CPP=$(PREFIX)cpp
-OBJCOPY=$(PREFIX)objcopy
-AR=$(PREFIX)ar
-RANLIB=$(PREFIX)ranlib
+CC=$(CROSSPREFIX)gcc
+LD=$(CROSSPREFIX)ld
+CPP=$(CROSSPREFIX)cpp
+OBJCOPY=$(CROSSPREFIX)objcopy
+AR=$(CROSSPREFIX)ar
+RANLIB=$(CROSSPREFIX)ranlib
 
 CFLAGS=\
 	   -Wall\
@@ -70,22 +69,31 @@ CSRCS= $(wildcard $(SRCDIR)/*.c)
 ASRCS= $(filter-out $(STARTUP),$(wildcard $(SRCDIR)/*.S))
 
 SRCDIR=sources
+
+BUILDDIR=build
+
 ifneq (,$(filter $(ONLY_68K),Y yes))
 	# asume a multi-lib without flags ar m68000
-	# NOTE \s?$ is important - gcc on Windows outputs \r\n-lineendings but MSYS grep only accept \n -> \s matchs \r
-	LIBDIRS := $(shell $(CC) -print-multi-lib | grep -E ';\s?$$' | sed -e "s/;.*//")
+	# NOTE \s?$ is important - gcc on Windows outputs \r\n-lineendings but MSYS's grep only accept \n -> \s eats \r
+	MULTILIBDIRS := $(shell $(CC) -print-multi-lib | grep -E ';\s?$$' | sed -e "s/;.*//")
 else
-	LIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/;.*//")
+	MULTILIBDIRS := $(shell $(CC) -print-multi-lib | sed -e "s/;.*//")
 	ifeq (,$(filter $(BUILD_FAST),Y yes))
-		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*fastcall\S*/ /g')
+		MULTILIBDIRS := $(shell echo $(MULTILIBDIRS) | sed -e 's/\S*fastcall\S*/ /g')
 	endif
 	ifeq (,$(filter $(BUILD_CF),Y yes))
-		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*m5475\S*/ /g')
+		MULTILIBDIRS := $(shell echo $(MULTILIBDIRS) | sed -e 's/\S*m5475\S*/ /g')
 	endif
 	ifeq (,$(filter $(BUILD_SOFT_FLOAT),Y yes))
-		MULTILIB := $(shell echo $(MULTILIB) | sed -e 's/\S*soft-float\S*/ /g')
+		MULTILIBDIRS := $(shell echo $(MULTILIBDIRS) | sed -e 's/\S*soft-float\S*/ /g')
+	endif
+	ifeq (,$(filter $(BUILD_SHORT),Y yes))
+		MULTILIBDIRS := $(shell echo $(MULTILIBDIRS) | sed -e 's/\S*short\S*/ /g')
 	endif
 endif
+MULTILIBFLAGS = $(shell $(CC) -print-multi-lib | grep '^$(1);' | sed -e 's/^.*;//' -e 's/@/ -/g')
+
+LIBDIRS=$(patsubst %,$(BUILDDIR)/%,$(MULTILIBDIRS))
 OBJDIRS=$(patsubst %,%/objs,$(LIBDIRS))
 
 COBJS=$(patsubst $(SRCDIR)/%.o,%.o,$(patsubst %.c,%.o,$(CSRCS)))
@@ -119,20 +127,18 @@ tests:
 
 
 clean:
-	$(Q)rm -rf $(LIBS) $(LIBSIIO) $(patsubst %,%/objs/*.o,$(LIBDIRS)) $(patsubst %,%/objs/*.d,$(LIBDIRS)) $(patsubst %,%/objs/iio,$(LIBDIRS)) $(STARTUPS) $(STARTUPS:.o=.d) depend
-	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
-	$(Q) rm -rf libcmini-*
+	@rm -r$(v) $(patsubst %,$(BUILDDIR)/%,$(shell ls $(BUILDDIR)))
+	@for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i clean || { exit 1;} fi; done;
 
 all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 
 #
 # multilib flags
 #
-MULTIFLAGS = $(shell $(CC) -print-multi-lib | grep '^$(1);' | sed -e 's/^.*;//' -e 's/@/ -/g')
-define MULTIFLAG_TEMPLATE
-$(1)/%.a $(1)/startup.o: CFLAGS += $(call MULTIFLAGS,$(1))
+define MULTILIBFLAGS_TEMPLATE
+$(BUILDDIR)/$(1)/%.a $(BUILDDIR)/$(1)/startup.o : CFLAGS += $(call MULTILIBFLAGS,$(1))
 endef
-$(foreach DIR,$(LIBDIRS),$(eval $(call MULTIFLAG_TEMPLATE,$(DIR))))
+$(foreach DIR,$(MULTILIBDIRS),$(eval $(call MULTILIBFLAGS_TEMPLATE,$(DIR))))
 
 #
 # generate pattern rules for multilib object files
@@ -184,12 +190,11 @@ release: all
 	if [ "x$$RELEASETAG" != "x" ] ; then\
 	    mkdir -p $$RELEASEDIR/lib ;\
 	    cp -r include $$RELEASEDIR ;\
-	    for i in m5475 m68020-60 mshort m5475/mshort m68020-60/mshort; do \
+	    for i in $(MULTILIBDIRS); do \
 		    mkdir -p $$RELEASEDIR/lib/$$i ;\
-	        cp $$i/libcmini.a $$RELEASEDIR/lib/$$i ;\
-	        cp $$i/startup.o $$RELEASEDIR/lib/$$i ;\
+	        cp $(BUILDDIR)/$$i/libcmini.a $$RELEASEDIR/lib/$$i ;\
+	        cp $(BUILDDIR)/$$i/startup.o $$RELEASEDIR/lib/$$i ;\
 	    done ;\
-	    cp startup.o libcmini.a $$RELEASEDIR/lib ;\
 		chown -R 0:0 $$RELEASEDIR/* ;\
 		tar -C $$RELEASEDIR -cvzf $$RELEASEDIR.tar.gz . ;\
 	    chmod 644 $$RELEASEDIR.tar.gz ;\
@@ -202,13 +207,58 @@ DEPENDS := $(foreach dir,$(LIBDIRS), $(wildcard $(dir)/objs/*.d) $(wildcard $(di
 .PHONY: printvars tests
 printvars:
 	@$(foreach V,$(.VARIABLES),	$(if $(filter-out environment% default automatic, $(origin $V)),$(warning $V=$($V))))
-		
-install::
-	for i in $(LIBDIRS); do \
-		mkdir -p $(DESTDIR)/usr/lib/$$i; \
-		cp -a $$i/$(LIBC) $$i/$(LIBIIO) $(DESTDIR)/usr/lib/$$i; \
+
+install: all
+
+PREFIX =
+PREFIX_FOR_INCLUDE =
+PREFIX_FOR_LIB =
+PREFIX_FOR_STARTUP =
+
+ifneq (,$(PREFIX)$(PREFIX_FOR_INCLUDE)$(PREFIX_FOR_LIB)$(PREFIX_FOR_STARTUP))
+	ifneq (,$(DESTDIR))
+		ERR := $(error Options DESTDIR and PREFIX[_FOR_(INCLUDE|LIB|STARTUP)] are mutually incompatible. Use either DESTDIR or PREFIX...)
+	endif
+	ifneq (,$(PREFIX))
+		ifeq (,$(PREFIX_FOR_INCLUDE))
+			PREFIX_FOR_INCLUDE = $(PREFIX)/include
+		endif
+		ifeq (,$(PREFIX_FOR_LIB))
+			PREFIX_FOR_LIB = $(PREFIX)/lib
+		endif
+		ifeq (,$(PREFIX_FOR_STARTUP))
+			PREFIX_FOR_STARTUP = $(PREFIX)/lib
+		endif
+	endif
+else
+	PREFIX_FOR_LIB = $(DESTDIR)/usr/lib
+	PREFIX_FOR_STARTUP = $(DESTDIR)/usr/lib
+endif
+
+ifneq (,$(PREFIX_FOR_INCLUDE))
+install : install-include
+install-include:
+	@mkdir -pv $(PREFIX_FOR_INCLUDE)
+	@cp -arv include/* $(PREFIX_FOR_INCLUDE)
+endif
+
+ifneq (,$(PREFIX_FOR_LIB))
+install : install-libs
+install-libs:
+	@for i in $(MULTILIBDIRS); do \
+		mkdir -pv $(PREFIX_FOR_LIB)/$$i; \
+		cp -av $(BUILDDIR)/$$i/$(LIBC) $(BUILDDIR)/$$i/$(LIBIIO) $(PREFIX_FOR_LIB)/$$i; \
 	done
-	cp -a startup.o $(DESTDIR)/usr/lib
+endif
+
+ifneq (,$(PREFIX_FOR_STARTUP))
+install : install-startup
+install-startup:
+	@for i in $(MULTILIBDIRS); do \
+		mkdir -pv $(PREFIX_FOR_STARTUP)/$$i; \
+		cp -av $(BUILDDIR)/$$i/startup.o $(PREFIX_FOR_STARTUP)/$$i; \
+	done
+endif
 
 ifneq (clean,$(MAKECMDGOALS))
 -include $(DEPENDS)
