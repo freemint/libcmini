@@ -27,14 +27,15 @@ int main(int argc, char *argv[])
 compiled with the standard m68k-atari-mint toolchain 
 
 ```
-m68k-atari-mint-gcc -o hello.tos -s hello.c
+m68k-atari-mint-gcc -o hello.tos -s hello.c 
 ```
 
 results in a binary size of 118220 bytes. Huge. The same thing compiled with libcmini:
 
 ```
-m68k-atari-mint-gcc -nostdlib $LIBCMINI/startup.o hello.c -o hello.tos -s -L$LIBCMINI -lcmini
+m68k-atari-mint-gcc -nostdlib $LIBCMINI/startup.o hello.c -o hello.tos -s -L$LIBCMINI -lcmini -lgcc
 ```
+(note that - since we compile with -nostdlib - you have to add the gcc runtime support library libgcc.a to your command line for the processors that need it)
 
 creates a binary with 11794 byts. About a tenth of the size.
 
