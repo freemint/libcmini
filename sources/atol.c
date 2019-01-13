@@ -6,36 +6,43 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include <ctype.h>
+
+#if defined(__MSHORT__) || defined(__PUREC__) || defined(__AHCC__)
+
+#define ISSPACE(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v'))
+#define ISDIGIT(c)	((unsigned char)(c) >= '0' && (unsigned char)(c) <= '9')
 
 long atol(const char *c)
 {
-    long value = 0;
-    int negative = 0;
+	long value = 0;
+	int negative = 0;
 
-    while (isspace(*c)) c++;
+	while (ISSPACE(*c))
+		c++;
 
-    if (*c == '+')
-    {
-        c++;
-    }
-    else if (*c == '-')
-    {
-        negative = 1;
-        c++;
-    }
- 
-    while (isdigit(*c))
-    {
-        value *= 10;
-        value += (long) (*c - '0');
-        c++;
-    }
+	if (*c == '+')
+	{
+		c++;
+	} else if (*c == '-')
+	{
+		negative = 1;
+		c++;
+	}
 
-    if (negative)
-    {
-        value=-value;
-    }
+	while (ISDIGIT(*c))
+	{
+		value *= 10;
+		value += *c - '0';
+		c++;
+	}
 
-    return value;
+	if (negative)
+	{
+		value = -value;
+	}
+
+	return value;
 }
+#endif
