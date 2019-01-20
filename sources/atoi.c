@@ -15,8 +15,19 @@
 int atoi(const char *c)
 {
     int value = 0;
+    int negative = 0;
 
     while (isspace(*c)) c++;
+
+    if (*c == '+')
+    {
+        c++;
+    }
+    else if (*c == '-')
+    {
+        negative = 1;
+        c++;
+    }
 
     while (isdigit(*c))
     {
@@ -24,5 +35,11 @@ int atoi(const char *c)
         value += (int) (*c - '0');
         c++;
     }
+
+    if (negative)
+    {
+        value=-value;
+    }
+
     return value;
 }
