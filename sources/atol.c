@@ -28,7 +28,7 @@ long atol(const char *c)
         negative = 1;
         c++;
     }
-
+ 
     while (isdigit(*c))
     {
         value *= 10;
