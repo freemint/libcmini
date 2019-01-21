@@ -32,5 +32,6 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list va)
 	doprnt(addchar, &stream, fmt, va);
 	*stream.xstring++ = '\0';
 
-	return stream.xestring - stream.xstring;
+	/* -1 on the account of terminating 0 */
+	return stream.xstring - str - 1;
 }
