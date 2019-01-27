@@ -11,10 +11,12 @@ int strcmp(const char *s1, const char *s2)
 {
 	int cmp;
 
-	for (; *s1++ && *s2++;)
+	for (; *s1 && *s2;)
 	{
 		cmp = (*s1 - *s2);
+        printf("%c, %c, %d\r\n", *s1, *s2, *s1 - *s2);
 		if (cmp != 0) return cmp;
+        s1++; s2++;
 	}
 	return cmp;
 }
