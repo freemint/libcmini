@@ -129,21 +129,21 @@ copy256:
 	movem.l	d1-d7/a2-a3,220(a0)
 	lea	256(a1),a1
 #else
-	movml	d1/d3-d7/a2/a3/a5/a6,-(sp)	| d2 is already saved
+	movem.l	d1/d3-d7/a2/a3/a5/a6,-(sp)	| d2 is already saved
 					| exclude a4 because of -mbaserel
 copy256:
-	movml	(a1)+,d1-d7/a2/a3/a5/a6	| copy 5*44+36=256 bytes
-	movml	d1-d7/a2/a3/a5/a6,(a0)
-	movml	(a1)+,d1-d7/a2/a3/a5/a6
-	movml	d1-d7/a2/a3/a5/a6,44(a0)
-	movml	(a1)+,d1-d7/a2/a3/a5/a6
-	movml	d1-d7/a2/a3/a5/a6,88(a0)
-	movml	(a1)+,d1-d7/a2/a3/a5/a6
-	movml	d1-d7/a2/a3/a5/a6,132(a0)
-	movml	(a1)+,d1-d7/a2/a3/a5/a6
-	movml	d1-d7/a2/a3/a5/a6,176(a0)
-	movml	(a1)+,d1-d7/a2-a3
-	movml	d1-d7/a2-a3,220(a0)
+	movem.l	(a1)+,d1-d7/a2/a3/a5/a6	| copy 5*44+36=256 bytes
+	movem.l	d1-d7/a2/a3/a5/a6,(a0)
+	movem.l	(a1)+,d1-d7/a2/a3/a5/a6
+	movem.l	d1-d7/a2/a3/a5/a6,44(a0)
+	movem.l	(a1)+,d1-d7/a2/a3/a5/a6
+	movem.l	d1-d7/a2/a3/a5/a6,88(a0)
+	movem.l	(a1)+,d1-d7/a2/a3/a5/a6
+	movem.l	d1-d7/a2/a3/a5/a6,132(a0)
+	movem.l	(a1)+,d1-d7/a2/a3/a5/a6
+	movem.l	d1-d7/a2/a3/a5/a6,176(a0)
+	movem.l	(a1)+,d1-d7/a2-a3
+	movem.l	d1-d7/a2-a3,220(a0)
 #endif
 	lea	256(a0),a0		| increment dest, src is already
 	subq.l	#1,d0
