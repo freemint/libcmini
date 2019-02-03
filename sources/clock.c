@@ -9,7 +9,7 @@ clock_t clock(void)
 
 	ssp = Super(0L);
 
-	ret = *_hz_200;
+	ret = * (volatile clock_t *) _hz_200;
 
 	Super(ssp);
 

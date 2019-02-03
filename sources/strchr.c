@@ -6,7 +6,7 @@ char *strchr(const char *str, int c)
 
 	do
 	{
-		if (*p == (char) c)
+		if (*p == c)
 			return p;
 	} while (*p++);
 

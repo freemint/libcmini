@@ -38,6 +38,7 @@ extern void *memset(void *b, int c, size_t len);
 extern void *memcpy(void *dest, const void *src, size_t n);
 extern void *memmove(void *dest, const void *src, size_t n);
 extern int memcmp(const void *s1, const void *s2, size_t n);
+void *memchr(const void *ptr, int ch, size_t count);
 
 extern char *strerror(int errnum);
 extern char* strerror_r(int errnum, char *buf, size_t bufsize);
