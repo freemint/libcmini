@@ -1,16 +1,19 @@
+#include "lib.h"
 #include <string.h>
 
-void *memchr(const void *ptr, int ch, size_t count)
+void *memchr(const void *s, int ucharwanted, size_t size)
 {
-    const char *p = ptr;
+	const char *scan;
+	size_t n;
 
-    while (count-- > 0) {
-        if (*p == (char) ch) {
-            return (void *) p;
-        }
+	scan = (const char *) s;
+	for (n = size; n > 0; n--)
+	{
+		if (*scan == (char) ucharwanted)
+			return NO_CONST(scan);
+		else
+			scan++;
+	}
 
-        ++p;
-    }
-
-    return NULL;
+	return NULL;
 }
