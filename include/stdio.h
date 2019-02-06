@@ -112,6 +112,6 @@ extern int open(const char *filename, int access, ...);
 extern int close(int fd);
 extern int unlink(const char *filename);
 
-static inline int fileno(FILE *stream) { return stream->Handle; }
-static inline int getc(FILE *stream) { return fgetc(stream); }
+// static inline int fileno(FILE *stream) { return stream->Handle; }
+// static inline int getc(FILE *stream) { return fgetc(stream); }
 #endif /* STDIO_H_ */
