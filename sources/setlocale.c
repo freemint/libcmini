@@ -1,4 +1,5 @@
 #include "locale.h"
+#include "string.h"
 
 /*
  * this is basically a dummy function as standard TOS doesn't 
