@@ -8,7 +8,7 @@
 
 | void _checkcpu(void);
 |
-| No need for __FASTCALL__ as long as we call _Getcookie not _getcookie.
+| No need for __FASTCALL__ as long as we call _getcookie not _Getcookie.
 |
 | Check if the actual CPU is compatible with this binary.
 | If it is compatible, the function returns silently.
@@ -22,7 +22,7 @@
 | pseudo-jump instructions must be avoided (jbsr, jbra...), because they may
 | be translated to unsupported jump instructions.
 
-	.extern	_Getcookie		| int Getcookie(long cookie, long *val);
+	.extern	_getcookie		| int Getcookie(long cookie, long *val);
 
 	.globl	__checkcpu
 __checkcpu:
@@ -31,7 +31,7 @@ __checkcpu:
 
 	lea	sp@,a0
 	movl	#0x5f435055,d0	| "_CPU"
-	jsr	_Getcookie
+	jsr	_getcookie
 
 	movel	sp@+,d1			| Cookie value
 
@@ -58,7 +58,7 @@ __checkcpu:
 
 	lea	sp@,a0
 	movl	#0x5f43465f,d0	| "_CF_"
-	jsr	_Getcookie
+	jsr	_getcookie
 
 	movel	sp@+,d1			| Cookie value
 
@@ -81,7 +81,7 @@ __checkcpu:
 
 	lea	sp@,a0
 	movl	#0x5f465055,d0	| "_FPU"
-	jsr	_Getcookie
+	jsr	_getcookie
 
 	movel	sp@+,d1			| Cookie value
 
