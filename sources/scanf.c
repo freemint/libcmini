@@ -453,6 +453,7 @@ static __inline int _sscanf(const char *_pstring, const char *_pformat, va_list 
     int modeflags;
     int format_length;
     int format_recovery = 0;
+    int found_items = 0;
 
     const char *pformat = _pformat;
     const char *pstring = _pstring;
@@ -686,7 +687,7 @@ modifier_recover:
             case 'n':	// not that useful...
             case '[':	// todo: better support this one
                 printf("sscanf: error - unsupported format pattern '%%%c'\n", cf);
-                return 0;
+                return found_items;
                 break;
             }
         }
@@ -694,11 +695,12 @@ modifier_recover:
         {
             // not [whitespace], not [string], not [%format] = failure
             printf("sscanf: error - format:string desync\n");
-            return 0;
+            return found_items;
         }
+        found_items++;
     }
 
-    return 1;
+    return found_items;
 } // _sscanf
 
 
