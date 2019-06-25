@@ -20,3 +20,8 @@ void srand48(long int seed)
 	_seed = seed;
 }
 
+void
+srand(unsigned int seed)
+{
+	_seed = seed;
+}
