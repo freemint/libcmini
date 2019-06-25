@@ -44,7 +44,7 @@ creates a binary with 11794 byts. About a tenth of the size.
 binary releases (in tar.gz format) can be downloaded from here: https://github.com/mfro0/libcmini/releases
 source is also available there.
 
-## what's that libcmini.creator stuff about?
+## What's that libcmini.creator stuff about?
 
 I'm using the QtCreator IDE for my Atari cross development work (most of the time, if I'm not in vi mode). The `libcmini.config`, `libcmini.creator`, `libcmini.files` and `libcmini.includes` files are used by QtCreator to keep track of the project.
 If you are not using QtCreator (I would recommend it since it adds a few nice features to Atari cross development), just ignore these files.
