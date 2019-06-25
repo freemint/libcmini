@@ -80,6 +80,7 @@ extern int errno;
 
 extern FILE *fopen(const char *path, const char *mode);
 extern int fclose(FILE *fp);
+extern int fcloseall();
 extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern int fseek(FILE *fp, long offset, int origin);
