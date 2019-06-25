@@ -106,6 +106,8 @@ extern int snprintf(char *s, size_t size, const char *fmt, ...);
 extern int vsnprintf(char *str, size_t size, const char *fmt, va_list va);
 extern int sprintf(char *s, const char *format, ...);
 extern int vsprintf(char *s, const char *format, va_list va);
+extern int asprintf(char** strp, const char* format, ...);
+extern int vasprintf(char** strp, const char* format, va_list ap);
 
 extern int puts(const char *s);
 
