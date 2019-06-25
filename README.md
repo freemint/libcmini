@@ -64,3 +64,7 @@ The result is faster code execution, and slightly smaller memory footprint. Espe
 avoid library calls for most integer operations.
 
 With -mfastcall libcmini itself is 3% smaller binary, and the tests/bench test executes 20% faster. 
+
+## Contribution
+
+Contributors are always welcome. Please, make sure your editor preserves tabs to make diffs shorter and easier to compare.
