@@ -30,8 +30,7 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list va)
 	stream.xstring = str;
 	stream.xestring = str + size - 1;
 	doprnt(addchar, &stream, fmt, va);
-	*stream.xstring++ = '\0';
+	*stream.xstring = '\0';
 
-	/* -1 on the account of terminating 0 */
-	return stream.xstring - str - 1;
+	return stream.xstring - str;
 }
