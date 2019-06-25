@@ -23,6 +23,7 @@ sources/close.c
 sources/doprnt.c
 sources/exit.c
 sources/fclose.c
+sources/fcloseall.c
 sources/fflush.c
 sources/fgetc.c
 sources/fopen.c
