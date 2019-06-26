@@ -2,6 +2,11 @@
 
 size_t strxfrm(char *dest, const char *src, size_t n)
 {
-    strncpy(dest, src, n);
+	if (n > 0) {
+    	strncpy(dest, src, n);
+		dest[n] = '\0';
+    	n = strlen(dest);
+	}
+
     return n;
 }

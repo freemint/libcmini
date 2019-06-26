@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1996, 1997, 1998 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,15 +16,16 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
 
-#include <stddef.h>
+#include <errno.h>
 #include <stdio.h>
-#include <string.h>
 
-#undef  puts
+#undef  ferror
+#undef  ferror_unlocked
 
 
-/* Write the string in S and a newline to stdout.  */
-int puts(const char *s)
+/* Return non-zero if STREAM has its error indicator set.  */
+int
+ferror(FILE* stream)
 {
-  return (fputs(s, stdout) == EOF || fputs("\n", stdout) == EOF) ? EOF : 0;
+	return stream->__error;
 }

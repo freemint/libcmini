@@ -1,7 +1,7 @@
 #include <ctype.h>
 #include <string.h>
 
-char *strlwr(char *str)
+char *strupr(char *str)
 {
     char *p = str;
 
@@ -9,8 +9,8 @@ char *strlwr(char *str)
     {
         do
         {
-            if (isupper(*str)) {
-                *str = tolower(*str);
+            if (islower(*str)) {
+                *str = toupper(*str);
 			}
         } while (*str++ != '\0');
     }

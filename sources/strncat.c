@@ -9,15 +9,17 @@
 
 char *strncat(char *dst, const char *src, size_t max)
 {
-	int i;
-	char *ret = dst;
+	char* ret = dst;
 
-	dst = &dst[strlen(dst)];
-	for (i = 0; i < max && *src; i++)
-	{
+	while (*dst != '\0') {
+		++dst;
+	}
+
+	while (max-- > 0 && *src != '\0') {
 		*dst++ = *src++;
 	}
-	*dst++ = '\0';
+
+	*dst = '\0';
 
 	return ret;
 }

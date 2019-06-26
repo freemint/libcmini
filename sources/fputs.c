@@ -18,21 +18,63 @@
 
 /* Modified for MiNTLib by Guido Flohr <guido@freemint.de>.  */
 
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+
 
 #ifdef fputs_unlocked
 # undef fputs_unlocked
 #endif
 
+
 /* Write the string S to STREAM.  */
-int fputs (const char *s, FILE *stream)
+int
+fputs(const char* s, FILE* stream)
 {
-  const size_t len = strlen (s);
-  if (len == 1)
-    return putc (*s, stream) == EOF ? EOF : 0;
-  if (fwrite ((void *) s, 1, len, stream) != len)
-    return EOF;
-  return 0;
+    size_t len = strlen(s);
+    int    ret = len;
+
+    if (len == 1) {
+        if (*s == '\n' && !stream->__mode.__binary && fputc('\r', stream) == EOF) {
+            ret = EOF;
+        } else if (fputc(*s, stream) == EOF) {
+            ret = EOF;
+        }
+    } else if (stream->__mode.__binary) {
+        if (fwrite(s, sizeof(char), len, stream) != len) {
+            ret = EOF;
+        }
+    } else {
+        char* nl = strchr(s, '\n');
+
+        while (nl != NULL) {
+            if (nl == s || (nl > s && nl[-1] != '\r')) {
+                *nl = '\0';
+                len = strlen(s);
+
+                if (fwrite(s, sizeof(char), len, stream) != len || fwrite("\r\n", sizeof(char), 2, stream) != 2) {
+                    ret = EOF;
+                    *nl = '\n';
+                    break;
+                }
+
+                *nl = '\n';
+                s   = nl + 1;
+            }
+
+            nl = strchr(nl + 1, '\n');
+        }
+
+        if (ret != EOF && s != NULL) {
+            len = strlen(s);
+
+            if (fwrite(s, sizeof(char), len, stream) != len) {
+                ret = EOF;
+            }
+        }
+    }
+
+    return ret;
 }

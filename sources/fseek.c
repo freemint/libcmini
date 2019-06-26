@@ -10,16 +10,29 @@
 #include <osbind.h>
 #include "lib.h"
 
-extern FILE *__stdio_head;
 
-int fseek(FILE *fp, long offset, int origin)
+extern FILE* __stdio_head;
+
+
+int
+fseek(FILE* fp, long offset, int origin)
 {
-	long res = -1;
+    long res;
 
-	if (fp && fp->__magic == _IOMAGIC)
-	{
-		res = Fseek(offset, FILE_GET_HANDLE(fp), origin);
-	}
-	return (res >= 0 ? 0 : res);	/* FIXME: add stdio error codes */
+    if (fp && fp->__magic == _IOMAGIC) {
+        res = Fseek(offset, FILE_GET_HANDLE(fp), origin);
+
+        if (res >= 0) {
+            res = 0;
+
+            fp->__eof         = 0;
+            fp->__pushed_back = 0;
+            fp->__pushback    = '\0';
+        }
+    } else {
+        res = -1;
+    }
+
+    return res;    /* FIXME: add stdio error codes */
 }
 

@@ -9,14 +9,35 @@
 #include <osbind.h>
 #include "lib.h"
 
-int fgetc(FILE *stream)
+
+int
+fgetc(FILE* stream)
 {
-	char ch;
+    if (stream != NULL && stream->__mode.__read) {
+        int ret;
 
-	if ((Fread(FILE_GET_HANDLE(stream), 1, &ch) == 0L))
-	{
-		return EOF;
-	}
+        if (stream->__pushed_back) {
+            ret = stream->__pushback;
+            stream->__pushed_back = 0;
+            stream->__pushback    = '\0';
+        } else {
+            char ch;
+            long rc = Fread(FILE_GET_HANDLE(stream), 1, &ch);
 
-	return (int) ch;
+            if (rc == 0) {
+                stream->__eof = 1;
+                ret = EOF;
+            } else {
+                ret = ch;
+
+                if (rc < 0) {
+                    stream->__error = 1;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    return EOF;
 }

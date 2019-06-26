@@ -9,10 +9,8 @@
 
 char *strncpy(char *dst, const char *src, size_t max)
 {
-	char *ptr = dst;
+    char *ptr = dst;
 
-	while ((*dst++ = *src++) != '\0' && max-- >= 0);
-	return ptr;
+    while (max-- > 0 && (*dst++ = *src++) != '\0');
+    return ptr;
 }
-
-
