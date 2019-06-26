@@ -8,10 +8,12 @@
 #include <string.h>
 #include <stdio.h>
 
-static char unknown_error[] = "Unknown error 0123456789";
+#define PREFIX  "Unknown error "
 
-char *strerror(int errnum) {
-
-	snprintf (unknown_error, sizeof(unknown_error),"Unknown error %u", errnum);
+char*
+strerror(int errnum)
+{
+	static char* unknown_error = PREFIX "0123456789";
+	sprintf(unknown_error + strlen(PREFIX), "%d", errnum);
 	return unknown_error;
 }

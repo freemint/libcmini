@@ -1,9 +1,28 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-int fpc(int c, void *fp)
+static int last_char;
+
+static int fpc(int c, void *fp)
 {
-	return fputc(c, (FILE *) fp);
+	int   ret    = '\0';
+	FILE* stream = fp;
+
+	if (!stream->__mode.__binary) {
+		if (c == '\n' && last_char != '\r') {
+			if (fputc('\r', stream) == EOF) {
+				ret = EOF;
+			}
+		}
+
+		last_char = c;
+	}
+
+	if (ret != EOF) {
+		ret = fputc(c, stream);
+	}
+
+	return ret;
 }
 
 extern int doprnt(int (*addchar)(int, void *), void *stream, const char *sfmt, va_list ap);

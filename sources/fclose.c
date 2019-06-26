@@ -27,8 +27,8 @@ int fclose(FILE *fp)
 				;
 			if (prev) prev->__next = fp->__next;
 		}
-		free(fp);
 	}
+	free(fp);
 	return 0;
 }
 

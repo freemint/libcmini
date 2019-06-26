@@ -21,13 +21,8 @@ void exit(int status)
         (*_at_exit++) ();
 
     /* second: close all files */
-    FILE *stream = __stdio_head;
-    while (stream) {
-        FILE *stream_next = __stdio_head->__next;
-        if (stream->__magic == _IOMAGIC)
-            fclose (stream);
-        stream = stream_next;
-    }
+    fcloseall();
+
     /* third: exit*/
     (void) Pterm(status);
     while(1);	/* get rid of gcc complaining about returning from exit() */

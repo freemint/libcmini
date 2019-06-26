@@ -9,16 +9,19 @@
 
 int strncmp(const char *s1, const char *s2, size_t max)
 {
-	size_t i;
-	int cmp;
+	int cmp = 0;
 
-	for (i = 0; i < max && *s1 && *s2; i++)
-	{
+	while (max-- > 0 && cmp == 0) {
 		cmp = (*s1 - *s2);
-		if (cmp != 0) return cmp;
-		s1++;
-		s2++;
+
+		if (*s1 == '\0' || *s2 == '\0') {
+			break;
+		} else {
+			++s1;
+			++s2;
+		}
 	}
+
 	return cmp;
 }
 
