@@ -39,8 +39,8 @@ extern struct mem_chunk _mchunk_free_list;
 #	define FILE_SET_HANDLE(fp, H) fp->__cookie = (void*)H
 #	define FILE_GET_HANDLE(fp) ((long)fp->__cookie)
 #else
-#	define FILE_SET_HANDLE(fp, H) fp->Handle = H
-#	define FILE_GET_HANDLE(fp) (fp->Handle)
+#	define FILE_SET_HANDLE(fp, H) fp->__hdl = H
+#	define FILE_GET_HANDLE(fp) (fp->__hdl)
 #endif
 
 typedef void (*ExitFn)(void);

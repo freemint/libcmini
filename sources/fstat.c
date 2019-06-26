@@ -2,14 +2,13 @@
 #include <osbind.h>
 
 #ifdef __MINTLIB_COMPATIBLE
-#	include <sys/stat.h>
+#   include <sys/stat.h>
 #else
-#	include <ext.h>
+#   include <ext.h>
 #endif
 
 int fstat(int fd, struct stat *buff)
 {
-    _DTA dta = {{0}};
     long ret = 0;
 
     /*

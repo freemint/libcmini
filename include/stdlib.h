@@ -8,7 +8,7 @@
 #ifndef _STDLIB_H_
 #define _STDLIB_H_
 
-typedef unsigned long size_t;
+#include <stddef.h>
 
 extern int atoi(const char *c);
 extern long atol(const char *c);
