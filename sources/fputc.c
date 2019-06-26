@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-int fputc(int c, FILE *stream)
+
+int
+fputc(int c, FILE* stream)
 {
-	int ret;
-	unsigned char uc;
+    unsigned char uc = (unsigned char)c;
 
-	uc = (unsigned char) c;
-	ret = fwrite(&uc, 1, 1, stream);
+    fwrite(&uc, sizeof(char), 1, stream);
 
-	return (ret < 0 ? ret : uc);
+    return stream->__error ? EOF : c;
 }

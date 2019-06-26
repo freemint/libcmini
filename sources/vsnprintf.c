@@ -1,5 +1,5 @@
 /*
- * snprintf.c
+ * vsnprintf.c
  *
  *  Created on: 29.05.2013
  *      Author: mfro
@@ -9,28 +9,58 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-extern int doprnt(int (*)(int, void *), void *stream, const char *fmt, va_list va);
 
-struct _mem_stream { char *xstring; char *xestring; };
-#define TO_MEMSP(stream) ((struct _mem_stream *) stream)
+extern int doprnt(int (*addchar)(int, void*), void* stream, const char* fmt, va_list va);
 
-int addchar(int c, void *stream)
+int addchar(int c, void* stream);
+
+
+struct _mem_stream
 {
-	if (TO_MEMSP(stream)->xestring == TO_MEMSP(stream)->xstring)
-		*TO_MEMSP(stream)->xstring = '\0';
-	else
-		*TO_MEMSP(stream)->xstring++ = (char) c;
+    char* xstring;
+    char* xestring;
+};
 
-	return 1;
+
+static int char_count;
+
+
+int
+vsnprintf(char* str, size_t size, const char* fmt, va_list va)
+{
+    struct _mem_stream stream;
+    char temp;
+
+    if (size == 0) {
+        str  = &temp;
+        size = 1;
+    }
+
+    char_count = 0;
+
+    stream.xstring  = str;
+    stream.xestring = str + size - 1;
+
+    doprnt(addchar, &stream, fmt, va);
+
+    *stream.xstring = '\0';
+
+    return char_count;
 }
 
-int vsnprintf(char *str, size_t size, const char *fmt, va_list va)
-{
-	struct _mem_stream stream;
-	stream.xstring = str;
-	stream.xestring = str + size - 1;
-	doprnt(addchar, &stream, fmt, va);
-	*stream.xstring = '\0';
 
-	return stream.xstring - str;
+int
+addchar(int c, void* stream)
+{
+    struct _mem_stream* memstream = (struct _mem_stream*)stream;
+
+    *memstream->xstring = c;
+
+    if (memstream->xstring != memstream->xestring) {
+        ++memstream->xstring;
+    }
+
+    ++char_count;
+
+    return 1;
 }

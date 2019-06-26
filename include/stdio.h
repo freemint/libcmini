@@ -12,28 +12,44 @@
 #include <stdarg.h>
 #include <osbind.h>
 
+/* The mode of I/O, as given in the MODE argument to fopen, etc.  */
+typedef struct
+{
+  unsigned int __read:1;    /* Open for reading.  */
+  unsigned int __write:1;   /* Open for writing.  */
+  unsigned int __append:1;  /* Open for appending.  */
+  unsigned int __binary:1;  /* Opened binary.  */
+  unsigned int __create:1;  /* Create the file.  */
+  unsigned int __exclusive:1;   /* Error if it already exists.  */
+  unsigned int __truncate:1;    /* Truncate the file on opening.  */
+} __io_mode;
+
 typedef struct __stdio_file FILE;
-typedef struct __stdio_file
+struct __stdio_file
 {
     int __magic;
-#define	_IOMAGIC ((int) 0xfedabeeb)	/* Magic number to fill `__magic'.  */
+#define _IOMAGIC ((int) 0xfedabeeb) /* Magic number to fill `__magic'.  */
 
 #if 0
-    void *BufPtr;     /* next byte write */
-    void *BufLvl;     /* next byte read */
-    void *BufStart;   /* first byte of buffer */
-    void *BufEnd;     /* first byte after buffer */
+    char *__bufp;     /* next byte write */
+    void *__buflvl;   /* next byte read */
+    void *__bufstart; /* first byte of buffer */
+    void *__bufend;   /* first byte after buffer */
 #endif
-    long Handle;      /* GEMDOS handle */
+    /* long Handle; */
+    long __hdl;       /* GEMDOS handle */
 #if 0
-    char Flags;
-    char resv;
-    char ChrBuf;
-    char ungetFlag;
+    char __flags;
+    char __resv;
+    char __char_buf;
 #endif
+    unsigned char __pushback;
+    unsigned int __pushed_back;
     FILE *__next;     /* Next FILE in the linked list.  */
-
-} FILE;
+    __io_mode __mode;     /* File access mode.  */
+    unsigned int __eof;
+    unsigned int __error;
+};
 
 extern FILE *stdout;
 extern FILE *stdin;
@@ -79,28 +95,38 @@ extern FILE _StdPrnF;
 extern int errno;
 
 extern FILE *fopen(const char *path, const char *mode);
+extern FILE *freopen(const char *path, const char *mode, FILE* stream);
 extern int fclose(FILE *fp);
 extern int fcloseall();
 extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
 extern int fseek(FILE *fp, long offset, int origin);
 extern long ftell(FILE *stream);
-
-
-
+extern void rewind(FILE* stream);
 
 extern int fputs(const char *s, FILE *stream);
 extern int puts(const char *s);
 extern int fputc(int c, FILE *stream);
 extern int putc(int c, FILE *stream);
+extern int putchar(int c);
+extern int puts(const char *s);
+
+extern int fgetc(FILE *stream);
+extern char* fgets(char *s, int n, FILE *stream);
+extern int getc(FILE *stream);
+/* No gets() anymore! */
+#define getchar()  fgetc(stdin)
+extern int ungetc(int c, FILE* stream);
 
 extern int scanf(const char *format, ...);
 extern int fscanf(FILE *stream, const char *format, ...);
-extern int fgetc(FILE *stream);
-extern int putchar(int c);
+extern int sscanf(const char* str, const char* format, ...);
+extern int vscanf(const char*fmt, va_list list);
+extern int vfscanf(FILE* fp, const char* fmt, va_list list);
+extern int vsscanf(const char* str, const char* fmt, va_list list);
+
 extern int fprintf(FILE *stream, const char *format, ...);
 extern int vfprintf(FILE *stream, const char *format, va_list ap);
-
 extern int printf(const char *fmt, ...);
 extern int snprintf(char *s, size_t size, const char *fmt, ...);
 extern int vsnprintf(char *str, size_t size, const char *fmt, va_list va);
@@ -109,12 +135,20 @@ extern int vsprintf(char *s, const char *format, va_list va);
 extern int asprintf(char** strp, const char* format, ...);
 extern int vasprintf(char** strp, const char* format, va_list ap);
 
-extern int puts(const char *s);
+extern int fflush(FILE* stream);
+extern int feof(FILE* stream);
+extern int ferror(FILE* stream);
+extern void clearerr(FILE* stream);
+extern int fileno(FILE *stream);
 
 extern int open(const char *filename, int access, ...);
 extern int close(int fd);
 extern int unlink(const char *filename);
 
+extern int remove(const char* filename);
+extern int rename(const char* oldname, const char* newname);
+
 // static inline int fileno(FILE *stream) { return stream->Handle; }
 // static inline int getc(FILE *stream) { return fgetc(stream); }
+
 #endif /* STDIO_H_ */
