@@ -11,7 +11,7 @@ int printf(const char *fmt, ...)
 
 	va_list va;
 	va_start(va, fmt);
-	ret = doprnt((int (*)(int, void *)) putchar, NULL, fmt, va);
+	ret = vfprintf(stdout, fmt, va);
 	va_end(va);
 
 	return ret;

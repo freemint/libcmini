@@ -7,12 +7,12 @@ char *strlwr(char *str)
 
     if (p)
     {
-        while (*str)
+        do
         {
-            if (isupper(*str))
+            if (isupper(*str)) {
                 *str = tolower(*str);
-            ++str;
-        }
+			}
+        } while (*str++ != '\0');
     }
     return p;
 }

@@ -7,12 +7,12 @@ char *strupr(char *str)
 
     if (p)
     {
-        while (*str)
+        do
         {
-            if (islower(*str))
+            if (islower(*str)) {
                 *str = toupper(*str);
-            ++str;
-        }
+			}
+        } while (*str++ != '\0');
     }
     return p;
 }
