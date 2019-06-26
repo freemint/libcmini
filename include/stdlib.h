@@ -49,8 +49,11 @@ extern double strtod(const char* s, char** endp);
 extern void* bsearch(const void* key, const void* base, size_t num, size_t size, int (*cmp)(const void*, const void*));
 extern void qsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
 
-//#define abs(j)   ((j) > 0 ? (j) : -(j))
-#define labs(j)  ((j) > 0 ? (j) : -(j))
+extern int abs(int n);
+extern long labs(long n);
 
-#define NULL	((void *) 0)
+#ifndef NULL
+# define NULL	((void *) 0)
+#endif /* !defined NULL */
+
 #endif /* _STDLIB_H_ */
