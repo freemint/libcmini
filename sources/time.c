@@ -15,7 +15,7 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 
     now.tm_sec = (tos_time & 0x1f) * 2;
     now.tm_min = (tos_time >> 5) & 0x3f;
-    now.tm_hour = tos_time >> 11;
+    now.tm_hour = (tos_time >> 11) & 0x1f;
     now.tm_mday = tos_date & 0x1f;
     now.tm_mon = ((tos_date >> 5) & 0xf) - 1;
     now.tm_year = (tos_date >> 9) + 80;
