@@ -16,11 +16,7 @@ fgetc(FILE* stream)
     if (stream != NULL && stream->__mode.__read) {
         int ret;
 
-        if (stream->__pushed_back) {
-            ret = stream->__pushback;
-            stream->__pushed_back = 0;
-            stream->__pushback    = '\0';
-        } else {
+        if (stream->__pushback == EOF) {
             char ch;
             long rc = Fread(FILE_GET_HANDLE(stream), 1, &ch);
 
@@ -34,6 +30,9 @@ fgetc(FILE* stream)
                     stream->__error = 1;
                 }
             }
+        } else {
+            ret = stream->__pushback;
+            stream->__pushback = EOF;
         }
 
         return ret;

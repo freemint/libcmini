@@ -13,6 +13,5 @@ rewind(FILE* stream)
 {
     fseek(stream, 0, SEEK_SET);
     clearerr(stream);
-    stream->__pushed_back = 0;
-    stream->__pushback = '\0';
+    stream->__pushback = EOF;
 }

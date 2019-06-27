@@ -25,9 +25,8 @@ fseek(FILE* fp, long offset, int origin)
         if (res >= 0) {
             res = 0;
 
-            fp->__eof         = 0;
-            fp->__pushed_back = 0;
-            fp->__pushback    = '\0';
+            fp->__eof      = 0;
+            fp->__pushback = EOF;
         }
     } else {
         res = -1;

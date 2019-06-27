@@ -27,7 +27,7 @@ ungetc(int c, FILE* stream)
 		return EOF;
 	} else if (c == EOF) {
 		return EOF;
-	} else if (stream->__pushed_back) {
+	} else if (stream->__pushback != EOF) {
 		/* There is already a char pushed back.  */
 		return EOF;
 	}
@@ -40,9 +40,8 @@ ungetc(int c, FILE* stream)
 	}
 #endif
 
-	stream->__pushback = (unsigned char)c;
+	stream->__pushback = c;
 	/* Tell __fillbf we've pushed back a char.  */
-	stream->__pushed_back = 1;
 
 #if 0
 	stream->__pushback_bufp = stream->__bufp;

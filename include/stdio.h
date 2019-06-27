@@ -43,8 +43,7 @@ struct __stdio_file
     char __resv;
     char __char_buf;
 #endif
-    unsigned char __pushback;
-    unsigned int __pushed_back;
+    int __pushback;
     FILE *__next;     /* Next FILE in the linked list.  */
     __io_mode __mode;     /* File access mode.  */
     unsigned int __eof;
