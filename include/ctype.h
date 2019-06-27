@@ -24,11 +24,21 @@ extern unsigned int* _ctype;
 #define isdigit(c)	(((c) >= '0') && ((c) <= '9'))
 #define isupper(c)	((c) >= 'A' && ((c) <= 'Z'))
 #define islower(c)	((c) >= 'a' && ((c) <= 'z'))
-#define isalpha(c)	(isupper((c)) || islower(c))
+#define isalpha(c)	(isupper(c) || islower(c))
+#define iscntrl(c)  ((unsigned char)(c) < ' ' || (unsigned char)(c) >= 0x7f)
+#define isgraph(c)  ((unsigned char)(c) > ' ' && (unsigned char)(c) != 0x7f)
+#define isprint(c)  ((unsigned char)(c) >= ' ' && (unsigned char)(c) != 0x7f)
+#define ispunct(c)  (!((unsigned char)(c) <= ' ' || (unsigned char)(c) == 0x7f  || \
+                       ((unsigned char)(c) >= '0' && (unsigned char)(c) <= '9') || \
+                       ((unsigned char)(c) >= 'A' && (unsigned char)(c) <= 'Z') || \
+                       ((unsigned char)(c) >= 'a' && (unsigned char)(c) <= 'z')    \
+                      )                                                            \
+                    )
+#define isxdigit(c) (isdigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 #define tolower(c)	(isupper(c) ? ((c) + 'a' - 'A') : (c))
 #define toupper(c)	(islower(c) ? ((c) - 'a' - 'A') : (c))
 
-#define isspace(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v'))
+#define isspace(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v') || ((c) == '\f'))
 #define isalnum(c)  (isalpha(c) || isdigit(c))
 
 #endif /* CTYPE_H_ */

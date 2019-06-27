@@ -1,10 +1,10 @@
-#include <stdio.h>
+#include <ctype.h>
+
+#ifdef toupper
+#undef toupper
+#endif
 
 int toupper(int c)
 {
-	if ((unsigned char) c > 'a' && (unsigned char) c < 'z')
-		return (c + ('A' - 'a'));
-	else
-		return c;
+    return islower(c) ? ((c) - 'a' - 'A') : (c);
 }
-
