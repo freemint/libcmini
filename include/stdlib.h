@@ -52,6 +52,21 @@ extern void qsort(void *base, size_t nel, size_t width, int (*compar)(const void
 extern int abs(int n);
 extern long labs(long n);
 
+typedef struct
+{
+	int quot;
+	int rem;
+} div_t;
+
+typedef struct
+{
+	long quot;
+	long rem;
+} ldiv_t;
+
+extern div_t div(int n, int d);
+extern ldiv_t ldiv(long n, long d);
+
 #ifndef NULL
 # define NULL	((void *) 0)
 #endif /* !defined NULL */
