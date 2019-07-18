@@ -1,7 +1,7 @@
 #ifndef _SETJMP_H_
 #define _SETJMP_H_
 
-typedef struct 
+typedef struct
 {
 	long retaddr;
 #ifndef __FASTCALL__
@@ -29,9 +29,9 @@ int setjmp(jmp_buf *buf)
 
 void longjmp(jmp_buf *buf, int val)
 {
-	register int d0 asm("%d0") = val;
-	register long *a0 asm("%a0") = &buf->regs[0];
-	
+	register int d0 __asm__("%d0") = val;
+	register long *a0 __asm__("%a0") = &buf->regs[0];
+
 	if (val == 0)	/* avoid infinite loop */
 		val = 1;
 
