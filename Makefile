@@ -121,9 +121,13 @@ dirs::
 
 startups: $(STARTUPS)
 
+ifeq (,$(filter $(ONLY_68K),Y yes))
 tests:
 	$(Q)echo make tests
 	$(Q)for i in $(TESTS); do if test -e tests/$$i/Makefile ; then $(MAKE) -C tests/$$i || { exit 1;} fi; done;
+else
+tests:
+endif
 
 
 clean:
