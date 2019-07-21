@@ -71,6 +71,6 @@ extern ldiv_t ldiv(long n, long d);
 
 #ifndef NULL
 # define NULL	((void *) 0)
-#endif /* !defined NULL */
+#endif
 
 #endif /* _STDLIB_H_ */

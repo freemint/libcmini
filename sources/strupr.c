@@ -3,16 +3,15 @@
 
 char *strupr(char *str)
 {
-    char *p = str;
+	char *p = str;
 
-    if (p)
-    {
-        do
-        {
-            if (islower(*str)) {
-                *str = toupper(*str);
-			}
-        } while (*str++ != '\0');
-    }
-    return p;
+	if (p)
+	{
+		while (*str)
+		{
+			*str = toupper((unsigned char)*str);
+			++str;
+		}
+	}
+	return p;
 }
