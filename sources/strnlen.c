@@ -10,10 +10,11 @@
 
 #include <string.h>
 
-
 size_t
-strnlen(const char* s, size_t max)
+strnlen (const char* s, size_t max)
 {
-	size_t len = strlen(s);
-	return (max > len) ? len : max;
+  const char* e = memchr (s, '\0', max);
+  if (e != NULL)
+    return e - s;
+  return max;
 }
