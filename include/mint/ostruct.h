@@ -612,11 +612,11 @@ typedef struct
 /* Structure used by Bconmap() */
 typedef struct
 {
-	short (*Bconstat)();
-	long (*Bconin)();
-	long (*Bcostat)();
-	void (*Bconout)();
-	unsigned long (*Rsconf)();
+	short (*Bconstat)(short dev);
+	long (*Bconin)(short dev);
+	long (*Bcostat)(short dev);
+	void (*Bconout)(short dev, short c);
+	unsigned long (*Rsconf)(short, short, short, short, short, short);
 	_IOREC *iorec;
 } _MAPTAB;
 

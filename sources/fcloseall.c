@@ -11,19 +11,17 @@
 #include "lib.h"
 
 
-int
-fcloseall()
+int fcloseall(void)
 {
 	/* close all streams */
 
-	register FILE* f = __stdio_head;
+	FILE *f, *next;
 
-	while (f != NULL) {
-        FILE* next = f->__next;
-
-        fclose(f);
-        f = next;
-    }
+	for (f = __stdio_head; f != NULL; f = next)
+	{
+		next = f->__next;
+		fclose(f);
+	}
 
 	return 0;
 }

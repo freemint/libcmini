@@ -13,7 +13,6 @@
 #include "lib.h"
 
 extern int main (int, char **, char **);
-void __main();
 
 static long parseargs(BASEPAGE *bp);
 
@@ -44,7 +43,7 @@ static void _main (int _argc, char **_argv, char **_envp) {
 }
 
 void _crtinit_noargs(void) {
-	extern void etext();	/* a "function" to fake out pc-rel addressing */
+	extern void etext(void);	/* a "function" to fake out pc-rel addressing */
 
 	register BASEPAGE *bp;
 	register long m;
