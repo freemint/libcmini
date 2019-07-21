@@ -11,19 +11,19 @@
 #include "lib.h"
 
 
-extern FILE* __stdio_head;
-
-
 int
 fcloseall()
 {
 	/* close all streams */
 
-	register FILE* f;
+	register FILE* f = __stdio_head;
 
-	for (f = __stdio_head; f != NULL; f = f->__next) {
-		fclose(f);
-	}
+	while (f != NULL) {
+        FILE* next = f->__next;
+
+        fclose(f);
+        f = next->__next;
+    }
 
 	return 0;
 }

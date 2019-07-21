@@ -50,6 +50,10 @@ struct __stdio_file
     unsigned int __error;
 };
 
+/* All the known streams are in a linked list
+   linked by the `next' field of the FILE structure.  */
+extern FILE *__stdio_head;      /* Head of the list.  */
+
 extern FILE *stdout;
 extern FILE *stdin;
 extern FILE *stderr;
