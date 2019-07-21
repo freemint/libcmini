@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include "lib.h"
 
 ExitFn *_at_exit = NULL;
@@ -20,17 +20,10 @@ void exit(int status)
         (*_at_exit++) ();
 
     /* second: close all files */
-
-    /*
-     * FIXME: if FILEs ever get buffered, we need to call that.
-     * Until then, it is not needed and causes unnecessary overhead
-     */
-#ifdef NOT_USED
-    fcloseall();
-#endif /* NOT_USED */
+    /* unneeded here, since handles are unbuffered */
 
     /* third: exit*/
     (void) Pterm(status);
-    while(1);	/* get rid of gcc complaining about returning from exit() */
+    __builtin_unreachable();	/* get rid of gcc complaining about returning from exit() */
 }
 
