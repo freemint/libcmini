@@ -3,8 +3,7 @@
 
 extern unsigned long _seed;
 
-void srand48(long int seed)
+void srand(unsigned int seed)
 {
-	if (seed == 0) seed = -1;
 	_seed = seed;
 }

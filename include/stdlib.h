@@ -36,9 +36,9 @@ extern void abort(void);
 #endif
 
 extern int rand(void);
-extern void srand(unsigned int seed);
+extern void srand(unsigned int __seed);
 extern long lrand(void);
-extern void srand48(long int seed);
+extern void srand48(long int __seed);
 
 extern long strtol(const char*, char**, int);
 extern unsigned long strtoul(const char*, char**, int);
