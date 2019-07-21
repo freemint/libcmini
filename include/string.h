@@ -33,6 +33,7 @@ extern char *strrchr(const char *s, int c);
 extern char *rindex(const char *s, int c);
 extern size_t strnlen(const char* s, size_t maxlen);
 extern char* strtok(char* s1, const char* s2);
+char *strtok_r(char *s, const char *delim, char **scanpoint);
 extern char* stpcpy(char* dest, const char* src);
 extern char* stpncpy(char* dest, const char* src, size_t n);
 extern size_t strlcpy(char* dst, const char* src, size_t siz);
