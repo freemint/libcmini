@@ -10,7 +10,6 @@
 #include <osbind.h>
 #include "lib.h"
 
-extern FILE *__stdio_head;
 
 int fclose(FILE *fp)
 {

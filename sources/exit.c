@@ -12,7 +12,6 @@
 
 ExitFn *_at_exit = NULL;
 int _num_at_exit = 0;
-extern FILE *__stdio_head;
 
 void exit(int status)
 {

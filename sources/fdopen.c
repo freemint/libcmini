@@ -3,7 +3,6 @@
 #include <osbind.h>
 #include "lib.h"
 
-extern FILE *__stdio_head;
 
 FILE *fdopen(int fd, const char *mode)
 {
