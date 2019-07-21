@@ -8,17 +8,17 @@
     understand and accept it fully.
 */
 
+#include "lib.h"
 #include <string.h>
 
-
-char*
-basename(const char* filename)
+char *basename(const char *filename)
 {
-	const char* backslash = strrchr(filename, '\\');
+	char *slash = strrchr(filename, '/');
+	char *backslash = strrchr(filename, '\\');
 
-	if (backslash != NULL) {
-		filename = backslash + 1;
-	}
-
-	return (char*)filename;
+	if (slash > backslash)
+		return slash + 1;
+	if (backslash != NULL)
+		return backslash + 1;
+	return (char *) NO_CONST(filename);
 }
