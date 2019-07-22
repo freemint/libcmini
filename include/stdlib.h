@@ -19,7 +19,9 @@ extern void *realloc(void *ptr, size_t size);
 extern void free(void *ptr);
 
 extern char *ltoa(long value, char *buffer, int radix);
+extern char *ultoa(unsigned long value, char *buffer, int radix);
 #define _ltoa(a, b, c) ltoa((a), (b), (c))
+#define _ultoa(a, b, c) ultoa((a), (b), (c))
 
 extern char *getenv(const char *name);
 extern int setenv(const char *name, const char *value, int replace);
