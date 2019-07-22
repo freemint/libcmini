@@ -36,9 +36,12 @@ struct timezone
 	int tz_dsttime;			/* type of DST correction */
 };
 
+extern long timezone;
+
 extern time_t time(time_t *tloc);
 extern clock_t clock(void);
 extern time_t mktime(struct tm *tm);
+extern struct tm* gmtime(const time_t* timep);
 extern struct tm* localtime(const time_t* timep);
 extern size_t strftime(char* s, size_t smax, const char* fmt, const struct tm* tp);
 

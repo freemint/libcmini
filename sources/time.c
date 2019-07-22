@@ -4,6 +4,12 @@
 #	include <sys/time.h>
 #endif
 
+long timezone = 0L;
+
+#define ISDIGIT(c)  ((c) >= '0' && (c) <= '9')
+
+time_t get_timezone_offset();
+
 int gettimeofday(struct timeval *tp, struct timezone *tzp)
 {
     int tos_time;
@@ -23,10 +29,96 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 
     if (tp != NULL)
     {
-        tp->tv_sec = mktime(&now);
+        tp->tv_sec = mktime(&now) - get_timezone_offset();
         tp->tv_usec = 0;
     }
     return 0;
+}
+
+time_t
+get_timezone_offset()
+{
+    const char* tzval = getenv("TZ");
+
+    if (tzval != NULL) {
+        if (tzval[0] == 'U' && tzval[1] == 'T' && tzval[2] == 'C') {
+            tzval += 3;
+
+            if (*tzval == '\0') {
+                // time zone is "UTC" -> no offset
+                return 0;
+            } else {
+                int mul   = 1;
+                int hours = 0;
+                int mins  = 0;
+                int secs  = 0;
+
+                if (*tzval == '-') {
+                    mul = -1;
+                    ++tzval;
+                } else if (*tzval == '+') {
+                    ++tzval;
+                }
+
+                if (ISDIGIT(*tzval)) {
+                    hours = *tzval++ - '0';
+
+                    if (ISDIGIT(*tzval)) {
+                        hours = 10 * hours + *tzval++ - '0';
+
+                        if (ISDIGIT(*tzval)) {
+                            // not more than two digits allowed
+                            hours = 0;
+                        } else if (*tzval++ == ':') {
+                            // minutes given?
+
+                            if (*tzval == '\0') {
+                                // no -> invalid
+                                hours = 0;
+                            } else if (ISDIGIT(*tzval)) {
+                                mins = *tzval++ - '0';
+
+                                if (ISDIGIT(*tzval)) {
+                                    mins = 10 * mins + *tzval++ - '0';
+
+                                    if (ISDIGIT(*tzval)) {
+                                        // not more than two digits allowed
+                                        hours = 0;
+                                        mins  = 0;
+                                    } else if (*tzval == ':') {
+                                        // seconds given?
+
+                                        if (*tzval == '\0') {
+                                            // no -> invalid
+                                            hours = 0;
+                                            mins  = 0;
+                                        } else if (ISDIGIT(*tzval)) {
+                                            secs = *tzval++ - '0';
+
+                                            if (ISDIGIT(*tzval)) {
+                                                secs = 10 * secs + *tzval++ - '0';
+
+                                                if (ISDIGIT(*tzval)) {
+                                                    // not more than two digits allowed
+                                                    hours = 0;
+                                                    mins  = 0;
+                                                    secs  = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return (time_t)(mul * (secs + 60 * mins + 3600 * hours));
+            }
+        }
+    }
+
+    return (time_t)timezone;
 }
 
 time_t time(time_t *tloc)
