@@ -22,7 +22,7 @@ fcloseall()
         FILE* next = f->__next;
 
         fclose(f);
-        f = next->__next;
+        f = next;
     }
 
 	return 0;
