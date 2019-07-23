@@ -1,4 +1,5 @@
 #include <time.h>
+#include <string.h>
 #include <osbind.h>
 #ifdef __MINTLIB_COMPATIBLE
 #	include <sys/time.h>
@@ -26,6 +27,13 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
         tp->tv_sec = mktime(&now);
         tp->tv_usec = 0;
     }
+
+	if (tzp != NULL) {
+		tzset();
+		tzp->tz_minuteswest = -timezone / 60;
+		tzp->tz_dsttime     = strcmp(tzname[0], tzname[1]);
+	}
+
     return 0;
 }
 
