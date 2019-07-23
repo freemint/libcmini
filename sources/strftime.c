@@ -22,6 +22,8 @@ strftime(char* s, size_t smax, const char* fmt, const struct tm* tp)
     char*  ptr   = s;
     size_t count = 0;
 
+    tzset();
+
     do {
         if (*fmt == '%') {
             const char* addstr = NULL;
@@ -49,7 +51,7 @@ strftime(char* s, size_t smax, const char* fmt, const struct tm* tp)
                     break;
 
                 case 'c':
-                    strftime(addval, 80, "%a %b %d %x %Y", tp);
+                    strftime(addval, sizeof(addval) - 1, "%a %b %d %x %Y", tp);
                     break;
 
                 case 'd':
@@ -150,7 +152,7 @@ strftime(char* s, size_t smax, const char* fmt, const struct tm* tp)
                     break;
 
                 case 'Z':
-                    addstr = "";
+					addstr = tzname[tp->tm_isdst > 0];
                     break;
 
                 case '%':
