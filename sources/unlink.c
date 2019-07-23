@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <mint/osbind.h>
+#include <errno.h>
+#include "lib.h"
 
 int unlink(const char *filename)
 {
@@ -7,9 +9,7 @@ int unlink(const char *filename)
 
     if (filename == NULL)
     {
-        /* TODO: set errno */
-
-        // errno = EFAULT;
+        __set_errno(EFAULT);
 
         return -1;
     }
@@ -23,7 +23,7 @@ int unlink(const char *filename)
          * return an appropriate error (-ENOENT or -ENOTDIR)
          */
 
-        // errno = -ENOENT
+        __set_errno(-retval);
         return -1;
     }
     return 0;       /* no error */
