@@ -1,5 +1,6 @@
 #include <mint/osbind.h>
 #include <stdio.h>
+#include "lib.h"
 
 
 int close(int fd)
@@ -8,12 +9,10 @@ int close(int fd)
 
     ret = Fclose(fd);
 
-    if (ret != 0)
+    if (ret < 0)
     {
-        /* TODO: set errno accordingly */
+        __set_errno(-ret);
         return -1;
     }
     return 0;
 }
-
-
