@@ -1,13 +1,14 @@
 #include <stddef.h>	/* for size_t */
 #include <stdlib.h>
 #include <string.h>
-#include "lib.h"
+#include <errno.h>
+#include "mallint.h"
 
 
-void *realloc (void *r, size_t n)
+void *realloc(void *r, size_t n)
 {
 	struct mem_chunk *p;
-	long sz;
+	size_t sz;
 
 	/* obscure features:
 	 * 
@@ -17,19 +18,23 @@ void *realloc (void *r, size_t n)
 	if (!r)
 		return malloc(n);
 
-	if (n == 0) {
+	if (n == 0)
+	{
 		free(r);
 		return NULL;
 	}
 
-	p = ((struct mem_chunk *) r) - 1;
-	
+	p = (struct mem_chunk *)(((char *) r) - ALLOC_EXTRA);
+
 	if (p->valid != VAL_ALLOC)
+	{
+		errno = EINVAL;
 		return NULL;
+	}
 
-	sz = (n + sizeof(struct mem_chunk) + 7) & ~7;
+	sz = ALLOC_EXTRA + ((n + MALLOC_ALIGNMENT - 1) & ~(MALLOC_ALIGNMENT - 1));
 
-	if (p->size > (sz + ((2 * sizeof(struct mem_chunk) + 7) & ~7)))
+	if (p->size > (sz + 2 * ALLOC_EXTRA))
 	{
 		/* resize down */
 		void *newr;
@@ -37,47 +42,49 @@ void *realloc (void *r, size_t n)
 		newr = malloc(n);
 		if (newr)
 		{
-			bcopy(r, newr, n);
+			memcpy(newr, r, n);
 		    free(r);
-
 			r = newr;
 		}
 		/* else
 		 * malloc failed; can be safely ignored as the new block
 		 * is smaller
 		 */
-	}
-	else if (p->size < sz)
+	} else if (p->size < sz)
 	{
 		/* block too small, get new one */
-		struct mem_chunk *q, *s, *t;
+		struct mem_chunk *head, *s, *next;
 
-		q = &_mchunk_free_list;
-		t = _mchunk_free_list.next;
-		while (t && t < p)
+		head = &_mchunk_free_list;
+		next = head->next;
+		while (next != head && next < p)
 		{
-			q = t;
-			t = t->next;
+			next = next->next;
 		}
 
 		/* merge after if possible */
-		s = (struct mem_chunk * )(((long) p) + p->size);
-		if (t && s >= t && p->size + t->size >= sz
-		    && t->valid != VAL_BORDER)
+		s = (struct mem_chunk *)(((char *) p) + p->size);
+		if (s == next && (p->size + next->size) >= sz && next->valid == VAL_FREE)
 		{
-			p->size += t->size;
-			q->next = t->next;
-			t->size = 0;
-			t->next = NULL;
-		}
-		else
+			struct mem_chunk *prev;
+
+			p->size += next->size;
+			/*
+			 * disconnect 'next' from free list.
+			 * remember that 'p' is currently alloced
+			 * and therefore not on the free list
+			 */
+			prev = next->prev;
+			prev->next = next->next;
+			next->next->prev = prev;
+		} else
 		{
 			void *newr;
 
 			newr = malloc(n);
 			if (newr)
 			{
-				bcopy(r, newr, p->size - sizeof(struct mem_chunk));
+				memcpy(newr, r, p->size - ALLOC_EXTRA);
 			    free(r);
 			}
 			r = newr;
