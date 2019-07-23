@@ -36,7 +36,7 @@ else
 endif
 
 CFLAGS=\
-	   -Wall -Wstrict-prototypes -Wmissing-prototypes \
+	   -Wall -Wstrict-prototypes -Wmissing-prototypes -Wdeclaration-after-statement -Werror \
 	   -Os \
 	   -fomit-frame-pointer
 

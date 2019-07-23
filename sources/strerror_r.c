@@ -9,15 +9,20 @@
 
 #include <string.h>
 
-char* strerror_r (int errnum, char *buf, size_t bufsize) {
-  if (buf == NULL || bufsize == 0)
-    return buf;
-  char* retval = strerror (errnum);
-  size_t len = strlen (retval);
+char *strerror_r(int errnum, char *buf, size_t bufsize)
+{
+	char *retval;
+	size_t len;
+	size_t copylen;
 
-  size_t copylen = len < (bufsize - 1) ? len : (bufsize - 1);
- 
-  memcpy (buf, retval, copylen);
-  buf[copylen] = '\0';
-  return buf;    
+	if (buf == NULL || bufsize == 0)
+		return buf;
+	retval = strerror(errnum);
+	len = strlen(retval);
+
+	copylen = len < (bufsize - 1) ? len : (bufsize - 1);
+
+	memcpy(buf, retval, copylen);
+	buf[copylen] = '\0';
+	return buf;
 }
