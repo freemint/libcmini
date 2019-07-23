@@ -12,7 +12,7 @@ int strncmp(const char *s1, const char *s2, size_t max)
 	int cmp = 0;
 
 	while (max-- > 0 && cmp == 0) {
-		cmp = (*s1 - *s2);
+        cmp = (unsigned char)*s1 - (unsigned char)*s2;
 
 		if (*s1 == '\0' || *s2 == '\0') {
 			break;
