@@ -23,7 +23,7 @@
 	.globl	__app		| short, defined in crtinit.c
 	.globl	__base		| BASEPAGE *, defined in globals.c
 	.globl	__stksize	| long, defined by user or in stksiz.c
-	.globl	___has_no_ssystem	| int, defined in globals.c
+	.globl	___has_no_ssystem	| long, defined in globals.c
 
 |
 | externs to pull ident strings of all used libraries into the
