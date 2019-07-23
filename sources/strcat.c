@@ -9,14 +9,12 @@
 
 char *strcat(char *dst, const char *src)
 {
-    char* ret = dst;
+	char *ret = dst;
 
-    while (*dst != '\0') {
+    while (*dst != '\0')
         ++dst;
-    }
 
     do {} while ((*dst++ = *src++) != '\0');
 
-    return ret;
+	return ret;
 }
-
