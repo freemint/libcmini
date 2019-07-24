@@ -1,6 +1,7 @@
-#include <stdlib.h>
+/* The actual implementation for all floating point sizes is in strtod.c.
+   These macros tell it to produce the `float' version, `strtof'.  */
 
-float strtof(const char *nptr, char **endptr)
-{
-    return 0.0;     /* just a dummy for now */
-}
+#define FLOAT   float
+#define STRTOF  strtof
+
+#include "strtod.c"
