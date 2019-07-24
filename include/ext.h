@@ -120,7 +120,6 @@ int         getche( void );
 int         putch( int c);
 int         chdir( char *filename );
 
-int         fstat( int handle, struct stat *statbuf );
 int         stat( const char *path, struct stat *buff );
 
 int         isatty( int handle );
