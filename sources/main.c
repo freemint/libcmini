@@ -124,7 +124,7 @@ void _crtinit(void) {
 	} else if (_stksize ==  2L) {	/* keep 1/2, free 1/2 */
 		_stksize = freemem >> 1;
 	} else if (_stksize == 3L) {	/* keep 3/4, free 1/4 */
-		_stksize = freemem - (freemem >> 2); 
+		_stksize = freemem - (freemem >> 2);
 	} else {
 		if(_stksize < -1L) {	/* keep |_stksize|, use heap for mallocs */
 			_stksize = -_stksize;
@@ -208,12 +208,12 @@ static long parseargs(BASEPAGE *bp) {
 			/* find list of empty params
 			 */
 			if (*from == 'N' && *(from+1) == 'U'
-			    && *(from+2) == 'L' && *(from+3) == 'L' 
+			    && *(from+2) == 'L' && *(from+3) == 'L'
 			    && *(from+4) == ':')
 			{
 				null_list = from + 5;
 			}
-			    
+
 			while (*from++) ; /* skip ARGV= value */
 			__libc_argv = arg = envp;
 			*arg++ = from; count+= 4;
@@ -237,7 +237,7 @@ static long parseargs(BASEPAGE *bp) {
    see if the last environment variable ended with '=\0', and
    if so we append this one to the last one
  */
-		if(desktoparg && envp > &environ[1]) 
+		if(desktoparg && envp > &environ[1])
 		{
 		/* launched from desktop -- fix up env */
 		    char *p, *q;
@@ -276,11 +276,11 @@ old_cmdlin:
 	while(i > 0 && isspace(*cmdln) )
 		cmdln++,--i;
 
-	/* 
+	/*
 	 * MagXDesk only uses ARGV if the arg is longer than the 126 character
 	 * of bp->cmdlin. If the arg is short enough and contains a file name with
 	 * blanks it will be come quoted via bp->cmdlin!!
-	*/ 
+	*/
 	if (cmdln[0] != '\'')
 	{
 		while (i > 0) {
@@ -299,12 +299,12 @@ old_cmdlin:
 	else
 	{
 		int in_quote = 0;
-		
-		while (i > 0) 
+
+		while (i > 0)
 		{
 			if (*cmdln == '\'')
 			{
-				i--; 
+				i--;
 				cmdln++;
 				if (in_quote)
 				{
@@ -362,10 +362,10 @@ do_argc:
  	    p = strrchr (program_invocation_name, '/');
  	  if (p != 0)
  	    p++;
- 	  program_invocation_short_name = p == 0 ? 
+ 	  program_invocation_short_name = p == 0 ?
  	      program_invocation_name : p;
  	}
-	
+
 	__libc_argc = 1;		/* at this point __libc_argv[0] is done */
 	while (*from) {
 		*arg++ = from;
@@ -383,21 +383,21 @@ do_argc:
 
 		while (*null_list) {
 			s = null_list;
-			
+
 			while (* ++null_list) {	/* find ',' or '\0' */
 				if (*null_list == ',') {
 					*null_list++ = 0;
 					break;
 				}
 			}
-			
+
 			idx = 0;
 			for (;;) {
 				if (! isdigit(*s))
 					goto bail_out;
-					
+
 				/* don't feed this to strtol(),
-				 * do the ascii -> long conversion by 
+				 * do the ascii -> long conversion by
 				 * hand for efficency
 				 */
 				idx += *s++ - '0';
@@ -406,7 +406,7 @@ do_argc:
 				else
 					break;
 			}
-		
+
 			if (idx < __libc_argc)
 				*(__libc_argv[idx]) = 0;
 			else
@@ -433,7 +433,7 @@ FILE *stderr;
 void _main (int _argc, char **_argv, char **_envp) {
 	if (_app)
 		_pdomain = Pdomain(1);	/* set MiNT domain */
-		
+
 	/* if stderr is not re-directed to a file, force 2 to console
 	 * (UNLESS we've been run from a shell we trust, i.e. one that supports
 	 *  the official ARGV scheme, in which case we leave stderr be).
@@ -444,12 +444,17 @@ void _main (int _argc, char **_argv, char **_envp) {
 	stdin = &_StdInF; 				// _StdInF is in .bss and cleared from os
 	bzero(stdin, sizeof(FILE));	// but we cleared out again - safe is safe (paranoia???)
 	FILE_SET_HANDLE(stdin, 0);
+	stdin->__pushback = EOF;
+
 	stdout = &_StdOutF;
 	bzero(stdout, sizeof(FILE));
 	FILE_SET_HANDLE(stdout, 1);
+	stdout->__pushback = EOF;
+
 	stderr = &_StdErrF;
 	bzero(stderr, sizeof(FILE));
 	FILE_SET_HANDLE(stderr, 2);
+	stderr->__pushback = EOF;
 
 	exit(main(_argc, _argv, _envp));
 }
