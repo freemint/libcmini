@@ -450,7 +450,7 @@ void _main (int _argc, char **_argv, char **_envp) {
 	// While testing I experienced that there is
 	// always a CR in the standard input buffer
 	if (Cconis()) {
-		Cconin();
+		Cnecin();
 	}
 
 	stdout = &_StdOutF;
