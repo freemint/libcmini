@@ -30,17 +30,15 @@ extern int __text, __data, __bss;
 #define S_IREAD   0000400
 #define S_IWRITE  0000200
 
-typedef unsigned long size_t;
-
 
 struct ffblk
 {
-    char ff_reserved[21];               /* Reserved by TOS */
-    char ff_attrib;                     /* Attribute found */
-    int  ff_ftime;                      /* File time */
-    int  ff_fdate;                      /* File date */
-    long ff_fsize;                      /* File size */
-    char ff_name[13];                   /* File name found */
+    char  ff_reserved[21];              /* Reserved by TOS */
+    char  ff_attrib;                    /* Attribute found */
+    short ff_ftime;                     /* File time */
+    short ff_fdate;                     /* File date */
+    long  ff_fsize;                     /* File size */
+    char  ff_name[13];                  /* File name found */
 };
 
 struct date
@@ -60,12 +58,12 @@ struct time
 
 struct ftime
 {
-    unsigned ft_hour:   5;
-    unsigned ft_min:    6;
-    unsigned ft_tsec:   5;
-    unsigned ft_year:   7;
-    unsigned ft_month:  4;
-    unsigned ft_day:    5;
+    unsigned int ft_hour:   5;
+    unsigned int ft_min:    6;
+    unsigned int ft_tsec:   5;
+    unsigned int ft_year:   7;
+    unsigned int ft_month:  4;
+    unsigned int ft_day:    5;
 };
 
 struct stat
@@ -85,47 +83,45 @@ struct stat
 
 struct dfree
 {
-        unsigned df_avail;
-        unsigned df_total;
-        unsigned df_bsec;
-        unsigned df_sclus;
+        unsigned long df_avail;
+        unsigned long df_total;
+        unsigned long df_bsec;
+        unsigned long df_sclus;
 };
-
-size_t      malloc_size(const void *ptr);
 
 extern int getcurdir(int drive, char *path);
 extern char *getcwd(char *buffer, int bufflen);
 extern int getdisk(void);
 extern void getdfree(unsigned char drive, struct dfree *dtable);
-extern int setdisk(int drive);
+extern long setdisk(int drive);
 
 extern int findfirst(const char *filename, struct ffblk *ffblk, int attrib);
 extern int findnext(struct ffblk *ffblk);
 
-/* void        getdate( struct date *dateRec ); */
-void        gettime( struct time *timeRec );
-void        setdate( struct date *dateRec );
-void        settime( struct time *timeRec );
-int         getftime( int handle, struct ftime *ftimep );
-int         setftime( int handle, struct ftime *ftimep );
+extern void getdate(struct date *dateRec);
+extern void gettime(struct time *timeRec);
+extern void setdate(struct date *dateRec);
+extern void settime(struct time *timeRec);
+extern int getftime(int handle, struct ftime *ftimep);
+extern int setftime(int handle, struct ftime *ftimep);
 
-struct tm   *ftimtotm( struct ftime *f );
+extern struct tm* ftimtotm(struct ftime *f);
 
-void        delay( unsigned milliseconds );
-void        sleep( unsigned seconds );
+extern void delay(unsigned long milliseconds);
+extern void sleep(unsigned int seconds);
 
-int         kbhit( void );
-int         getch( void );
-int         getche( void );
-int         putch( int c);
-int         chdir( char *filename );
+extern int kbhit(void);
+extern int getch(void);
+extern int getche(void);
+extern int putch(int c);
+extern int chdir(char *filename);
 
-int         stat( const char *path, struct stat *buff );
+extern int stat(const char *path, struct stat *buff);
 
-int         isatty( int handle );
-long        filelength( int handle );
+extern int isatty(int handle);
+extern long filelength(int handle);
 
-size_t      coreleft( void );
+extern size_t coreleft(void);
 
 #endif /* _EXT_H_ */
 
