@@ -445,16 +445,19 @@ void _main (int _argc, char **_argv, char **_envp) {
 	bzero(stdin, sizeof(FILE));	// but we cleared out again - safe is safe (paranoia???)
 	FILE_SET_HANDLE(stdin, 0);
 	stdin->__pushback = EOF;
+	stdin->__mode.__read = 1;
 
 	stdout = &_StdOutF;
 	bzero(stdout, sizeof(FILE));
 	FILE_SET_HANDLE(stdout, 1);
 	stdout->__pushback = EOF;
+	stdin->__mode.__write = 1;
 
 	stderr = &_StdErrF;
 	bzero(stderr, sizeof(FILE));
 	FILE_SET_HANDLE(stderr, 2);
 	stderr->__pushback = EOF;
+	stdin->__mode.__write = 1;
 
 	exit(main(_argc, _argv, _envp));
 }
