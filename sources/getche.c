@@ -10,13 +10,17 @@
 
 int getche()
 {
-	int ch = getch();
+	int ch = 0;
+
+	do {
+		if (Cconis()) {
+			ch = Cconin() & 0xff;
+		}
+	} while (ch == 0);
 
 	if (ch == 0x1a) {
 		// CTRL-Z
 		ch = EOF;
-	} else {
-		putch(ch);
 	}
 
 	return ch;
