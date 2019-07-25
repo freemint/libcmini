@@ -12,6 +12,6 @@
 int
 putch(int c)
 {
-	Bconout(DEV_CONSOLE, c);
+	Cconout(c & 0xff);
 	return c;
 }

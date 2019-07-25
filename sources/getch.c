@@ -11,11 +11,13 @@
 
 int getch()
 {
-	int ch;
+	int ch = 0;
 
 	do {
-		ch = fgetc(stdin);
-	} while (ch == EOF);
+		if (Cconis()) {
+			ch = Cnecin() & 0xff;
+		}
+	} while (ch == 0);
 
 	return ch;
 }
