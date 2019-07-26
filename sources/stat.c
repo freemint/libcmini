@@ -50,12 +50,8 @@ int stat(const char *path, struct stat *buff)
         buff->st_mtime = dta.dta_time;
         buff->st_ctime = dta.dta_time;
 
-        if ((dta.dta_attribute & FA_RDONLY) != 0) {
-            buff->st_mode |= S_IRUSR;
-        }
-
-        if ((dta.dta_attribute & FA_RDONLY) != 0) {
-            buff->st_mode |= S_IRUSR;
+        if ((dta.dta_attribute & FA_RDONLY) == 0) {
+            buff->st_mode |= S_IWUSR;
         }
 
         if ((dta.dta_attribute & FA_DIR) != 0) {
