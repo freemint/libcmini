@@ -29,62 +29,69 @@
 #define S_IWOTH   00002    // others have write permission
 #define S_IXOTH   00001    // others have execute permission
 
-int stat(const char *path, struct stat *buff)
+int
+fstat(int handle, struct stat *buff)
 {
-    _DTA* old_dta = Fgetdta();
-    _DTA dta;
+    long fpos;
     long ret;
 
-    Fsetdta(&dta);
+    fpos = Fseek(0, handle, SEEK_CUR);
 
-    ret = Fsfirst(path, FA_DIR | FA_RDONLY); // no hidden files and no system files
+    if (fpos < 0) {
+        ret   = -1;
+        errno = ENOENT;
+    } else {
+        long   ftime;
+        size_t fsize;
 
-    if (ret == 0) {
-        buff->st_dev   = (path[0] != '\0' && path[1] == ':') ? ((path[0] & ~0x20 /* toupper */) - 'A') : Dgetdrv();
+        Fdatime(&ftime, handle, 0);
+
+        fsize = Fseek(0, handle, SEEK_END);
+
+        // intialize struct
+        // Pure C did not initialize members which cannot be set with a handle!
+
+        buff->st_dev   = 0; // cannot be determined
         buff->st_ino   = 0;
-        buff->st_mode  = S_IRUSR;
+        buff->st_mode  = S_IFREG | S_IRUSR;
         buff->st_nlink = 1;
         buff->st_uid   = 0;
         buff->st_gid   = 0;
         buff->st_rdev  = buff->st_dev;
-        buff->st_size  = dta.dta_size;
-        buff->st_atime = dta.dta_time;
-        buff->st_mtime = dta.dta_time;
-        buff->st_ctime = dta.dta_time;
+        buff->st_size  = fsize;
+        buff->st_atime = ftime;
+        buff->st_mtime = ftime;
+        buff->st_ctime = ftime;
 
-        if ((dta.dta_attribute & FA_RDONLY) == 0) {
-            buff->st_mode |= S_IWUSR;
-        }
+        if (fsize > 0) {
+            unsigned char byte;
 
-        if ((dta.dta_attribute & FA_DIR) != 0) {
-            buff->st_mode |= S_IFDIR | S_IXUSR;
-        } else {
-            long fh;
+            Fseek(0, handle, SEEK_SET);
 
-            buff->st_mode |= S_IFREG;
+            if (Fread(handle, 1, &byte) == 1) {
+                Fseek(0, handle, SEEK_SET);
 
-            fh = Fopen(path, FO_READ);
+                if (Fwrite(handle, 1, &byte) == 1) {
+                    buff->st_mode |= S_IWUSR;
+                }
 
-            if (fh >= 0) {
-                unsigned short magic;
+                if (fsize > 1) {
+                    unsigned short magic;
 
-                if (Fread(fh, sizeof(magic), &magic) == sizeof(magic)) {
-                    if (magic == X_MAGIC) {
+                    Fseek(0, handle, SEEK_SET);
+
+                    if (Fread(handle, sizeof(magic), &magic) == sizeof(magic) && magic == X_MAGIC) {
                         buff->st_mode |= S_IXUSR;
                     }
                 }
-
-                Fclose(fh);
             }
         }
 
-        errno = 0;
-    } else {
-        ret   = -1;
-        errno = ENOENT;
-    }
+        Fseek(fpos, handle, SEEK_SET);
 
-    Fsetdta(old_dta);
+        ret   = 0;
+        errno = 0;
+    }
 
     return ret;
 }

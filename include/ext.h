@@ -116,6 +116,7 @@ extern int getche(void);
 extern int putch(int c);
 extern int chdir(char *filename);
 
+extern int fstat(int handle, struct stat *buff);
 extern int stat(const char *path, struct stat *buff);
 
 extern int isatty(int handle);
