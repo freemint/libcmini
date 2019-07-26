@@ -64,7 +64,7 @@ int stat(const char *path, struct stat *buff)
             fh = Fopen(path, FO_READ);
 
             if (fh >= 0) {
-                long magic;
+                unsigned short magic;
 
                 if (Fread(fh, sizeof(magic), &magic) == sizeof(magic)) {
                     if (magic == 0x601a) {
