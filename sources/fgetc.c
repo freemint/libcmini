@@ -17,7 +17,7 @@ fgetc(FILE* stream)
         int ret;
 
         if (stream->__pushback == EOF) {
-            char ch;
+            unsigned char ch;
             long rc = Fread(FILE_GET_HANDLE(stream), 1, &ch);
 
             if (rc == 0) {
