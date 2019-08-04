@@ -15,7 +15,7 @@
 	((void)((expr)||(fprintf(stderr, \
 	"\nAssertion failed: %s, file %s, line %d\n",\
 	 #expr, __FILE__, __LINE__ ),\
-	 ((int (*)(void))abort)())))
+	 abort(), 0)))
 #else
 #define assert(expr)
 #endif /* NDEBUG */

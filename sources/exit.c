@@ -20,7 +20,14 @@ void exit(int status)
         (*_at_exit++) ();
 
     /* second: close all files */
+
+    /*
+     * FIXME: if FILEs ever get buffered, we need to call that.
+     * Until then, it is not needed and causes unnecessary overhead
+     */
+#ifdef NOT_USED
     fcloseall();
+#endif /* NOT_USED */
 
     /* third: exit*/
     (void) Pterm(status);
