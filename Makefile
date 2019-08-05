@@ -35,7 +35,13 @@ else
   	CROSSPREFIX=m68k-atari-mint-
 endif
 
+CFLAGS=\
+	   -Wall\
+	   -Os \
+	   -fomit-frame-pointer
+
 -include Make.config
+-include Make.config.local
 
 CC=$(CROSSPREFIX)gcc
 LD=$(CROSSPREFIX)ld
@@ -43,11 +49,6 @@ CPP=$(CROSSPREFIX)cpp
 OBJCOPY=$(CROSSPREFIX)objcopy
 AR=$(CROSSPREFIX)ar
 RANLIB=$(CROSSPREFIX)ranlib
-
-CFLAGS=\
-	   -Wall\
-	   -Os \
-	   -fomit-frame-pointer
 
 ifeq (,$(filter $(MINTLIB_COMPATIBLE),Y yes))
 	INCLUDE=-Iinclude
