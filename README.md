@@ -67,4 +67,6 @@ With -mfastcall libcmini itself is 3% smaller binary, and the tests/bench test e
 
 ## Contribution
 
-Contributors are always welcome. Please, make sure your editor preserves tabs to make diffs shorter and easier to compare.
+Contributions are always welcome.
+
+Please, make sure to provide all new code using 'four spaces' indentation without TAB characters.
