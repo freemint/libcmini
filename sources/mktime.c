@@ -29,6 +29,8 @@ time_t mktime(struct tm *tm)
 	long tyears, tdays, leaps, utc_hrs;
     int leap_year;
 
+    tzset();
+
     leap_year = is_leap(tm->tm_year + 1900);
 	tyears = tm->tm_year - 70;
 	leaps = (tyears + 2) / 4;
@@ -54,5 +56,5 @@ time_t mktime(struct tm *tm)
 
     utc_hrs = tm->tm_hour;
 
-    return (tdays * 86400) + (utc_hrs * 3600) + (tm->tm_min * 60) + tm->tm_sec;
+    return (tdays * 86400) + (utc_hrs * 3600) + (tm->tm_min * 60) + tm->tm_sec + timezone;
 }
