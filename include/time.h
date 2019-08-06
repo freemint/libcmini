@@ -36,13 +36,6 @@ struct timezone
 	int tz_dsttime;			/* Nonzero if DST is ever in effect */
 };
 
-/*
-Time functions assume that the BIOS clock uses local time.
-If your clock uses GMT and your local time is not, uncomment this.
-
-#define GMT_BIOS_CLOCK
-*/
-
 extern long timezone;
 extern char* tzname[2];
 
