@@ -36,7 +36,7 @@ extern unsigned int* _ctype;
                     )
 #define isxdigit(c) (isdigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
 #define tolower(c)	(isupper(c) ? ((c) + 'a' - 'A') : (c))
-#define toupper(c)	(islower(c) ? ((c) - 'a' - 'A') : (c))
+#define toupper(c)	(islower(c) ? ((c) - 'a' + 'A') : (c))
 
 #define isspace(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v') || ((c) == '\f'))
 #define isalnum(c)  (isalpha(c) || isdigit(c))
