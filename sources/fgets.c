@@ -19,6 +19,7 @@
 /* Modified for MiNTLib by Guido Flohr <guido@freemint.de>.  */
 
 #include <stdio.h>
+#include "lib.h"
 
 /* Reads characters from STREAM into S, until either a newline character
    is read, N - 1 characters have been read, or EOF is seen.  Returns
@@ -50,7 +51,13 @@ fgets(char* s, int n, FILE* stream)
 
 			*p++ = c;
 
-			if (c == '\n') {
+            if (FILE_GET_HANDLE(stream) == 0) {
+                // stdin
+
+                if (c == '\r') {
+                    break;
+                }
+            } else if (c == '\n') {
 				break;
 			}
 		}
