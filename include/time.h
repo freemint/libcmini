@@ -40,7 +40,7 @@ extern long timezone;
 extern char* tzname[2];
 
 extern time_t time(time_t *tloc);
-extern void tzset();
+extern void tzset(void);
 extern clock_t clock(void);
 extern time_t mktime(struct tm *tm);
 extern struct tm* gmtime(const time_t* timep);
