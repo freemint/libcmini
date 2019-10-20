@@ -451,13 +451,13 @@ void _main (int _argc, char **_argv, char **_envp) {
 	bzero(stdout, sizeof(FILE));
 	FILE_SET_HANDLE(stdout, 1);
 	stdout->__pushback = EOF;
-	stdin->__mode.__write = 1;
+	stdout->__mode.__write = 1;
 
 	stderr = &_StdErrF;
 	bzero(stderr, sizeof(FILE));
 	FILE_SET_HANDLE(stderr, 2);
 	stderr->__pushback = EOF;
-	stdin->__mode.__write = 1;
+	stderr->__mode.__write = 1;
 
 	exit(main(_argc, _argv, _envp));
 }
