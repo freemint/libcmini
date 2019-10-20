@@ -1,10 +1,21 @@
 language: c
 os: linux
-dist: trusty
+dist: xenial
 sudo: required
+
+addons:
+    apt:
+        sources:
+            - sourceline: 'ppa:vriviere/ppa'
+        packages:
+            - cross-mint-essential
+            - dos2unix
+            - lftp
+            - hatari
+            - aranym
+            - mtools
+
 before_install:
-- sudo .travis/register_apt_repositories.sh
-- sudo apt-get install -y cross-mint-essential dos2unix lftp
 - git --version
 - make --version
 - ld --version
