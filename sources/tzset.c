@@ -97,13 +97,13 @@ get_tz_offset(const char* src, int* error)
 	} else {
 		enum { Hours, Minutes, Seconds };
 
-		int tim[3] = { 0, 0, 0 };
-		int mul    = 1;
+		int  tim[3] = { 0, 0, 0 };
+		long mul    = 1L;
 
 		register int i;
 
 		if (*src == '-') {
-			mul = -1;
+			mul = -1L;
 			++src;
 		} else if (*src == '+') {
 			++src;
@@ -112,7 +112,7 @@ get_tz_offset(const char* src, int* error)
 		for (i = 0; i < sizeof(tim) / sizeof(tim[0]); ++i) {
 			if (*src == '\0') {
 				// invalid
-				mul = 0;
+				mul = 0L;
 			} else if (ISDIGIT(*src)) {
 				tim[i] = *src++ - '0';
 
@@ -121,12 +121,12 @@ get_tz_offset(const char* src, int* error)
 
 					if (ISDIGIT(*src)) {
 						// not more than two digits allowed
-						mul = 0;
+						mul = 0L;
 					}
 				}
 			}
 
-			if (mul == 0) {
+			if (mul == 0L) {
 				// invalid offset format
 				break;
 			} else if (*src == ':') {
@@ -140,11 +140,11 @@ get_tz_offset(const char* src, int* error)
 
 		if (tim[Minutes] > 59 || tim[Seconds] > 59) {
 			// invalid minutes or seconds
-			mul = 0;
+			mul = 0L;
 		}
 
-		timezone = mul * (tim[Seconds] + 60 * tim[Minutes] + 3600 * tim[Hours]);
-		*error   = (mul == 0);
+		timezone = mul * ((long)tim[Seconds] + 60L * (long)tim[Minutes] + 3600L * (long)tim[Hours]);
+		*error   = (mul == 0L);
 	}
 
 	return src;
