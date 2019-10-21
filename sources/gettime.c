@@ -12,7 +12,7 @@
 void
 gettime(struct time* timeRec)
 {
-    int tos_time = Tgettime();
+    unsigned short tos_time = Tgettime();
 
     timeRec->ti_sec  = (tos_time & 0x1f) * 2;
     timeRec->ti_min  = (tos_time >> 5) & 0x3f;

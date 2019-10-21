@@ -7,8 +7,8 @@
 
 int gettimeofday(struct timeval *tp, struct timezone *tzp)
 {
-    int tos_time;
-    int tos_date;
+    unsigned short tos_time;
+    unsigned short tos_date;
     struct tm now;
 
     tos_time = Tgettime();
