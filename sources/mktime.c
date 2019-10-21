@@ -56,5 +56,5 @@ time_t mktime(struct tm *tm)
 
     utc_hrs = tm->tm_hour;
 
-    return (tdays * 86400) + (utc_hrs * 3600) + (tm->tm_min * 60) + tm->tm_sec + timezone;
+    return (tdays * 86400L) + (utc_hrs * 3600L) + ((long)tm->tm_min * 60L) + (long)tm->tm_sec + timezone;
 }
