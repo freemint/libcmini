@@ -49,15 +49,14 @@ fgets(char* s, int n, FILE* stream)
 				last_char = c;
 			}
 
+            if (c == '\r' && FILE_GET_HANDLE(stream) == 0) {
+                // stdin
+                c = '\n';
+            }
+
 			*p++ = c;
 
-            if (FILE_GET_HANDLE(stream) == 0) {
-                // stdin
-
-                if (c == '\r') {
-                    break;
-                }
-            } else if (c == '\n') {
+            if (c == '\n') {
 				break;
 			}
 		}
