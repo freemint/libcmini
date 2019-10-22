@@ -12,7 +12,7 @@
 void
 setdate(struct date* dateRec)
 {
-    short tos_date;
+    unsigned short tos_date;
 
     tos_date = (dateRec->da_day & 0x1f)
              | ((dateRec->da_mon & 0x1f) << 5)
