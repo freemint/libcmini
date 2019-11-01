@@ -74,7 +74,7 @@ __bcopy:
 
 _memcpy:
 _memmove:
-	tst.l	d0
+	tst.l	d0	
 
 #endif /* __FASTCALL__ */
 
@@ -200,8 +200,8 @@ less2:
 none:
 exit_d2:
 	move.l	(sp)+,d2
-	move.l	(sp)+,a0
 exit:
+	move.l	(sp)+,a0
 	move.l 	a0,d0		| return dest (for memcpy only)
 	rts
 
