@@ -12,7 +12,7 @@
 void
 getdate(struct date* dateRec)
 {
-    int tos_date = Tgetdate();
+    unsigned short tos_date = Tgetdate();
 
     dateRec->da_day  = tos_date & 0x1f;
     dateRec->da_mon  = (tos_date >> 5) & 0xf;

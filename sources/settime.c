@@ -9,8 +9,7 @@
 #include <osbind.h>
 
 
-void
-settime(struct time* timeRec)
+void settime(struct time* timeRec)
 {
     unsigned short tos_time;
 
@@ -18,6 +17,5 @@ settime(struct time* timeRec)
              | ((timeRec->ti_min & 0x3f) << 5)
              | ((timeRec->ti_hour & 0x1f) << 11)
              ;
-
-	Tsettime(tos_time);
+    Tsettime(tos_time);
 }

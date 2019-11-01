@@ -45,6 +45,7 @@ extern unsigned long strtoul(const char*, char**, int);
 extern long long strtoll(const char*, char**, int);
 extern unsigned long long strtoull(const char*, char**, int);
 extern double strtod(const char* s, char** endp);
+extern long double strtold(const char* s, char** endp);
 extern float strtof(const char* s, char** endp);
 
 extern void* bsearch(const void* key, const void* base, size_t num, size_t size, int (*cmp)(const void*, const void*));
