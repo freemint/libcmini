@@ -33,6 +33,13 @@ extern char *strrchr(const char *s, int c);
 extern char *rindex(const char *s, int c);
 extern size_t strnlen(const char* s, size_t maxlen);
 extern char* strtok(char* s1, const char* s2);
+extern char* stpcpy(char* dest, const char* src);
+extern char* stpncpy(char* dest, const char* src, size_t n);
+extern size_t strlcpy(char* dst, const char* src, size_t siz);
+extern size_t strlcat(char* dst, const char* src, size_t siz);
+extern char* strsep(char** s, const char* sep);
+extern char* strchrnul(const char* s, int c_in);
+extern char* strcasestr(const char* s, const char* wanted);
 
 extern void bzero(void *s, size_t n);
 extern void bcopy(const void *src, void *dst, size_t n);
@@ -41,6 +48,8 @@ extern void *memcpy(void *dest, const void *src, size_t n);
 extern void *memmove(void *dest, const void *src, size_t n);
 extern int memcmp(const void *s1, const void *s2, size_t n);
 extern void *memchr(const void *ptr, int ch, size_t count);
+extern void* memccpy(void* dst, const void* src, int ucharstop, size_t size);
+extern void* mempcpy(void* dstpp, const void* srcpp, size_t len);
 
 extern char *strerror(int errnum);
 extern char* strerror_r(int errnum, char *buf, size_t bufsize);
@@ -51,5 +60,6 @@ extern char *strupr(char *str);
 
 extern char* basename(const char *filename);
 extern char* dirname(char *filename);
+
 
 #endif /* _STRING_H_ */
