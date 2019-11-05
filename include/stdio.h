@@ -131,6 +131,7 @@ extern int vsscanf(const char* str, const char* fmt, va_list list);
 extern int fprintf(FILE *stream, const char *format, ...);
 extern int vfprintf(FILE *stream, const char *format, va_list ap);
 extern int printf(const char *fmt, ...);
+extern int vprintf(const char *fmt, va_list ap);
 extern int snprintf(char *s, size_t size, const char *fmt, ...);
 extern int vsnprintf(char *str, size_t size, const char *fmt, va_list va);
 extern int sprintf(char *s, const char *format, ...);

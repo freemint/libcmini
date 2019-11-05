@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <osbind.h>
 
-extern int doprnt(int (*)(int, void *), void *stream, const char *fmt, va_list va);
 
 int printf(const char *fmt, ...)
 {
@@ -11,7 +10,7 @@ int printf(const char *fmt, ...)
 
 	va_list va;
 	va_start(va, fmt);
-	ret = vfprintf(stdout, fmt, va);
+	ret = vprintf(fmt, va);
 	va_end(va);
 
 	return ret;
