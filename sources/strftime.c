@@ -38,7 +38,13 @@ strftime(char* s, size_t smax, const char* fmt, const struct tm* tp)
                     /* FALLTHROUGH */
 
                 case 'A':
-                    addstr = wday_name[tp->tm_wday];
+                    if (tp->tm_wday < 0 || tp->tm_wday > 6) {
+                        addstr = "?";
+                        addlen = -1;
+                    } else {
+                        addstr = wday_name[tp->tm_wday];
+                    }
+
                     break;
 
                 case 'b':
@@ -47,7 +53,13 @@ strftime(char* s, size_t smax, const char* fmt, const struct tm* tp)
                     /* FALLTHROUGH */
 
                 case 'B':
-                    addstr = mon_name[tp->tm_mon];
+                    if (tp->tm_mon < 0 || tp->tm_mon > 11) {
+                        addstr = "?";
+                        addlen = -1;
+                    } else {
+                        addstr = mon_name[tp->tm_mon];
+                    }
+
                     break;
 
                 case 'c':
