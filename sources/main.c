@@ -50,6 +50,7 @@ static void _main (int _argc, char **_argv, char **_envp) {
 
 
 void _crtinit(void) {
+
 	BASEPAGE *bp;
 	long m;
 	long freemem;

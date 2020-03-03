@@ -33,7 +33,7 @@ m68k-atari-mint-gcc -o hello.tos -s hello.c
 results in a binary size of 118220 bytes. Huge. The same thing compiled with libcmini:
 
 ```
-m68k-atari-mint-gcc -nostdlib $LIBCMINI/startup.o hello.c -o hello.tos -s -L$LIBCMINI -lcmini -lgcc
+m68k-atari-mint-gcc -nostdlib $LIBCMINI/crt0.o hello.c -o hello.tos -s -L$LIBCMINI -lcmini -lgcc
 ```
 (note that - since we compile with -nostdlib - you have to add the gcc runtime support library libgcc.a to your command line for the processors that need it)
 

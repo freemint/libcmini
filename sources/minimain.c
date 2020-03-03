@@ -17,7 +17,6 @@ extern int main (int, char **, char **);
 static long parseargs(BASEPAGE *bp);
 
 extern long _stksize;
-extern long _initial_stack;
 
 
 #undef isspace
@@ -36,8 +35,7 @@ static void _main (int _argc, char **_argv, char **_envp) {
 	 * (UNLESS we've been run from a shell we trust, i.e. one that supports
 	 *  the official ARGV scheme, in which case we leave stderr be).
 	 */
-	if(!*_argv[0] && isatty (2))
-		(void) Fforce(2, -1);
+	/* (void) Fforce(2, -1); */
 
 	exit(main(_argc, _argv, _envp));
 }
@@ -45,9 +43,9 @@ static void _main (int _argc, char **_argv, char **_envp) {
 void _crtinit_noargs(void) {
 	extern void etext(void);	/* a "function" to fake out pc-rel addressing */
 
-	register BASEPAGE *bp;
-	register long m;
-	register long freemem;
+	BASEPAGE *bp;
+	long m;
+	long freemem;
 
 	/* its an application */
 	_app = 1;
@@ -110,9 +108,6 @@ void _crtinit_noargs(void) {
 	/* not reached normally */
 
 notenough:
-	(void) Cconws("Fatal error: insufficient memory\r\n");
-	(void) Cconws("Hint: either decrease stack size using 'stack' command (not recomended)\r\n" \
-		   "      or increase TPA_INITIALMEM value in mint.cnf.\r\n");
 	Pterm(-1);
 }
 

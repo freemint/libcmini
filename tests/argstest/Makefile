@@ -121,7 +121,7 @@ $(1)/%.o:$(SRCDIR)/%.S
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(APP): $$($(1)_OBJS)
 	$$(Q)echo "CC $$(@)"
-	$$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../build/`$(CC) $$(CFLAGS) -print-multi-directory`/startup.o $$($(1)_OBJS) -L../../build/`$(CC) $$(CFLAGS) -print-multi-directory` $(LIBS)
+	$$(Q)$(CC) $$(CFLAGS) -Wl,-Map,$(1)/mapfile -o $$@ ../../build/crt0.o $$($(1)_OBJS) -L../../build/`$(CC) $$(CFLAGS) -print-multi-directory` $(LIBS)
 	$$(Q)$(STRIP) $$@
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))

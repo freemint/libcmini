@@ -63,11 +63,11 @@ endif
 
 
 STARTUP= \
-	$(SRCDIR)/startup.S
+	$(SRCDIR)/crt0.S
 	
 CSRCS= $(wildcard $(SRCDIR)/*.c)
 	
-ASRCS= $(filter-out $(STARTUP),$(wildcard $(SRCDIR)/*.S))
+ASRCS= $(filter-out $(SRCDIR)/crt0.S $(SRCDIR)/minicrt0.S, $(wildcard $(SRCDIR)/*.S))
 
 SRCDIR=sources
 
@@ -103,13 +103,13 @@ OBJS=$(COBJS) $(AOBJS)
 
 IIO_OBJS = doprnt.o $(filter %printf.o, $(patsubst %,../%,$(OBJS)))
 
-START_OBJ=startup.o
+START_OBJ=crt0.o
 LIBC=libcmini.a
 LIBIIO=libiiomini.a
 
 LIBS=$(patsubst %,%/$(LIBC),$(LIBDIRS))
 LIBSIIO=$(patsubst %,%/$(LIBIIO),$(LIBDIRS))
-STARTUPS=$(patsubst %,%/$(START_OBJ),$(LIBDIRS))
+STARTUPS=$(BUILDDIR)/$(START_OBJ) $(BUILDDIR)/minicrt0.o
 
 TESTS:= $(shell ls tests | grep -E -v '^(CVS)$$')
 
@@ -141,7 +141,7 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 # multilib flags
 #
 define MULTILIBFLAGS_TEMPLATE
-$(BUILDDIR)/$(1)/%.a $(BUILDDIR)/$(1)/startup.o : CFLAGS += $(call MULTILIBFLAGS,$(1))
+$(BUILDDIR)/$(1)/%.a : CFLAGS += $(call MULTILIBFLAGS,$(1))
 endef
 $(foreach DIR,$(MULTILIBDIRS),$(eval $(call MULTILIBFLAGS_TEMPLATE,$(DIR))))
 
@@ -166,6 +166,14 @@ $(1)/%.o:$(SRCDIR)/%.S
 	$(Q)$(CC) -MMD -MP -MF $$(@:.o=.d) $$(CFLAGS) $(INCLUDE) -c $$< -o $$@
 endef
 $(foreach DIR,$(LIBDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
+
+$(BUILDDIR)/crt0.o: $(SRCDIR)/crt0.S
+	$(Q)echo "CC $(@)"
+	$(Q)$(CC) -MMD -MP -MF $(@:.o=.d) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(BUILDDIR)/minicrt0.o: $(SRCDIR)/minicrt0.S
+	$(Q)echo "CC $(@)"
+	$(Q)$(CC) -MMD -MP -MF $(@:.o=.d) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 #
 # generate pattern rules for multilib archive
@@ -198,7 +206,7 @@ release: all
 	    for i in $(MULTILIBDIRS); do \
 		    mkdir -p $$RELEASEDIR/lib/$$i ;\
 	        cp $(BUILDDIR)/$$i/libcmini.a $$RELEASEDIR/lib/$$i ;\
-	        cp $(BUILDDIR)/$$i/startup.o $$RELEASEDIR/lib/$$i ;\
+	        cp $(BUILDDIR)/$$i/crt0.o $$RELEASEDIR/lib/$$i ;\
 	    done ;\
 		chown -R 0:0 $$RELEASEDIR/* ;\
 		tar -C $$RELEASEDIR -cvzf $$RELEASEDIR.tar.gz . ;\
@@ -259,10 +267,7 @@ endif
 ifneq (,$(PREFIX_FOR_STARTUP))
 install : install-startup
 install-startup:
-	@for i in $(MULTILIBDIRS); do \
-		mkdir -pv $(PREFIX_FOR_STARTUP)/$$i; \
-		cp -av $(BUILDDIR)/$$i/startup.o $(PREFIX_FOR_STARTUP)/$$i; \
-	done
+	cp -av $(STARTUPS) $(DESTDIR)/usr/lib
 endif
 
 ifneq (clean,$(MAKECMDGOALS))

@@ -29,7 +29,7 @@ all: $(APP)
 
 $(APP): $(LIBDIR)/libcmini.a $(OBJS)
 	$(Q)echo "CC $(@)"
-	$(Q)$(CC) $(LIBDIR)/startup.o -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
+	$(Q)$(CC) ../../build/crt0.o -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
 	$(Q)m68k-atari-mint-strip $(APP)
 
 	
