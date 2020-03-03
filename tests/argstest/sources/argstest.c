@@ -10,7 +10,7 @@
 #include <mint/osbind.h>
 #include <mint/basepage.h>
 
-extern struct basep *BasPag;
+extern struct basep *_BasPag;
 
 int main(int argc, char *argv[], char *envp[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	while (Cconis()) Cconin();
 
-	printf("cmdline=%s\r\n", (char *) (BasPag->p_cmdlin) + 1);
+	printf("cmdline=%s\r\n", (char *) (_BasPag->p_cmdlin) + 1);
 	printf("argc=%d\r\n", argc);
 	for (i = 0; i < argc; i++)
 		printf("argv[%d] = %s\r\n", i, argv[i]);

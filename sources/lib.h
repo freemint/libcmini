@@ -42,6 +42,8 @@ void _acc_main(void);
 void _crtinit(void);
 void _crtinit_noargs(void);
 
+extern FILE *__stdio_head;
+
 #undef __set_errno
 #define __set_errno(e) (errno = (int)(e))
 

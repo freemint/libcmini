@@ -12,9 +12,6 @@
 #include "lib.h"
 
 
-FILE *__stdio_head = NULL;
-
-
 FILE *fopen(const char *path, const char *mode)
 {
 	FILE *fp;
