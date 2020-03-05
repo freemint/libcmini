@@ -40,5 +40,5 @@ deploy:
   overwrite: true
   on:
     tags: true
-    repo: mfro0/libcmini
+    repo: freemint/libcmini
     all_branches: true
