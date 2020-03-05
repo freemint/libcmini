@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mfro0/libcmini.svg?branch=master)](https://travis-ci.org/mfro0/libcmini)
+[![Build Status](https://travis-ci.org/freemint/libcmini.svg?branch=master)](https://travis-ci.org/freemint/libcmini)
 
 # libcmini
 
