@@ -41,7 +41,7 @@ creates a binary with 11794 byts. About a tenth of the size.
 
 ## Binary Releases Downloads
 
-binary releases (in tar.gz format) can be downloaded from here: https://github.com/mfro0/libcmini/releases
+binary releases (in tar.gz format) can be downloaded from here: https://github.com/freemint/libcmini/releases
 source is also available there.
 
 ## What's that libcmini.creator stuff about?
