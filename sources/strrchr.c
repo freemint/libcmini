@@ -2,7 +2,7 @@
 
 char *strrchr(const char *s, int c)
 {
-	const char *cp = s + strlen(s) + 1;
+	const char *cp = s + strlen(s);
 
 	do
 	{
