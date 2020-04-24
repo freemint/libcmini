@@ -1,5 +1,3 @@
-#ifndef __FASTCALL__
-
 |	new version of bcopy, memcpy and memmove
 |	handles overlap, odd/even alignment
 |	uses movem to copy 256 bytes blocks faster.
@@ -13,6 +11,8 @@
 	.globl _bcopy
 	.globl _memcpy
 	.globl _memmove
+
+#ifndef __FASTCALL__
 
 |	void *memcpy( void *dest, const void *src, size_t len );
 |	void *memmove( void *dest, const void *src, size_t len );
