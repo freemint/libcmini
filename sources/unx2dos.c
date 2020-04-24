@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "lib.h"
 
 int unx2dos(const char *unx, char *dos)
 {

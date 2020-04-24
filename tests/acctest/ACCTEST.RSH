@@ -30,15 +30,15 @@
 static OBJECT rs_object[] =
 { 
   /******** Tree 0 MAIN ****************************************************/
-        -1,        1,        2, G_BOX             ,   /* Object 0  */
-  NONE, OUTLINED, (LONG)0x00021100L,
-  0x0000, 0x0000, 0x0028, 0x0009,
-         2,       -1,       -1, G_STRING          ,   /* Object 1  */
-  NONE, NORMAL, (LONG)"BaS_gcc interface info",
-  0x0001, 0x0001, 0x0016, 0x0001,
-         0,       -1,       -1, G_BUTTON          ,   /* Object 2  */
-  SELECTABLE|DEFAULT|EXIT|LASTOB, NORMAL, (LONG)" OK ",
-  0x001F, 0x0007, 0x0008, 0x0001
+  {      -1,        1,        2, G_BOX             ,   /* Object 0  */
+   NONE, OUTLINED, {(LONG)0x00021100L},
+   0x0000, 0x0000, 0x0028, 0x0009 },
+  {      2,       -1,       -1, G_STRING          ,   /* Object 1  */
+   NONE, NORMAL, {(LONG)"BaS_gcc interface info"},
+   0x0001, 0x0001, 0x0016, 0x0001 },
+  {      0,       -1,       -1, G_BUTTON          ,   /* Object 2  */
+   SELECTABLE|DEFAULT|EXIT|LASTOB, NORMAL, {(LONG)" OK "},
+   0x001F, 0x0007, 0x0008, 0x0001 }
 };
 
 static OBJECT *rs_trindex[] =

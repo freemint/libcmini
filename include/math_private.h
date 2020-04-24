@@ -41,8 +41,8 @@ typedef union
   double value;
   struct
   {
-    u_int32_t msw;
-    u_int32_t lsw;
+    __uint32_t msw;
+    __uint32_t lsw;
   } parts;
 } ieee_double_shape_type;
 
@@ -55,8 +55,8 @@ typedef union
   double value;
   struct
   {
-    u_int32_t lsw;
-    u_int32_t msw;
+    __uint32_t lsw;
+    __uint32_t msw;
   } parts;
 } ieee_double_shape_type;
 
@@ -126,7 +126,7 @@ do {								\
 typedef union
 {
   float value;
-  u_int32_t word;
+  __uint32_t word;
 } ieee_float_shape_type;
 
 /* Get a 32 bit int from a float.  */
@@ -179,7 +179,7 @@ extern double __ieee754_y1 (double);
 extern double __ieee754_jn (int,double);
 extern double __ieee754_yn (int,double);
 extern double __ieee754_remainder (double,double);
-extern int32_t __ieee754_rem_pio2 (double,double*);
+extern __int32_t __ieee754_rem_pio2 (double,double*);
 extern double __ieee754_scalb (double,double);
 
 /* fdlibm kernel function */
@@ -187,7 +187,7 @@ extern double __kernel_standard (double,double,int);
 extern double __kernel_sin (double,double,int);
 extern double __kernel_cos (double,double);
 extern double __kernel_tan (double,double,int);
-extern int    __kernel_rem_pio2 (double*,double*,int,int,int, const int32_t*);
+extern int    __kernel_rem_pio2 (double*,double*,int,int,int, const __int32_t*);
 
 /* internal functions.  */
 extern double __copysign (double x, double __y);
@@ -222,7 +222,7 @@ extern float __ieee754_y1f (float);
 extern float __ieee754_jnf (int,float);
 extern float __ieee754_ynf (int,float);
 extern float __ieee754_remainderf (float,float);
-extern int32_t __ieee754_rem_pio2f (float,float*);
+extern __int32_t __ieee754_rem_pio2f (float,float*);
 extern float __ieee754_scalbf (float,float);
 
 
@@ -230,7 +230,7 @@ extern float __ieee754_scalbf (float,float);
 extern float __kernel_sinf (float,float,int);
 extern float __kernel_cosf (float,float);
 extern float __kernel_tanf (float,float,int);
-extern int   __kernel_rem_pio2f (float*,float*,int,int,int, const int32_t*);
+extern int   __kernel_rem_pio2f (float*,float*,int,int,int, const __int32_t*);
 
 
 /* ieee style elementary long double functions */

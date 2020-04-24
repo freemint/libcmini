@@ -6,11 +6,7 @@
  */
 
 #include <string.h>
-#ifdef MINTLIB_COMPATIBLE
-#	include <ctype.h>
-#else
-#	include "../include/ctype.h"
-#endif
+#include <ctype.h>
 
 long atol(const char *c)
 {

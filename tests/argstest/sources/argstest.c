@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <mint/basepage.h>
 
 extern struct basep *BasPag;

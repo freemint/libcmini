@@ -18,12 +18,12 @@ typedef union
   long double value;
   struct
   {
-    u_int64_t msw;
-    u_int64_t lsw;
+    __uint64_t msw;
+    __uint64_t lsw;
   } parts64;
   struct
   {
-    u_int32_t w0, w1, w2, w3;
+    __uint32_t w0, w1, w2, w3;
   } parts32;
 } ieee854_long_double_shape_type;
 
@@ -36,12 +36,12 @@ typedef union
   long double value;
   struct
   {
-    u_int64_t lsw;
-    u_int64_t msw;
+    __uint64_t lsw;
+    __uint64_t msw;
   } parts64;
   struct
   {
-    u_int32_t w3, w2, w1, w0;
+    __uint32_t w3, w2, w1, w0;
   } parts32;
 } ieee854_long_double_shape_type;
 

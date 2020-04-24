@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 
 // Recursive calls.
 int bench1a(int i);
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 		(void)bench4(i & 0xf);
 	}
 	
-	printf("Executed in %ld seconds.\r\n", time(NULL) - start);
+	printf("Executed in %ld seconds.\r\n", (long)time(NULL) - start);
   } else {
 	printf("Provide number of iterations\r\n");
   }

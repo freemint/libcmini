@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <mint/basepage.h>
 
 void recursive_alloc(int depth)

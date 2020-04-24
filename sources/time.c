@@ -1,9 +1,7 @@
 #include <time.h>
 #include <string.h>
 #include <osbind.h>
-#ifdef __MINTLIB_COMPATIBLE
-#	include <sys/time.h>
-#endif
+#include <sys/time.h>
 
 int gettimeofday(struct timeval *tp, struct timezone *tzp)
 {

@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include <osbind.h>
+#include <unistd.h>
+#include <mint/osbind.h>
+#include <sys/types.h>
 #include "lib.h"
 
 

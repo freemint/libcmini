@@ -1,7 +1,5 @@
 #include <time.h>
-#ifdef __MINTLIB_COMPATIBLE
-#	include <sys/time.h>
-#endif
+#include <sys/time.h>
 
 /* year range is from 1901 to 2038, so no century can occur which is not a leap year
 #define is_leap(y)  ((y) % 4 == 0 && ((y) % 100 != 0 || (y) % 400 == 0))
