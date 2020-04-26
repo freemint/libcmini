@@ -3,16 +3,15 @@
 
 char *strlwr(char *str)
 {
-    char *p = str;
+	char *p = str;
 
-    if (p)
-    {
-        do
-        {
-            if (isupper(*str)) {
-                *str = tolower(*str);
-			}
-        } while (*str++ != '\0');
-    }
-    return p;
+	if (p)
+	{
+		while (*str)
+		{
+			*str = tolower((unsigned char)*str);
+			++str;
+		}
+	}
+	return p;
 }
