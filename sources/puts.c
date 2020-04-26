@@ -20,11 +20,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#undef  puts
+#undef	puts
 
 
 /* Write the string in S and a newline to stdout.  */
 int puts(const char *s)
 {
-  return (fputs(s, stdout) == EOF || fputs("\n", stdout) == EOF) ? EOF : 0;
+  return fputs(s, stdout) || putchar ('\n') == EOF ? EOF : 0;
 }
