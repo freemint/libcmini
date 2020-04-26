@@ -20,37 +20,18 @@
 
 
 /* Push the character C back onto the input stream of STREAM.  */
-int
-ungetc(int c, FILE* stream)
+int ungetc(int c, FILE *stream)
 {
-	if (stream == NULL || !stream->__mode.__read) {
+	if (c == EOF)
 		return EOF;
-	} else if (c == EOF) {
-		return EOF;
-	} else if (stream->__pushback != EOF) {
+	if (stream->__pushback != EOF)
 		/* There is already a char pushed back.  */
 		return EOF;
-	}
-
-#if 0
-	if ((stream->__linebuf_active || stream->__put_limit > stream->__buffer) && __flshfp (stream, EOF) == EOF) {
-		/* This is a read-write stream with something in its buffer.
-		Flush the stream.  */
-		return EOF;
-	}
-#endif
 
 	stream->__pushback = c;
-	/* Tell __fillbf we've pushed back a char.  */
-
-#if 0
-	stream->__pushback_bufp = stream->__bufp;
-	/* Make the next getc call __fillbf.  It will return C.  */
-	stream->__bufp = stream->__get_limit;
-#endif
-
+	
 	/* We just gave it another character to read, so it's not at EOF.  */
 	stream->__eof = 0;
-
+	
 	return stream->__pushback;
 }

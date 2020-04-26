@@ -10,7 +10,6 @@
 #include <stdarg.h>
 #include "lib.h"
 
-
 int __addchar(int c, void *_stream)
 {
 	struct _mem_stream *stream = (struct _mem_stream *)_stream;
