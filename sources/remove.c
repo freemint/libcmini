@@ -9,16 +9,20 @@
 #include <errno.h>
 #include <stdio.h>
 #include <osbind.h>
+#include "lib.h"
 
-
-int
-remove(const char* filename)
+int remove(const char *filename)
 {
 	int ret = Ddelete(filename);
 
-	if (ret == ENOTDIR) {
+	if (ret == ENOTDIR)
+	{
 		ret = Fdelete(filename);
 	}
-
-	return ret;
+	if (ret < 0)
+	{
+		__set_errno(-ret);
+		return -1;
+	}
+	return 0;
 }
