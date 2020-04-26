@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-size_t lseek(int fd, size_t offset, int whence)
+off_t lseek(int fd, off_t offset, int whence)
 {
     long res;
 

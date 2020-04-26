@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include "lib.h"
 
-
-extern int doscan(int (*getchar_func)(void*), int (*ungetchar_func)(int, void*), void* stream, const char* fmt, va_list va);
 
 static int getchar_func(void* fp);
 static int ungetchar_func(int c, void* fp);

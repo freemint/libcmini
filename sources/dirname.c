@@ -9,7 +9,7 @@
 */
 
 #include <string.h>
-#include "../include/ctype.h"
+#include "ctype.h"
 #include "lib.h"
 
 

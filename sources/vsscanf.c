@@ -1,16 +1,8 @@
 #include <stdio.h>
 #include <values.h>
 #include <stdarg.h>
+#include "lib.h"
 
-
-struct _mem_stream
-{
-    const char* xstring;
-    const char* xestring;
-};
-
-
-extern int doscan(int (*getchar_func)(void*), int (*ungetchar_func)(int, void*), void* stream, const char* fmt, va_list va);
 
 static int getchar_func(void *fp);
 
@@ -20,7 +12,7 @@ vsscanf(const char* str, const char* format, va_list va)
 {
     struct _mem_stream stream;
 
-    stream.xstring  = str;
+    stream.xstring  = (char *)NO_CONST(str);
     stream.xestring = NULL;
 
     return doscan(getchar_func, NULL, &stream, format, va);

@@ -11,11 +11,17 @@
 #include <stdio.h>
 #endif
 
-#define assert(expr)\
-	((void)((expr)||(fprintf(stderr, \
-	"\nAssertion failed: %s, file %s, line %d\n",\
-	 #expr, __FILE__, __LINE__ ),\
-	 abort(), 0)))
+/* This prints an "Assertion failed" message and aborts.  */
+void __assert_fail (const char *__assertion,
+			   const char *__file,
+			   unsigned int __line,
+			   const char *__function)
+     __attribute__ ((__noreturn__));
+
+# define assert(expr)							      \
+  ((void) ((expr) ? 0 :							      \
+	   (__assert_fail (#expr,				      \
+			   __FILE__, __LINE__, NULL), 0)))
 #else
 #define assert(expr)
 #endif /* NDEBUG */

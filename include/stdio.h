@@ -90,6 +90,7 @@ extern int errno;
 
 extern FILE *fopen(const char *path, const char *mode);
 extern FILE *freopen(const char *path, const char *mode, FILE *stream);
+FILE *fdopen(int fd, const char *mode);
 extern int fclose(FILE *fp);
 extern int fcloseall(void);
 extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);

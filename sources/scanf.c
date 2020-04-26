@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <osbind.h>
 #include <stdio.h>
+#include "lib.h"
 
-
-extern int doscan(int (*)(void*), int (*)(int, void*), void *stream, const char *fmt, va_list va);
 
 static int getchar_func(void* dummy);
 static int ungetchar_func(int c, void* dummy);
