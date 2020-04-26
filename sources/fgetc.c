@@ -6,37 +6,33 @@
  */
 
 #include <stdio.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include "lib.h"
 
 
-int
-fgetc(FILE* stream)
+int fgetc(FILE *stream)
 {
-    if (stream != NULL && stream->__mode.__read) {
-        int ret;
-
-        if (stream->__pushback == EOF) {
-            unsigned char ch;
-            long rc = Fread(FILE_GET_HANDLE(stream), 1, &ch);
-
-            if (rc == 0) {
-                stream->__eof = 1;
-                ret = EOF;
-            } else {
-                ret = ch;
-
-                if (rc < 0) {
-                    stream->__error = 1;
-                }
-            }
-        } else {
-            ret = stream->__pushback;
-            stream->__pushback = EOF;
-        }
-
-        return ret;
-    }
-
-    return EOF;
+	unsigned char ch;
+	long rc;
+	
+	if (stream->__pushback != EOF)
+	{
+		ch = stream->__pushback;
+		stream->__pushback = EOF;
+		return ch;
+	}
+	rc = Fread(FILE_GET_HANDLE(stream), 1, &ch);
+	if (rc == 0)
+	{
+		stream->__eof = 1;
+		return EOF;
+	}
+	if (rc < 0)
+	{
+		__set_errno(-rc);
+		stream->__error = 1;
+		return EOF;
+	}
+	return ch;
 }
+int getc(FILE *stream) __attribute__((alias("fgetc")));
