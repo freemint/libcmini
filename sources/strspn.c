@@ -17,16 +17,13 @@ size_t strspn(const char *s, const char *accept)
     {
         for (ascan = accept; *ascan != '\0'; ascan++)
         {
-            if (*sscan == *ascan) {
+            if (*sscan == *ascan)
                 break;
-            }
-        }
 
-        if (*ascan == '\0') {
-            return count;
+            if (*ascan == '\0')
+                return count;
+            count++;
         }
-
-        count++;
     }
     return count;
 }
