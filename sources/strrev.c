@@ -6,20 +6,19 @@
 
 #include <string.h>
 
-char *
-strrev (char *string)
+char *strrev(char *string)
 {
-	register char *p = string;
-	register char *q;
+	char *p = string;
+	char *q;
 
-	if (*(q = p)) /* non-empty string? */
+	if (*(q = p) != '\0') /* non-empty string? */
 	{
 		while (*++q)
 			;
 
 		while (--q > p)
 		{
-			register char c;
+			char c;
 
 			c = *q;
 			*q = *p;
