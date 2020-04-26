@@ -28,7 +28,7 @@ int getopt(int argc, char * const argv[], const char *optstring)
 
 	optopt = c = argv[optind][sp];
 
-	if (c == ':' || (cp = index(optstring, c)) == NULL)
+	if (c == ':' || (cp = strchr(optstring, c)) == NULL)
 	{
 		if (opterr)
 		{
