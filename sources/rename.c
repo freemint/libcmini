@@ -7,9 +7,15 @@
 
 #include <stdio.h>
 #include <osbind.h>
+#include "lib.h"
 
-int
-rename(const char* oldname, const char* newname)
+int rename(const char *oldname, const char *newname)
 {
-	return Frename(0, oldname, newname);
+	int ret = Frename(0, oldname, newname);
+	if (ret < 0)
+	{
+		__set_errno(-ret);
+		return -1;
+	}
+	return 0;
 }
