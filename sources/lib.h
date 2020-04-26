@@ -19,13 +19,8 @@ void _setstack(char *);
 
 /* definitions needed in FILE related functions (fopen, fseek etc.) */
 
-#ifdef __MINTLIB_COMPATIBLE
-#	define FILE_SET_HANDLE(fp, H) fp->__cookie = (void*)H
-#	define FILE_GET_HANDLE(fp) ((long)fp->__cookie)
-#else
-#	define FILE_SET_HANDLE(fp, H) fp->__hdl = H
-#	define FILE_GET_HANDLE(fp) (fp->__hdl)
-#endif
+#define FILE_SET_HANDLE(fp, H) (fp)->__cookie = ((void*)(long)(H))
+#define FILE_GET_HANDLE(fp) ((long)(fp)->__cookie)
 
 typedef void (*ExitFn)(void);
 extern char **environ;

@@ -30,24 +30,12 @@ struct __stdio_file
     long __magic;
 #define	_IOMAGIC (0xfedabeecL)	/* Magic number to fill `__magic'.  */
 
-#if 0
-    char *__bufp;     /* next byte write */
-    void *__buflvl;   /* next byte read */
-    void *__bufstart; /* first byte of buffer */
-    void *__bufend;   /* first byte after buffer */
-#endif
-    /* long Handle; */
-    long __hdl;       /* GEMDOS handle */
-#if 0
-    char __flags;
-    char __resv;
-    char __char_buf;
-#endif
-    int __pushback;
-    FILE *__next;     /* Next FILE in the linked list.  */
-    __io_mode __mode;     /* File access mode.  */
-    unsigned int __eof;
-    unsigned int __error;
+    void *__cookie;			/* Magic cookie. Holds GEMDOS handle */
+	int __pushback;
+    FILE *__next;     		/* Next FILE in the linked list.  */
+	__io_mode __mode;     /* File access mode.  */
+	unsigned int __eof:1;
+	unsigned int __error:1;
 };
 
 /* All the known streams are in a linked list
