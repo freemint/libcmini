@@ -2,13 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__MSHORT__) || defined(__PUREC__) || defined(__AHCC__)
+char *itoa(int value, char *buffer, int radix);
 
 extern char const __itoa_numstr[16];
 
-char *ltoa(long value, char *buffer, int radix);
-
-char *ltoa(long value, char *buffer, int radix)
+char *itoa(int value, char *buffer, int radix)
 {
 	char *p;
 	int neg = 0;
@@ -34,4 +32,6 @@ char *ltoa(long value, char *buffer, int radix)
 	return buffer;
 }
 
+#if !(defined(__MSHORT__) || defined(__PUREC__) || defined(__AHCC__))
+char *ltoa(long value, char *buffer, int radix) __attribute__((alias("itoa")));
 #endif
