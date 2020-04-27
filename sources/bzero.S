@@ -204,7 +204,7 @@ set16:
 	dbra	d0,set16
 #endif
 less4:
-	move.w	sp@+,d0
+	move.w	(sp)+,d0
 	btst	#1,d0
 	jeq		less2
 	move.w	d2,a0@-
