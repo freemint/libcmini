@@ -1,9 +1,6 @@
 #include <time.h>
-#include <osbind.h>
-
-#ifdef __MINTLIB_COMPATIBLE
-# include <sys/time.h>
-#endif /* __MINTLIB_COMPATIBLE */
+#include <mint/osbind.h>
+#include <sys/time.h>
 
 
 /* year range is from 1901 to 2038, so no century can occur which is not a leap year

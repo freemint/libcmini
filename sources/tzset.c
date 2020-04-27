@@ -1,9 +1,7 @@
 #include <time.h>
 #include <string.h>
-#include <osbind.h>
-#ifdef __MINTLIB_COMPATIBLE
-#	include <sys/time.h>
-#endif
+#include <mint/osbind.h>
+#include <sys/time.h>
 
 
 #ifndef TZ_STRLEN_MAX

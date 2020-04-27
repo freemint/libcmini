@@ -9,12 +9,7 @@
 */
 
 #include <string.h>
-
-#ifdef MINTLIB_COMPATIBLE
-#   include <ctype.h>
-#else
-#   include "../include/ctype.h"
-#endif
+#include <ctype.h>
 
 /* Similar to `strstr' but this function ignores the case of both strings.  */
 

@@ -18,14 +18,12 @@ all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # ONLY_68K: for faster developing; set to Y to build only the 68000 library
 # BUILD_CF: Build ColfFire binaries.
-# MINTLIB_COMPATIBLE: set to Y to build libcmini with mintlib-includes
 #
 ONLY_68K=N
 BUILD_CF=Y
 BUILD_FAST=Y
 BUILD_SOFT_FLOAT=Y
 BUILD_SHORT=Y
-MINTLIB_COMPATIBLE=N
 COMPILE_ELF=N
 STDIO_WITH_LONG_LONG=N
 
@@ -50,12 +48,7 @@ OBJCOPY=$(CROSSPREFIX)objcopy
 AR=$(CROSSPREFIX)ar
 RANLIB=$(CROSSPREFIX)ranlib
 
-ifeq (,$(filter $(MINTLIB_COMPATIBLE),Y yes))
-	INCLUDE=-Iinclude
-else
-	INCLUDE=
-	CFLAGS+=-D__MINTLIB_COMPATIBLE
-endif
+INCLUDE=-Iinclude
 
 ifneq (,$(filter $(STDIO_WITH_LONG_LONG),Y yes))
 	CFLAGS+=-DSTDIO_WITH_LONG_LONG

@@ -1,9 +1,6 @@
 #include <time.h>
-#include <osbind.h>
-
-#ifdef __MINTLIB_COMPATIBLE
-# include <sys/time.h>
-#endif /* __MINTLIB_COMPATIBLE */
+#include <mint/osbind.h>
+#include <time.h>
 
 
 struct tm*
