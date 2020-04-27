@@ -11,10 +11,9 @@
 typedef unsigned long size_t;
 typedef signed long ptrdiff_t;
 
-#ifdef __NULL
-#undef __NULL
+#ifndef NULL
+#define NULL        ((void *)0)
 #endif
-#define __NULL (0L)
 
 /* Offset of member MEMBER in a struct of type TYPE.  */
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)

@@ -89,40 +89,40 @@ struct dfree
         unsigned long df_sclus;
 };
 
-extern int getcurdir(int drive, char *path);
-extern char *getcwd(char *buffer, int bufflen);
-extern int getdisk(void);
-extern void getdfree(unsigned char drive, struct dfree *dtable);
-extern long setdisk(int drive);
+int getcurdir(int drive, char *path);
+char *getcwd(char *buffer, int bufflen);
+int getdisk(void);
+void getdfree(unsigned char drive, struct dfree *dtable);
+long setdisk(int drive);
 
-extern int findfirst(const char *filename, struct ffblk *ffblk, int attrib);
-extern int findnext(struct ffblk *ffblk);
+int findfirst(const char *filename, struct ffblk *ffblk, int attrib);
+int findnext(struct ffblk *ffblk);
 
-extern void getdate(struct date *dateRec);
-extern void gettime(struct time *timeRec);
-extern void setdate(struct date *dateRec);
-extern void settime(struct time *timeRec);
-extern int getftime(int handle, struct ftime *ftimep);
-extern int setftime(int handle, struct ftime *ftimep);
+void getdate(struct date *dateRec);
+void gettime(struct time *timeRec);
+void setdate(struct date *dateRec);
+void settime(struct time *timeRec);
+int getftime(int handle, struct ftime *ftimep);
+int setftime(int handle, struct ftime *ftimep);
 
-extern struct tm* ftimtotm(struct ftime *f);
+struct tm* ftimtotm(struct ftime *f);
 
-extern void delay(unsigned long milliseconds);
-extern void sleep(unsigned int seconds);
+void delay(unsigned long milliseconds);
+void sleep(unsigned int seconds);
 
-extern int kbhit(void);
-extern int getch(void);
-extern int getche(void);
-extern int putch(int c);
-extern int chdir(char *filename);
+int kbhit(void);
+int getch(void);
+int getche(void);
+int putch(int c);
+int chdir(char *filename);
 
-extern int fstat(int handle, struct stat *buff);
-extern int stat(const char *path, struct stat *buff);
+int fstat(int handle, struct stat *buff);
+int stat(const char *path, struct stat *buff);
 
-extern int isatty(int handle);
-extern long filelength(int handle);
+int isatty(int handle);
+long filelength(int handle);
 
-extern size_t coreleft(void);
+size_t coreleft(void);
 
 #endif /* _EXT_H_ */
 

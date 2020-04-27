@@ -10,7 +10,7 @@
 
 
 int
-abs(int n)
+(abs)(int n)
 {
     return (n < 0) ? -n : n;
 }

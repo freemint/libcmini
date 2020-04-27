@@ -10,26 +10,28 @@
 
 #include <stddef.h>
 
-extern int atoi(const char *c);
-extern long atol(const char *c);
-extern double atof(const char *c);
-extern void *malloc(size_t size);
-extern void *calloc(size_t nmemb, size_t size);
-extern void *realloc(void *ptr, size_t size);
-extern void free(void *ptr);
+int atoi(const char *c);
+long atol(const char *c);
+double atof(const char *c);
+void *malloc(size_t size);
+void *calloc(size_t nmemb, size_t size);
+void *realloc(void *ptr, size_t size);
+void free(void *ptr);
 
-extern char *ltoa(long value, char *buffer, int radix);
-extern char *ultoa(unsigned long value, char *buffer, int radix);
+char *ltoa(long value, char *buffer, int radix);
+char *ultoa(unsigned long value, char *buffer, int radix);
+char *itoa(int value, char *buffer, int radix);
 #define _ltoa(a, b, c) ltoa((a), (b), (c))
 #define _ultoa(a, b, c) ultoa((a), (b), (c))
+#define _itoa(a, b, c) itoa((a), (b), (c))
 
-extern char *getenv(const char *name);
-extern int setenv(const char *name, const char *value, int replace);
-extern int unsetenv(const char *name);
+char *getenv(const char *name);
+int setenv(const char *name, const char *value, int replace);
+int unsetenv(const char *name);
 
-extern int atexit(void (*func)(void));
-extern void exit(int status);
-extern void abort(void);
+int atexit(void (*func)(void));
+void exit(int status);
+void abort(void);
 
 #ifdef __MSHORT__
 #define	RAND_MAX (0x7FFF)
@@ -37,39 +39,53 @@ extern void abort(void);
 #define	RAND_MAX (0x7FFFFFFFL)
 #endif
 
-extern int rand(void);
-extern void srand(unsigned int __seed);
-extern long lrand(void);
-extern void srand48(long int __seed);
+int rand(void);
+void srand(unsigned int __seed);
+long lrand(void);
+void srand48(long int __seed);
 
-extern long strtol(const char*, char**, int);
-extern unsigned long strtoul(const char*, char**, int);
-extern long long strtoll(const char*, char**, int);
-extern unsigned long long strtoull(const char*, char**, int);
-extern double strtod(const char* s, char** endp);
-extern long double strtold(const char* s, char** endp);
-extern float strtof(const char* s, char** endp);
+long strtol(const char*, char**, int);
+unsigned long strtoul(const char*, char**, int);
+long long strtoll(const char*, char**, int);
+unsigned long long strtoull(const char*, char**, int);
+double strtod(const char* s, char** endp);
+long double strtold(const char* s, char** endp);
+float strtof(const char* s, char** endp);
 
-extern void* bsearch(const void* key, const void* base, size_t num, size_t size, int (*cmp)(const void*, const void*));
-extern void qsort(void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
+#ifndef __COMPAR_FN_T
+# define __COMPAR_FN_T
+typedef int (*__compar_fn_t) (__const void*, __const void*);
 
-extern int abs(int n);
-extern long labs(long n);
+# ifdef	__USE_GNU
+typedef __compar_fn_t comparison_fn_t;
+# endif
+#endif
 
-typedef struct
-{
-	int quot;
-	int rem;
+void *bsearch(const void *key, const void *base, size_t num, size_t size, int (*cmp)(const void *, const void *));
+void qsort(void *__base, size_t __nel, size_t __size, __compar_fn_t __compar);
+
+int abs(int n);
+long labs(long n);
+
+#define abs(j)  ((j) > 0 ? (j) : -(j))
+
+/* Returned by `div'.  */
+typedef struct {
+	int quot;			/* Quotient.  */
+    int rem;			/* Remainder.  */
 } div_t;
 
-typedef struct
-{
-	long quot;
-	long rem;
+/* Returned by `ldiv'.  */
+#ifndef __ldiv_t_defined
+typedef struct {
+	long int quot;		/* Quotient.  */
+	long int rem;		/* Remainder.  */
 } ldiv_t;
+# define __ldiv_t_defined	1
+#endif
 
-extern div_t div(int n, int d);
-extern ldiv_t ldiv(long n, long d);
+div_t div(int __numer, int __denom) __attribute__ ((__const__));
+ldiv_t ldiv(long int __numer, long int __denom) __attribute__ ((__const__));
 
 #ifndef NULL
 # define NULL	((void *) 0)

@@ -76,62 +76,62 @@ extern FILE *stderr;
 
 extern int errno;
 
-extern FILE *fopen(const char *path, const char *mode);
-extern FILE *freopen(const char *path, const char *mode, FILE *stream);
+FILE *fopen(const char *path, const char *mode);
+FILE *freopen(const char *path, const char *mode, FILE *stream);
 FILE *fdopen(int fd, const char *mode);
-extern int fclose(FILE *fp);
-extern int fcloseall(void);
-extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
-extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
-extern int fseek(FILE *fp, long offset, int origin);
-extern long ftell(FILE *stream);
-extern void rewind(FILE *stream);
+int fclose(FILE *fp);
+int fcloseall(void);
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
+int fseek(FILE *fp, long offset, int origin);
+long ftell(FILE *stream);
+void rewind(FILE *stream);
 
 int setvbuf(FILE *stream, char *buf, int mode, size_t size);
 
-extern int fputs(const char *s, FILE *stream);
-extern int puts(const char *s);
-extern int fputc(int c, FILE *stream);
-extern int putc(int c, FILE *stream);
-extern int putchar(int c);
-extern int puts(const char *s);
+int fputs(const char *s, FILE *stream);
+int puts(const char *s);
+int fputc(int c, FILE *stream);
+int putc(int c, FILE *stream);
+int putchar(int c);
+int puts(const char *s);
 
-extern int fgetc(FILE *stream);
-extern char* fgets(char *s, int n, FILE *stream);
-extern int getc(FILE *stream);
+int fgetc(FILE *stream);
+char* fgets(char *s, int n, FILE *stream);
+int getc(FILE *stream);
 /* No gets() anymore! */
 #define getchar()  fgetc(stdin)
-extern int ungetc(int c, FILE *stream);
+int ungetc(int c, FILE *stream);
 
-extern int scanf(const char *format, ...);
-extern int fscanf(FILE *stream, const char *format, ...);
-extern int sscanf(const char *str, const char *format, ...);
-extern int vscanf(const char *format, va_list list);
-extern int vfscanf(FILE* fp, const char *format, va_list list);
-extern int vsscanf(const char* str, const char *format, va_list list);
+int scanf(const char *format, ...);
+int fscanf(FILE *stream, const char *format, ...);
+int sscanf(const char *str, const char *format, ...);
+int vscanf(const char *format, va_list list);
+int vfscanf(FILE* fp, const char *format, va_list list);
+int vsscanf(const char* str, const char *format, va_list list);
 
-extern int fprintf(FILE *stream, const char *format, ...);
-extern int vfprintf(FILE *stream, const char *format, va_list ap);
-extern int printf(const char *fmt, ...);
-extern int vprintf(const char *fmt, va_list ap);
-extern int snprintf(char *s, size_t size, const char *fmt, ...);
-extern int vsnprintf(char *str, size_t size, const char *fmt, va_list va);
-extern int sprintf(char *s, const char *format, ...);
-extern int vsprintf(char *s, const char *format, va_list va);
-extern int asprintf(char** strp, const char* format, ...);
-extern int vasprintf(char** strp, const char* format, va_list ap);
+int fprintf(FILE *stream, const char *format, ...);
+int vfprintf(FILE *stream, const char *format, va_list ap);
+int printf(const char *fmt, ...);
+int vprintf(const char *fmt, va_list ap);
+int snprintf(char *s, size_t size, const char *fmt, ...);
+int vsnprintf(char *str, size_t size, const char *fmt, va_list va);
+int sprintf(char *s, const char *format, ...);
+int vsprintf(char *s, const char *format, va_list va);
+int asprintf(char** strp, const char* format, ...);
+int vasprintf(char** strp, const char* format, va_list ap);
 
-extern int fflush(FILE *stream);
-extern int feof(FILE *stream);
-extern int ferror(FILE *stream);
-extern void clearerr(FILE *stream);
-extern int fileno(FILE *stream);
+int fflush(FILE *stream);
+int feof(FILE *stream);
+int ferror(FILE *stream);
+void clearerr(FILE *stream);
+int fileno(FILE *stream);
 
-extern int open(const char *filename, int access, ...);
-extern int close(int fd);
-extern int unlink(const char *filename);
+int open(const char *filename, int access, ...);
+int close(int fd);
+int unlink(const char *filename);
 
-extern int remove(const char *filename);
-extern int rename(const char *oldname, const char *newname);
+int remove(const char *filename);
+int rename(const char *oldname, const char *newname);
 
 #endif /* STDIO_H_ */

@@ -3,13 +3,24 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #define CLOCKS_PER_SEC 200
 #define CLK_TCK	       200
 
-typedef long time_t;
-typedef long clock_t;
-typedef long suseconds_t;
+#ifndef __time_t_defined
+typedef __time_t time_t;
+#define __time_t_defined 1
+#endif
+#ifndef __clock_t_defined
+typedef __clock_t clock_t;
+#define __clock_t_defined 1
+#endif
+#ifndef __suseconds_t_defined
+typedef __suseconds_t suseconds_t;
+#define __suseconds_t_defined 1
+#endif
+
 
 struct tm
 {
@@ -39,12 +50,12 @@ struct timezone
 extern long timezone;
 extern char* tzname[2];
 
-extern time_t time(time_t *tloc);
-extern void tzset(void);
-extern clock_t clock(void);
-extern time_t mktime(struct tm *tm);
-extern struct tm* gmtime(const time_t* timep);
-extern struct tm* localtime(const time_t* timep);
-extern size_t strftime(char* s, size_t smax, const char* fmt, const struct tm* tp);
+time_t time(time_t *tloc);
+void tzset(void);
+clock_t clock(void);
+time_t mktime(struct tm *tm);
+struct tm* gmtime(const time_t* timep);
+struct tm* localtime(const time_t* timep);
+size_t strftime(char* s, size_t smax, const char* fmt, const struct tm* tp);
 
 #endif /* _TIME_H_ */
