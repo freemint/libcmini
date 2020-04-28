@@ -1,5 +1,6 @@
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 #include <mint/osbind.h>
 #include <sys/time.h>
 
@@ -22,7 +23,7 @@ static char _tzdflt[]                     = TZ_DEFAULT;
 
 
 int   _bios_is_gmt = 0;
-long  timezone     = 0L;
+long  timezone     = 0;
 char* tzname[2]    = { _tzdflt, _tzdflt };
 
 
@@ -109,7 +110,7 @@ get_tz_offset(const char* src, int* error)
 
 		for (i = 0; i < sizeof(tim) / sizeof(tim[0]); ++i) {
 			if (*src == '\0') {
-				// invalid
+				/* invalid */
 				mul = 0L;
 			} else if (ISDIGIT(*src)) {
 				tim[i] = *src++ - '0';
@@ -118,26 +119,26 @@ get_tz_offset(const char* src, int* error)
 					tim[i] = 10 * tim[i] + *src++ - '0';
 
 					if (ISDIGIT(*src)) {
-						// not more than two digits allowed
+						/* not more than two digits allowed */
 						mul = 0L;
 					}
 				}
 			}
 
 			if (mul == 0L) {
-				// invalid offset format
+				/* invalid offset format */
 				break;
 			} else if (*src == ':') {
-				// next field
+				/* next field */
 				++src;
 			} else {
-				// end of offset information
+				/* end of offset information */
 				break;
 			}
 		}
 
 		if (tim[Minutes] > 59 || tim[Seconds] > 59) {
-			// invalid minutes or seconds
+			/* invalid minutes or seconds */
 			mul = 0L;
 		}
 

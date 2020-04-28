@@ -29,7 +29,7 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 	if (tzp != NULL)
 	{
 		tzset();
-		tzp->tz_minuteswest = -timezone / 60;
+		tzp->tz_minuteswest = (int)(-timezone / 60);
 		tzp->tz_dsttime = strcmp(tzname[0], tzname[1]);
 	}
 
