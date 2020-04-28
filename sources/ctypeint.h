@@ -1,30 +1,3 @@
-/*
- * ctype.h
- *
- *  Created on: 29.05.2013
- *      Author: mfro
- */
-
-#ifndef _CTYPE_H_
-#define _CTYPE_H_
-
-int toupper(int c);
-int tolower(int c);
-int toascii(int c);
-int isalnum(int c);
-int isalpha(int c);
-int isascii(int c);
-int iscntrl(int c);
-int isdigit(int c);
-int isgraph(int c);
-int islower(int c);
-int isprint(int c);
-int ispunct(int c);
-int isspace(int c);
-int isupper(int c);
-int isxdigit(int c);
-int isblank(int c);
-
 extern unsigned char const __libc_ctype[];
 extern unsigned char const __libc_ctype2[];
 
@@ -56,20 +29,3 @@ extern unsigned char const __libc_ctype2[];
 #endif
 
 
-/* Problem: iscntrl(255) and iscntrl(EOF) should produce different values
-   (IMHO this is nonsense).  For non-GNU compilers there is now way to
-   implement that safely.  */
-#ifndef __GNUC__
-# define	iscntrl(c)	(((c) == -1) ? 0 : \
-	(unsigned char) (c) == 255 ? 1 : \
-	(__libc_ctype[(unsigned char)((c))]&_IScntrl))
-
-#else /* GNU C */
-# define        iscntrl(c) \
-  ({ int _c = (int) (c);   \
-     _c == -1 ? 0 : \
-     (unsigned char) (_c) == 255 ? 1 : __libc_ctype[(unsigned char)(_c)]&_IScntrl; })
-
-#endif /* GNU C */
-
-#endif /* CTYPE_H_ */

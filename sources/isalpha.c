@@ -4,7 +4,7 @@
 #include "ctypeint.h"
 #endif
 
-int (tolower)(int c)
+int (isalpha)(int c)
 {
-	return isupper(c) ? ((c) + 'a' - 'A') : (c);
+	return isalpha(c);
 }
