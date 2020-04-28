@@ -9,12 +9,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-void *memset(void *b, int c, size_t len)
+void *memset(void *_s, int c, size_t len)
 {
-	int i;
+	size_t i;
+	unsigned char *s = (unsigned char *)_s;
 
 	for (i = 0; i < len; i++)
-		((unsigned char *) b)[i] = (unsigned char) c;
+		s[i] = c;
 
-	return b;
+	return s;
 }

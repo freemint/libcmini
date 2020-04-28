@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void bzero(void *s, size_t n)
+void bzero(void *_s, size_t n)
 {
-	int i;
+	size_t i;
+	unsigned char *s = (unsigned char *)_s;
 
 	for (i = 0; i < n; i++)
-		((unsigned char *) s)[i] = '\0';
+		s[i] = '\0';
 }
