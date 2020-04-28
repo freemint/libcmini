@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include <osbind.h>
 #include <errno.h>
+#include <sys/types.h>
+#ifndef	_BITS_TYPES_H
+#define	_BITS_TYPES_H	1
+#endif
 #include <sys/stat.h>
 
 #define X_MAGIC   0x601a

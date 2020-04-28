@@ -4,6 +4,10 @@
 #include <mint/mintbind.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/types.h>
+#ifndef	_BITS_TYPES_H
+#define	_BITS_TYPES_H	1
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "lib.h"
