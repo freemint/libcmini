@@ -26,4 +26,3 @@ void exit(int status)
     (void) Pterm(status);
     __builtin_unreachable();	/* get rid of gcc complaining about returning from exit() */
 }
-

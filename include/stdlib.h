@@ -8,6 +8,10 @@
 #ifndef _STDLIB_H_
 #define _STDLIB_H_
 
+#ifndef	_FEATURES_H
+# include <features.h>
+#endif
+
 #include <stddef.h>
 
 int atoi(const char *c);
@@ -32,6 +36,10 @@ int unsetenv(const char *name);
 int atexit(void (*func)(void));
 void exit(int status);
 void abort(void);
+
+/* Terminate the program with STATUS without calling any of the
+   functions registered with `atexit' or `on_exit'.  */
+void _Exit (int __status) __THROW __attribute__ ((__noreturn__));
 
 #ifdef __MSHORT__
 #define	RAND_MAX (0x7FFF)
