@@ -36,9 +36,9 @@ fputs(const char* s, FILE* stream)
     int    ret = len;
 
     if (len == 1) {
-        if (*s == '\n' && !stream->__mode.__binary && fputc('\r', stream) == EOF) {
+        if (*s == '\n' && !stream->__mode.__binary && fputc('\r', stream) < 0) {
             ret = EOF;
-        } else if (fputc(*s, stream) == EOF) {
+        } else if (fputc(*s, stream) < 0) {
             ret = EOF;
         }
     } else if (stream->__mode.__binary) {

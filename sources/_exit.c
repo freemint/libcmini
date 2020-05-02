@@ -11,4 +11,3 @@ void _exit(int status)
 #ifdef __GNUC__
 void _Exit(int status) __attribute__((alias("_exit")));
 #endif
-

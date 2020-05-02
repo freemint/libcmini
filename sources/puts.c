@@ -26,5 +26,5 @@
 /* Write the string in S and a newline to stdout.  */
 int puts(const char *s)
 {
-  return fputs(s, stdout) || putchar ('\n') == EOF ? EOF : 0;
+  return fputs(s, stdout) < 0 || putchar ('\n') < 0 ? EOF : 0;
 }
