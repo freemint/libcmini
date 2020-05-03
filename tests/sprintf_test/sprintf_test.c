@@ -8,11 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mint/osbind.h>
+#include <assert.h>
 
 int main(int argc, char *argv[])
 {
 	char str[1024];
 	int i;
+	char *endp;
 
 	for (i = 0; i < 10; i++)
 	{
@@ -29,8 +31,10 @@ int main(int argc, char *argv[])
 	sprintf(str, "This %s %d complex %s%s", "is", 1, "test", "\r\n");
 	Cconws(str);
 	printf("little test: %x, %d, %f\r\n", 0xff, 12345, 3.1415926);
+
+	i = snprintf(NULL, 0, "%d", 100);
+	assert(i == 3);
 	
-	char *endp;
 	#define	_strtol(v) do{ printf("strtol(\"" v "\") => %x", strtol(v,&endp,0)); printf(*endp ? " Rest:%s\n\r":"\n\r", endp); } while(0)
 	#define	_strtoul(v) do{ printf("strtoul(\"" v "\") => %x", strtoul(v,&endp,0)); printf(*endp ? " Rest:%s\n\r":"\n\r", endp); } while(0)
 	_strtol("0x5050");
