@@ -39,6 +39,18 @@ m68k-atari-mint-gcc -nostdlib $LIBCMINI/crt0.o hello.c -o hello.tos -s -L$LIBCMI
 
 creates a binary with 11794 byts. About a tenth of the size.
 
+Remember that gcc does not automatically look up multi-lib versions of
+libraries in directories specified by -L. If you want to do the same as
+above for a different architecture, you have to explicitly add the
+correct sub-directory:
+
+```
+m68k-atari-mint-gcc -nostdlib -mcpu=5475 $LIBCMINI/crt0.o hello.c -o hello.tos -s -L$LIBCMINI/m5475 -lcmini -lgcc
+```
+
+Same applies if you are using any other switch that requires a
+different library version, like --mshort and --mfastcall.
+
 ## Binary Releases Downloads
 
 binary releases (in tar.gz format) can be downloaded from here: https://github.com/freemint/libcmini/releases
