@@ -1,6 +1,17 @@
 extern unsigned char const __libc_ctype[256];
 extern unsigned char const __libc_ctype2[256];
 
+#undef _IScntrl
+#undef _ISdigit
+#undef _ISupper
+#undef _ISlower
+#undef _ISspace
+#undef _ISpunct
+#undef _ISxdigit
+#undef _ISprint
+#undef _ISblank
+#undef _ISgraph
+
 #define	_IScntrl	0x01		/* control character */
 #define	_ISdigit	0x02		/* numeric digit */
 #define	_ISupper	0x04		/* upper case */
@@ -27,5 +38,3 @@ extern unsigned char const __libc_ctype2[256];
 #ifdef __USE_ISOC99
 #define isblank(c)	(__libc_ctype2[(unsigned char)((c))] & _ISblank)
 #endif
-
-
