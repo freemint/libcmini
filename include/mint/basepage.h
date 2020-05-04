@@ -30,6 +30,7 @@ typedef struct basep {
 } BASEPAGE;
 
 extern BASEPAGE *_base;
+extern BASEPAGE *_BasPag;
 
 __END_DECLS
 

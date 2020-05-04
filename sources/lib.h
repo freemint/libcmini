@@ -20,7 +20,7 @@ void _setstack(char *);
 /* definitions needed in FILE related functions (fopen, fseek etc.) */
 
 #define FILE_SET_HANDLE(fp, H) (fp)->__cookie = ((void*)(long)(H))
-#define FILE_GET_HANDLE(fp) ((long)(fp)->__cookie)
+#define FILE_GET_HANDLE(fp) ((long)((fp)->__cookie))
 
 typedef void (*ExitFn)(void);
 extern char **environ;

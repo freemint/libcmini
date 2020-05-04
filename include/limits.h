@@ -27,7 +27,7 @@
 #define ULONG_MAX	0xffffffffUL
 #define LONG_MIN	(-LONG_MAX - 1L)
 
-#ifdef __MSHORT__
+#if defined(__MSHORT__) || defined(__PUREC__) || defined(__AHCC__)
 # define INT_MAX	SHRT_MAX
 # define UINT_MAX	USHRT_MAX
 #else

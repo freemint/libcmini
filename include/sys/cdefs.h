@@ -64,6 +64,12 @@
 
 #endif	/* GCC.  */
 
+#ifndef __attribute__
+#  ifndef __GNUC__
+#    define __attribute__(x)
+#  endif
+#endif
+
 #define __CONCAT(x,y)	x ## y
 #define __STRING(x)	#x
 #define __STRINGIFY(x)	__STRING(x)

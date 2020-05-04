@@ -12,5 +12,5 @@ int vsprintf(char *str, const char *format, va_list va)
 	doprnt(__addchar, &stream, format, va);
 	*stream.xstring = '\0';
 
-	return stream.xstring - str;
+	return (int)(stream.xstring - str);
 }

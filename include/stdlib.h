@@ -41,7 +41,7 @@ void abort(void);
    functions registered with `atexit' or `on_exit'.  */
 void _Exit (int __status) __THROW __attribute__ ((__noreturn__));
 
-#ifdef __MSHORT__
+#if defined(__MSHORT__) || defined(__PUREC__) || defined(__AHCC__)
 #define	RAND_MAX (0x7FFF)
 #else
 #define	RAND_MAX (0x7FFFFFFFL)

@@ -25,8 +25,8 @@ int isupper(int c);
 int isxdigit(int c);
 int isblank(int c);
 
-extern unsigned char const __libc_ctype[];
-extern unsigned char const __libc_ctype2[];
+extern unsigned char const __libc_ctype[256];
+extern unsigned char const __libc_ctype2[256];
 
 #define	_IScntrl	0x01		/* control character */
 #define	_ISdigit	0x02		/* numeric digit */

@@ -11,7 +11,7 @@ static int fpc(int c, void *fp)
 
 	if (!stream->__mode.__binary) {
 		if (c == '\n' && last_char != '\r') {
-			if (fputc('\r', stream) == EOF) {
+			if (putc('\r', stream) == EOF) {
 				ret = EOF;
 			}
 		}
@@ -20,7 +20,7 @@ static int fpc(int c, void *fp)
 	}
 
 	if (ret != EOF) {
-		ret = fputc(c, stream);
+		ret = putc(c, stream);
 	}
 
 	return ret;

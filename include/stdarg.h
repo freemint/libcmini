@@ -37,13 +37,18 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
 #ifndef __GNUC_VA_LIST
 #define __GNUC_VA_LIST
+#ifdef __GNUC__
 typedef __builtin_va_list __gnuc_va_list;
+#else
+typedef char *__gnuc_va_list;
+#endif
 #endif
 
 /* Define the standard macros for the user,
    if this invocation was from the user program.  */
 #ifdef _STDARG_H
 
+#ifdef __GNUC__
 #define va_start(v,l)	__builtin_va_start(v,l)
 #define va_end(v)	__builtin_va_end(v)
 #define va_arg(v,l)	__builtin_va_arg(v,l)
@@ -52,6 +57,17 @@ typedef __builtin_va_list __gnuc_va_list;
 #define va_copy(d,s)	__builtin_va_copy(d,s)
 #endif
 #define __va_copy(d,s)	__builtin_va_copy(d,s)
+#else
+#define va_start(ap, parmN) ((ap) = (va_list)...)
+#define va_arg(ap, type)    \
+    ((sizeof(type) == 1) ? \
+    (*(type *)((ap += 2) - 1)) : \
+    (*((type *)(ap))++))
+#define va_end(ap)	(void)0
+
+#define __va_copy(d,s)	(d) = (s)
+#define va_copy(d,s)	__va_copy(d,s)
+#endif
 
 /* Define va_list, if desired, from __gnuc_va_list. */
 /* We deliberately do not define va_list when called from

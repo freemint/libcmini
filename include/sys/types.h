@@ -9,7 +9,7 @@ typedef signed char __int8_t;
 typedef unsigned char __uint8_t;
 typedef signed short int __int16_t;
 typedef unsigned short int __uint16_t;
-#ifndef __MSHORT__
+#if !defined(__MSHORT__) && !defined(__PUREC__) && !defined(__AHHC__)
 typedef signed int __int32_t;
 typedef unsigned int __uint32_t;
 #else
@@ -31,7 +31,7 @@ typedef struct
 } __quad_t;
 typedef struct
 {
-  __u_long __val[2];
+  __uint32_t __val[2];
 } __u_quad_t;
 #endif  /* GNUC */
 typedef __quad_t __dev_t;	/* Type of device numbers.  */

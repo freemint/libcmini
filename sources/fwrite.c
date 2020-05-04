@@ -6,7 +6,7 @@
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-	long rc = Fwrite(FILE_GET_HANDLE(stream), size * nmemb, ptr);
+	long rc = Fwrite((int)FILE_GET_HANDLE(stream), size * nmemb, ptr);
 
 	if (rc < 0)
 	{

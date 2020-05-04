@@ -255,7 +255,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                     }
 
 
-                    field_width -= bufptr - buf;
+                    field_width -= (int)(bufptr - buf);
 
                     if (!flush_left) {
                         if (negative && pad == '0') {
@@ -474,7 +474,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
 #endif /* ONLY_INTEGER_IO */
 
-                        field_width -= bufptr - buf;
+                        field_width -= (int)(bufptr - buf);
 
                         if (!flush_left) {
                             if (negative && pad == '0') {
@@ -668,7 +668,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                             bufptr = "(nil)";
                         }
 
-                        field_width -= strlen(bufptr);
+                        field_width -= (int)strlen(bufptr);
 
                         if (!flush_left) {
                             while (field_width-- > 0) {

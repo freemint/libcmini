@@ -36,5 +36,5 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list va)
 			*stream.xestring = '\0';
 	}
 
-	return stream.xstring - str;
+	return (int)(stream.xstring - str);
 }
