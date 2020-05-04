@@ -12,6 +12,8 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include "ctypeint.h"
+
 
 #define _CTc _IScntrl
 #define _CTd _ISdigit
@@ -24,81 +26,268 @@
 
 unsigned char const __libc_ctype[UCHAR_MAX + 1] =
 {
-	_CTc, _CTc, _CTc, _CTc,					/* 0x00..0x03 */
-	_CTc, _CTc, _CTc, _CTc,					/* 0x04..0x07 */
-	_CTc, _CTc|_CTs, _CTc|_CTs, _CTc|_CTs,	/* 0x08..0x0B */
-	_CTc|_CTs, _CTc|_CTs, _CTc, _CTc,		/* 0x0C..0x0F */
+	/* 00 */ _CTc,
+	/* 01 */ _CTc,
+	/* 02 */ _CTc,
+	/* 03 */ _CTc,
+	/* 04 */ _CTc,
+	/* 05 */ _CTc,
+	/* 06 */ _CTc,
+	/* 07 */ _CTc,
+	/* 08 */ _CTc,
+	/* 09 */ _CTc|_CTs,
+	/* 0A */ _CTc|_CTs,
+	/* 0B */ _CTc|_CTs,
+	/* 0C */ _CTc|_CTs,
+	/* 0D */ _CTc|_CTs,
+	/* 0E */ _CTc,
+	/* 0F */ _CTc,
 
-	_CTc, _CTc, _CTc, _CTc,				/* 0x10..0x17 */
-	_CTc, _CTc, _CTc, _CTc,				/* 0x14..0x17 */
-	_CTc, _CTc, _CTc, _CTc,				/* 0x18..0x1B */
-	_CTc, _CTc, _CTc, _CTc,				/* 0x1C..0x1F */
+	/* 10 */ _CTc,
+	/* 11 */ _CTc,
+	/* 12 */ _CTc,
+	/* 13 */ _CTc,
+	/* 14 */ _CTc,
+	/* 15 */ _CTc,
+	/* 16 */ _CTc,
+	/* 17 */ _CTc,
+	/* 18 */ _CTc,
+	/* 19 */ _CTc,
+	/* 1A */ _CTc,
+	/* 1B */ _CTc,
+	/* 1C */ _CTc,
+	/* 1D */ _CTc,
+	/* 1E */ _CTc,
+	/* 1F */ _CTc,
 
-	_CTs|_CTP, _CTp|_CTP, _CTp|_CTP, _CTp|_CTP,			/* 0x20..0x23 */
-	_CTp|_CTP, _CTp|_CTP, _CTp|_CTP, _CTp|_CTP,			/* 0x24..0x27 */
-	_CTp|_CTP, _CTp|_CTP, _CTp|_CTP, _CTp|_CTP,			/* 0x28..0x2B */
-	_CTp|_CTP, _CTp|_CTP, _CTp|_CTP, _CTp|_CTP,			/* 0x2C..0x2F */
+	/* 20 */ _CTs|_CTP,
+	/* 21 */ _CTp|_CTP,
+	/* 22 */ _CTp|_CTP,
+	/* 23 */ _CTp|_CTP,
+	/* 24 */ _CTp|_CTP,
+	/* 25 */ _CTp|_CTP,
+	/* 26 */ _CTp|_CTP,
+	/* 27 */ _CTp|_CTP,
+	/* 28 */ _CTp|_CTP,
+	/* 29 */ _CTp|_CTP,
+	/* 2A */ _CTp|_CTP,
+	/* 2B */ _CTp|_CTP,
+	/* 2C */ _CTp|_CTP,
+	/* 2D */ _CTp|_CTP,
+	/* 2E */ _CTp|_CTP,
+	/* 2F */ _CTp|_CTP,
 
-	_CTd|_CTx|_CTP, _CTd|_CTx|_CTP,
-	_CTd|_CTx|_CTP, _CTd|_CTx|_CTP,	/* 0x30..0x33 */
-	_CTd|_CTx|_CTP, _CTd|_CTx|_CTP,
-	_CTd|_CTx|_CTP, _CTd|_CTx|_CTP,	/* 0x34..0x37 */
-	_CTd|_CTx|_CTP, _CTd|_CTx|_CTP,
-	_CTp|_CTP, _CTp|_CTP,			/* 0x38..0x3B */
-	_CTp|_CTP, _CTp|_CTP,
-	_CTp|_CTP, _CTp|_CTP,			/* 0x3C..0x3F */
+	/* 30 */ _CTd|_CTx|_CTP,
+	/* 31 */ _CTd|_CTx|_CTP,
+	/* 32 */ _CTd|_CTx|_CTP,
+	/* 33 */ _CTd|_CTx|_CTP,
+	/* 34 */ _CTd|_CTx|_CTP,
+	/* 35 */ _CTd|_CTx|_CTP,
+	/* 36 */ _CTd|_CTx|_CTP,
+	/* 37 */ _CTd|_CTx|_CTP,
+	/* 38 */ _CTd|_CTx|_CTP,
+	/* 39 */ _CTd|_CTx|_CTP,
+	/* 3A */ _CTp|_CTP,
+	/* 3B */ _CTp|_CTP,
+	/* 3C */ _CTp|_CTP,
+	/* 3D */ _CTp|_CTP,
+	/* 3E */ _CTp|_CTP,
+	/* 3F */ _CTp|_CTP,
 
-	_CTp|_CTP, _CTu|_CTx|_CTP,
-	_CTu|_CTx|_CTP, _CTu|_CTx|_CTP,	/* 0x40..0x43 */
-	_CTu|_CTx|_CTP, _CTu|_CTx|_CTP,
-	_CTu|_CTx|_CTP, _CTu|_CTP,		/* 0x44..0x47 */
-	_CTu|_CTP, _CTu|_CTP,
-	_CTu|_CTP, _CTu|_CTP,			/* 0x48..0x4B */
-	_CTu|_CTP, _CTu|_CTP,
-	_CTu|_CTP, _CTu|_CTP,			/* 0x4C..0x4F */
+	/* 40 */ _CTp|_CTP,
+	/* 41 */ _CTu|_CTx|_CTP,
+	/* 42 */ _CTu|_CTx|_CTP,
+	/* 43 */ _CTu|_CTx|_CTP,
+	/* 44 */ _CTu|_CTx|_CTP,
+	/* 45 */ _CTu|_CTx|_CTP,
+	/* 46 */ _CTu|_CTx|_CTP,
+	/* 47 */ _CTu|_CTP,
+	/* 48 */ _CTu|_CTP,
+	/* 49 */ _CTu|_CTP,
+	/* 4A */ _CTu|_CTP,
+	/* 4B */ _CTu|_CTP,
+	/* 4C */ _CTu|_CTP,
+	/* 4D */ _CTu|_CTP,
+	/* 4E */ _CTu|_CTP,
+	/* 4F */ _CTu|_CTP,
 
-	_CTu|_CTP, _CTu|_CTP,
-	_CTu|_CTP, _CTu|_CTP,			/* 0x50..0x53 */
-	_CTu|_CTP, _CTu|_CTP,
-	_CTu|_CTP, _CTu|_CTP,			/* 0x54..0x57 */
-	_CTu|_CTP, _CTu|_CTP,
-	_CTu|_CTP, _CTp|_CTP,			/* 0x58..0x5B */
-	_CTp|_CTP, _CTp|_CTP,
-	_CTp|_CTP, _CTp|_CTP,			/* 0x5C..0x5F */
+	/* 50 */ _CTu|_CTP,
+	/* 51 */ _CTu|_CTP,
+	/* 52 */ _CTu|_CTP,
+	/* 53 */ _CTu|_CTP,
+	/* 54 */ _CTu|_CTP,
+	/* 55 */ _CTu|_CTP,
+	/* 56 */ _CTu|_CTP,
+	/* 57 */ _CTu|_CTP,
+	/* 58 */ _CTu|_CTP,
+	/* 59 */ _CTu|_CTP,
+	/* 5A */ _CTu|_CTP,
+	/* 5B */ _CTp|_CTP,
+	/* 5C */ _CTp|_CTP,
+	/* 5D */ _CTp|_CTP,
+	/* 5E */ _CTp|_CTP,
+	/* 5F */ _CTp|_CTP,
 
-	_CTp|_CTP, _CTl|_CTx|_CTP,
-	_CTl|_CTx|_CTP, _CTl|_CTx|_CTP,	/* 0x60..0x63 */
-	_CTl|_CTx|_CTP, _CTl|_CTx|_CTP,
-	_CTl|_CTx|_CTP, _CTl|_CTP,		/* 0x64..0x67 */
-	_CTl|_CTP, _CTl|_CTP,
-	_CTl|_CTP, _CTl|_CTP,			/* 0x68..0x6B */
-	_CTl|_CTP, _CTl|_CTP,
-	_CTl|_CTP, _CTl|_CTP,			/* 0x6C..0x6F */
+	/* 60 */ _CTp|_CTP,
+	/* 61 */ _CTl|_CTx|_CTP,
+	/* 62 */ _CTl|_CTx|_CTP,
+	/* 63 */ _CTl|_CTx|_CTP,
+	/* 64 */ _CTl|_CTx|_CTP,
+	/* 65 */ _CTl|_CTx|_CTP,
+	/* 66 */ _CTl|_CTx|_CTP,
+	/* 67 */ _CTl|_CTP,
+	/* 68 */ _CTl|_CTP,
+	/* 69 */ _CTl|_CTP,
+	/* 6A */ _CTl|_CTP,
+	/* 6B */ _CTl|_CTP,
+	/* 6C */ _CTl|_CTP,
+	/* 6D */ _CTl|_CTP,
+	/* 6E */ _CTl|_CTP,
+	/* 6F */ _CTl|_CTP,
 
-	_CTl|_CTP, _CTl|_CTP,
-	_CTl|_CTP, _CTl|_CTP,			/* 0x70..0x73 */
-	_CTl|_CTP, _CTl|_CTP,
-	_CTl|_CTP, _CTl|_CTP,			/* 0x74..0x77 */
-	_CTl|_CTP, _CTl|_CTP,
-	_CTl|_CTP, _CTp|_CTP,			/* 0x78..0x7B */
-	_CTp|_CTP, _CTp|_CTP,
-	_CTp|_CTP, _CTc,				/* 0x7C..0x7F */
+	/* 70 */ _CTl|_CTP,
+	/* 71 */ _CTl|_CTP,
+	/* 72 */ _CTl|_CTP,
+	/* 73 */ _CTl|_CTP,
+	/* 74 */ _CTl|_CTP,
+	/* 75 */ _CTl|_CTP,
+	/* 76 */ _CTl|_CTP,
+	/* 77 */ _CTl|_CTP,
+	/* 78 */ _CTl|_CTP,
+	/* 79 */ _CTl|_CTP,
+	/* 7A */ _CTl|_CTP,
+	/* 7B */ _CTp|_CTP,
+	/* 7C */ _CTp|_CTP,
+	/* 7D */ _CTp|_CTP,
+	/* 7E */ _CTp|_CTP,
+	/* 7F */ _CTc,
 
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0x87 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0x8F */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0x97 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0x9F */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xA7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xAF */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xB7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xBF */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xC7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xCF */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xD7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xDF */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xE7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xEF */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc, /* 0x80..0xF7 */
-	_CTc, _CTc, _CTc, _CTc, _CTc, _CTc, _CTc,
-	0 /* EOF */
+	/* 80 */ _CTc,
+	/* 81 */ _CTc,
+	/* 82 */ _CTc,
+	/* 83 */ _CTc,
+	/* 84 */ _CTc,
+	/* 85 */ _CTc,
+	/* 86 */ _CTc,
+	/* 87 */ _CTc,
+	/* 88 */ _CTc,
+	/* 89 */ _CTc,
+	/* 8A */ _CTc,
+	/* 8B */ _CTc,
+	/* 8C */ _CTc,
+	/* 8D */ _CTc,
+	/* 8E */ _CTc,
+	/* 8F */ _CTc,
+	/* 90 */ _CTc,
+	/* 91 */ _CTc,
+	/* 92 */ _CTc,
+	/* 93 */ _CTc,
+	/* 94 */ _CTc,
+	/* 95 */ _CTc,
+	/* 96 */ _CTc,
+	/* 97 */ _CTc,
+	/* 98 */ _CTc,
+	/* 99 */ _CTc,
+	/* 9A */ _CTc,
+	/* 9B */ _CTc,
+	/* 9C */ _CTc,
+	/* 9D */ _CTc,
+	/* 9E */ _CTc,
+	/* 9F */ _CTc,
+	/* A0 */ _CTc,
+	/* A1 */ _CTc,
+	/* A2 */ _CTc,
+	/* A3 */ _CTc,
+	/* A4 */ _CTc,
+	/* A5 */ _CTc,
+	/* A6 */ _CTc,
+	/* A7 */ _CTc,
+	/* A8 */ _CTc,
+	/* A9 */ _CTc,
+	/* AA */ _CTc,
+	/* AB */ _CTc,
+	/* AC */ _CTc,
+	/* AD */ _CTc,
+	/* AE */ _CTc,
+	/* AF */ _CTc,
+	/* B0 */ _CTc,
+	/* B1 */ _CTc,
+	/* B2 */ _CTc,
+	/* B3 */ _CTc,
+	/* B4 */ _CTc,
+	/* B5 */ _CTc,
+	/* B6 */ _CTc,
+	/* B7 */ _CTc,
+	/* B8 */ _CTc,
+	/* B9 */ _CTc,
+	/* BA */ _CTc,
+	/* BB */ _CTc,
+	/* BC */ _CTc,
+	/* BD */ _CTc,
+	/* BE */ _CTc,
+	/* BF */ _CTc,
+	/* C0 */ _CTc,
+	/* C1 */ _CTc,
+	/* C2 */ _CTc,
+	/* C3 */ _CTc,
+	/* C4 */ _CTc,
+	/* C5 */ _CTc,
+	/* C6 */ _CTc,
+	/* C7 */ _CTc,
+	/* C8 */ _CTc,
+	/* C9 */ _CTc,
+	/* CA */ _CTc,
+	/* CB */ _CTc,
+	/* CC */ _CTc,
+	/* CD */ _CTc,
+	/* CE */ _CTc,
+	/* CF */ _CTc,
+	/* D0 */ _CTc,
+	/* D1 */ _CTc,
+	/* D2 */ _CTc,
+	/* D3 */ _CTc,
+	/* D4 */ _CTc,
+	/* D5 */ _CTc,
+	/* D6 */ _CTc,
+	/* D7 */ _CTc,
+	/* D8 */ _CTc,
+	/* D9 */ _CTc,
+	/* DA */ _CTc,
+	/* DB */ _CTc,
+	/* DC */ _CTc,
+	/* DD */ _CTc,
+	/* DE */ _CTc,
+	/* DF */ _CTc,
+	/* E0 */ _CTc,
+	/* E1 */ _CTc,
+	/* E2 */ _CTc,
+	/* E3 */ _CTc,
+	/* E4 */ _CTc,
+	/* E5 */ _CTc,
+	/* E6 */ _CTc,
+	/* E7 */ _CTc,
+	/* E8 */ _CTc,
+	/* E9 */ _CTc,
+	/* EA */ _CTc,
+	/* EB */ _CTc,
+	/* EC */ _CTc,
+	/* ED */ _CTc,
+	/* EE */ _CTc,
+	/* EF */ _CTc,
+	/* F0 */ _CTc,
+	/* F1 */ _CTc,
+	/* F2 */ _CTc,
+	/* F3 */ _CTc,
+	/* F4 */ _CTc,
+	/* F5 */ _CTc,
+	/* F6 */ _CTc,
+	/* F7 */ _CTc,
+	/* F8 */ _CTc,
+	/* F9 */ _CTc,
+	/* FA */ _CTc,
+	/* FB */ _CTc,
+	/* FC */ _CTc,
+	/* FD */ _CTc,
+	/* FE */ _CTc,
+	/* FF */ 0
 };
