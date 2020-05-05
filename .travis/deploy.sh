@@ -3,27 +3,3 @@
 # -u: Treat unset variables as an error when substituting.
 
 echo "no deployment step implemented (yet)"
-
-#
-# trigger a rebuild of COPS & hypview
-#
-body='{
-"request": {
-"branch":"master"
-}}'
-
-curl -s -X POST \
-   -H "Content-Type: application/json" \
-   -H "Accept: application/json" \
-   -H "Travis-API-Version: 3" \
-   -H "Authorization: token 3jaognrl6GxeRNf1xO-Dyg" \
-   -d "$body" \
-   https://api.travis-ci.org/repo/freemint%2Fcops/requests
-
-curl -s -X POST \
-   -H "Content-Type: application/json" \
-   -H "Accept: application/json" \
-   -H "Travis-API-Version: 3" \
-   -H "Authorization: token 3jaognrl6GxeRNf1xO-Dyg" \
-   -d "$body" \
-   https://api.travis-ci.org/repo/freemint%2Fhypview/requests
