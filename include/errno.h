@@ -11,6 +11,7 @@ extern int errno;
 #define ELOOP   80
 #define EISDIR  24
 #define EACCES  36
+#define ENMFILES 49
 #define EEXIST  85
 #define ERANGE  88
 #define EDOM    89

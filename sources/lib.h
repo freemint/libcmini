@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/types.h>
 
 /* definitions needed for stack stuff */
 
@@ -43,6 +44,9 @@ void _crtinit(void);
 void _crtinit_noargs(void);
 
 extern FILE *__stdio_head;
+
+/* inode.c */
+extern __ino_t __inode;
 
 #undef __set_errno
 #define __set_errno(e) (errno = (int)(e))
