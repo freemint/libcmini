@@ -48,6 +48,13 @@
 #define AND_MEMORY
 #endif
 
+#if __GNUC_PREREQ(2, 5)
+#define __NORETURN __attribute__ ((noreturn))
+#define __EXITING void
+#else
+#define __EXITING volatile void
+#endif
+
 #else	/* Not GCC.  */
 
 # define __GNUC_PREREQ(maj, min) 0
@@ -68,6 +75,14 @@
 #  ifndef __GNUC__
 #    define __attribute__(x)
 #  endif
+#endif
+
+#ifndef __NORETURN
+#define __NORETURN
+#endif
+
+#ifndef __EXITING
+#define __EXITING
 #endif
 
 #define __CONCAT(x,y)	x ## y
