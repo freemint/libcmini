@@ -29,7 +29,9 @@ script:
 - make clean
 - make all
 - make release
-before_deploy: 
+before_deploy:
+after_script:
+  - ./.travis/deploy.sh
 deploy:
   provider: releases
   api_key:
