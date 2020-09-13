@@ -35,44 +35,8 @@ fputs(const char* s, FILE* stream)
     size_t len = strlen(s);
     int    ret = len;
 
-    if (len == 1) {
-        if (*s == '\n' && !stream->__mode.__binary && fputc('\r', stream) < 0) {
-            ret = EOF;
-        } else if (fputc(*s, stream) < 0) {
-            ret = EOF;
-        }
-    } else if (stream->__mode.__binary) {
-        if (fwrite(s, sizeof(char), len, stream) != len) {
-            ret = EOF;
-        }
-    } else {
-        char* nl = strchr(s, '\n');
-
-        while (nl != NULL) {
-            if (nl == s || (nl > s && nl[-1] != '\r')) {
-                *nl = '\0';
-                len = strlen(s);
-
-                if (fwrite(s, sizeof(char), len, stream) != len || fwrite("\r\n", sizeof(char), 2, stream) != 2) {
-                    ret = EOF;
-                    *nl = '\n';
-                    break;
-                }
-
-                *nl = '\n';
-                s   = nl + 1;
-            }
-
-            nl = strchr(nl + 1, '\n');
-        }
-
-        if (ret != EOF && s != NULL) {
-            len = strlen(s);
-
-            if (fwrite(s, sizeof(char), len, stream) != len) {
-                ret = EOF;
-            }
-        }
+    if (fwrite(s, sizeof(char), len, stream) != len) {
+        ret = EOF;
     }
 
     return ret;
