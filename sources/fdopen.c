@@ -75,6 +75,9 @@ FILE *fdopen(int fd, const char *mode)
     fp->__magic = _IOMAGIC;
     FILE_SET_HANDLE(fp, fd);
     fp->__pushback = EOF;
+#ifdef STDIO_MAP_NEWLINE
+    fp->__last_char = EOF;
+#endif /* defined STDIO_MAP_NEWLINE */
     fp->__next = __stdio_head;
     fp->__eof = 0;
     fp->__error = 0;

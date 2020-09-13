@@ -32,6 +32,9 @@ struct __stdio_file
 
     void *__cookie;			/* Magic cookie. Holds GEMDOS handle */
 	int __pushback;
+#ifdef STDIO_MAP_NEWLINE
+    int __last_char;
+#endif /* defined STDIO_MAP_NEWLINE */
     FILE *__next;     		/* Next FILE in the linked list.  */
 	__io_mode __mode;     /* File access mode.  */
 	unsigned int __eof:1;

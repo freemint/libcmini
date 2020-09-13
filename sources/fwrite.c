@@ -33,9 +33,11 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
             for (put = 0, got = 0; put < limit && got < n; put++, got++)
             {
-                if (str[got] == '\n' && (got == 0 || str[got - 1] != '\r'))
-                    buffer[put++] = '\r';
-                buffer[put] = str[got];
+                if (str[got] == '\n')
+                    if (got == 0 || str[got - 1] != '\r')
+                        if (got > 0 || stream->__last_char != '\r')
+                            buffer[put++] = '\r';
+                stream->__last_char = buffer[put] = str[got];
             }
 
             if (put > 0)
