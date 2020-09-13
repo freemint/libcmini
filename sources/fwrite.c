@@ -19,7 +19,6 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
         rc = Fwrite(fd, size * nmemb, ptr);
     } else
     {
-        const char* crlf = "\r\n";
         const unsigned char* str = ptr;
         size_t n = size * nmemb;
 
