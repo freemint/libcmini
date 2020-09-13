@@ -4,9 +4,62 @@
 #include <sys/types.h>
 #include "lib.h"
 
+#ifdef STDIO_MAP_NEWLINE
+# define BUFSIZE  8192
+#endif /* defined STDIO_MAP_NEWLINE */
+
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-	long rc = Fwrite((int)FILE_GET_HANDLE(stream), size * nmemb, ptr);
+#ifdef STDIO_MAP_NEWLINE
+    long rc;
+    int  fd = (int)FILE_GET_HANDLE(stream);
+
+    if (stream->__mode.__binary)
+    {
+        rc = Fwrite(fd, size * nmemb, ptr);
+    } else
+    {
+        const char* crlf = "\r\n";
+        const unsigned char* str = ptr;
+        size_t n = size * nmemb;
+
+        rc = 0;
+
+        while (n > 0)
+        {
+            char buffer[BUFSIZE];
+            register size_t put;
+            register size_t got;
+            size_t limit = (BUFSIZE > n) ? n : BUFSIZE;
+
+            for (put = 0, got = 0; put < limit && got < n; put++, got++)
+            {
+                if (str[got] == '\n' && (got == 0 || str[got - 1] != '\r'))
+                    buffer[put++] = '\r';
+                buffer[put] = str[got];
+            }
+
+            if (put > 0)
+            {
+                long count;
+
+                count = Fwrite(fd, put, buffer);
+
+                if (count < 0)
+                {
+                    rc = count;
+                    break;
+                } else
+                    rc += count;
+            }
+
+            str += got;
+            n -= got;
+        }
+    }
+#else
+    long rc = Fwrite((int)FILE_GET_HANDLE(stream), size * nmemb, ptr);
+#endif /* defined STDIO_MAP_NEWLINE */
 
 	if (rc < 0)
 	{
