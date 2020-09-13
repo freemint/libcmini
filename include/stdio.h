@@ -90,7 +90,6 @@ int puts(const char *s);
 int fputc(int c, FILE *stream);
 int putc(int c, FILE *stream);
 int putchar(int c);
-int puts(const char *s);
 
 int fgetc(FILE *stream);
 char* fgets(char *s, int n, FILE *stream);
