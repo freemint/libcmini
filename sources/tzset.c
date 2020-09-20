@@ -27,8 +27,8 @@ long  timezone     = 0;
 char* tzname[2]    = { _tzdflt, _tzdflt };
 
 
-const char* get_tz_name(const char* src, char* dest);
-const char* get_tz_offset(const char* src, int* error);
+static const char* get_tz_name(const char* src, char* dest);
+static const char* get_tz_offset(const char* src, int* error);
 
 
 void
