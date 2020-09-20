@@ -8,26 +8,27 @@
 #include <ext.h>
 #include <errno.h>
 #include <osbind.h>
+#include "lib.h"
 
 
-int
-findnext(struct ffblk* ffblk)
+int findnext(struct ffblk* ffblk)
 {
-	_DTA* dta = Fgetdta();
-	int   ret;
+	_DTA* dta;
+	int rc;
+
+    dta = Fgetdta();
 
 	// struct ffblk is identical to _DTA
 	Fsetdta(ffblk);
-	ret = Fsnext();
+    rc = Fsnext();
 
 	Fsetdta(dta);
 
-	if (ret < 0) {
-		errno = ret;
-		ret   = -1;
-	} else {
-		errno = 0;
+    if (rc < 0)
+    {
+        __set_errno(-rc);
+		return -1;
 	}
 
-	return ret;
+	return 0;
 }

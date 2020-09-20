@@ -8,19 +8,16 @@
 #include <ext.h>
 #include <errno.h>
 #include <osbind.h>
+#include "lib.h"
 
 
-int
-chdir(char* filename)
+int chdir(char* filename)
 {
-	int ret = Dsetpath(filename);
-
-	if (ret < 0) {
-		errno = ENOENT;
-		ret   = -1;
-	} else {
-		errno = 0;
+    if (Dsetpath(filename) < 0)
+    {
+		__set_errno(ENOENT);
+		return -1;
 	}
 
-	return ret;
+	return 0;
 }
