@@ -20,9 +20,7 @@ getcwd(char* buffer, int bufflen)
 		buf = malloc(bufflen);
 	}
 
-	if (buf == NULL) {
-		errno = ENOMEM;
-	} else {
+	if (buf != NULL) {
 		char path[MAXPATH];
 
 		path[0] = 'A' + Dgetdrv();
