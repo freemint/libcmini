@@ -39,11 +39,10 @@ DIR *opendir(const char *uname)
 
     strcpy(namebuf, uname);
     name = namebuf;
-    
+
     d = malloc(sizeof(DIR));
     if (!d)
     {
-        __set_errno(ENOMEM);
         return NULL;
     }
 
