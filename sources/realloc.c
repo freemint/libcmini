@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include "mallint.h"
+#include "lib.h"
 
 
 void *realloc(void *r, size_t n)
@@ -11,7 +12,7 @@ void *realloc(void *r, size_t n)
 	size_t sz;
 
 	/* obscure features:
-	 * 
+	 *
 	 * realloc(NULL,n) is the same as malloc(n)
 	 * realloc(p, 0) is the same as free(p)
 	 */
@@ -21,6 +22,12 @@ void *realloc(void *r, size_t n)
 	if (n == 0)
 	{
 		free(r);
+
+        /* errno must be set to 0, because NULL will be returned
+         * and this does not indicate an error
+         */
+        __set_errno(0);
+
 		return NULL;
 	}
 
@@ -28,7 +35,7 @@ void *realloc(void *r, size_t n)
 
 	if (p->valid != VAL_ALLOC)
 	{
-		errno = EINVAL;
+        __set_errno(EINVAL);
 		return NULL;
 	}
 
