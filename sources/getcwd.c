@@ -9,34 +9,50 @@
 #include <errno.h>
 #include <string.h>
 #include <osbind.h>
+#include "lib.h"
 
 
-char*
-getcwd(char* buffer, int bufflen)
+char* getcwd(char* buffer, int bufflen)
 {
-	char* buf = buffer;
+    if (bufflen < 0)
+    {
+        __set_errno(ERANGE);
+        buffer = NULL;
+    } else
+    {
+        char path[MAXPATH];
 
-	if (buf == NULL) {
-		buf = malloc(bufflen);
-	}
+        if (buffer == NULL && bufflen > 0)
+        {
+            buffer = malloc(bufflen);
 
-	if (buf != NULL) {
-		char path[MAXPATH];
+            if (buffer == NULL)
+                return NULL;
+        }
 
-		path[0] = 'A' + Dgetdrv();
-		path[1] = ':';
+        if (Dgetpath(&path[2], 0) < 0)
+        {
+            __set_errno(ENODEV);
+        } else
+        {
+            path[0] = 'A' + Dgetdrv();
+            path[1] = ':';
 
-		if (Dgetpath(&path[2], 0) < 0) {
-			errno = ENODEV;
-		} else {
-			strncpy(buf, path, bufflen);
-			buf[bufflen] = '\0';
+            if (buffer == NULL)
+            {
+                /* buffer is NULL and bufflen <= 0 -> allocate as much bytes as needed */
+                buffer = strdup(path);
+            } else if (bufflen > strlen(path))
+            {
+                strcpy(buffer, path);
+            } else
+            {
+                /* bufflen is too small */
+                buffer = NULL;
+                __set_errno(ERANGE);
+            }
+        }
+    }
 
-			if (bufflen <= strlen(path)) {
-				errno = ERANGE;
-			}
-		}
-	}
-
-	return buf;
+    return buffer;
 }
