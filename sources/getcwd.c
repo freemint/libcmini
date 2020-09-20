@@ -36,8 +36,6 @@ getcwd(char* buffer, int bufflen)
 
 			if (bufflen <= strlen(path)) {
 				errno = ERANGE;
-			} else {
-				errno = 0;
 			}
 		}
 	}

@@ -8,29 +8,31 @@
 #include <ext.h>
 #include <errno.h>
 #include <osbind.h>
+#include "lib.h"
 
 
-long
-filelength(int handle)
+long filelength(int handle)
 {
 	long ret;
-	long pos = Fseek(0, handle, SEEK_CUR);
+	long pos;
 
-	if (pos < 0) {
-		ret   = -1;
-		errno = EBADF;
-	} else {
-		ret = Fseek(0, handle, SEEK_END);
+    pos = Fseek(0, handle, SEEK_CUR);
 
-		if (ret < 0) {
-			ret   = -1;
-			errno = EBADF;
-		} else {
-			errno = 0;
-		}
-
-		Fseek(pos, handle, SEEK_SET);
+	if (pos < 0)
+    {
+        __set_errno(-pos);
+		return -1;
 	}
+
+    ret = Fseek(0, handle, SEEK_END);
+
+    if (ret < 0)
+    {
+        __set_errno(-ret);
+        return -1;
+    }
+
+    Fseek(pos, handle, SEEK_SET);
 
 	return ret;
 }
