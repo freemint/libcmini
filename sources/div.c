@@ -24,7 +24,7 @@ div_t div(int num, int denom)
 	return res;
 }
 #ifndef __MSHORT__
-#if defined(__GNUC__) && __GNUC__ >= 7
+#if defined(__GNUC__) && __GNUC__ >= 8
 #pragma GCC diagnostic ignored "-Wattribute-alias"
 #endif
 ldiv_t ldiv(long num, long denom) __attribute__((alias("div")));
