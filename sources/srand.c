@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <limits.h>
 
-extern unsigned long _seed;
+extern unsigned long _lseed;
 
 void srand(unsigned int seed)
 {
-	_seed = seed;
+	_lseed = seed;
 }
