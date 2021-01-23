@@ -246,35 +246,87 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                         } while (ulongval > 0);
                     }
 
-                    if (flush_left || pad != '0') {
-                        if (negative) {
-                            *bufptr++ = '-';
-                        } else if (space_or_sign != '\0') {
-                            *bufptr++ = space_or_sign;
+                    {
+                        int num_zeros;
+                        int num_blanks;
+                        int sign_extra;
+
+                        if (precision > 0) {
+                            num_zeros  = precision;
+                            num_blanks = field_width - num_zeros;
+                            sign_extra = TRUE;
+                            pad        = ' ';
+
+                            if (num_blanks < 0) {
+                                num_blanks = 0;
+                            }
+                        } else {
+                            if (pad == '0') {
+                                num_zeros  = field_width;
+                                num_blanks = 0;
+                            } else {
+                                num_zeros  = 0;
+                                num_blanks = field_width;
+                            }
+
+                            sign_extra = FALSE;
                         }
-                    }
 
+                        field_width = num_zeros + num_blanks;
+                        num_zeros  -= (int)(bufptr - buf);
 
-                    field_width -= (int)(bufptr - buf);
-
-                    if (!flush_left) {
-                        if (negative && pad == '0') {
-                            count += addchar(attributes | '-', stream);
-                            --field_width;
+                        if (num_zeros > 0) {
+                            pad = '0';
                         }
 
-                        while (field_width-- > 0) {
-                            count += addchar(attributes | (unsigned char)pad, stream);
+                        if ((flush_left && precision <= 0) || num_zeros <= 0) {
+                            if (negative) {
+                                *bufptr++ = '-';
+                                negative = FALSE;
+                            } else if (space_or_sign != '\0') {
+                                *bufptr++ = space_or_sign;
+                            }
+                        } else {
+                            char* signptr;
+
+                            while (num_zeros > 0) {
+                                *bufptr++ = pad;
+
+                                if (--num_zeros == 0) {
+                                    pad = ' ';
+                                }
+                            }
+
+                            signptr = sign_extra ? bufptr : (bufptr - 1);
+
+                            if (negative) {
+                                *signptr++ = '-';
+                                negative = FALSE;
+                            } else if (space_or_sign != '\0') {
+                                *signptr++ = space_or_sign;
+                            }
+
+                            if (sign_extra) {
+                                bufptr = signptr;
+                            }
                         }
-                    }
 
-                    for (--bufptr; bufptr >= buf; --bufptr) {
-                        count += addchar(attributes | (unsigned char)*bufptr, stream);
-                    }
+                        field_width -= (int)(bufptr - buf);
 
-                    if (flush_left) {
-                        while (field_width-- > 0) {
-                            count += addchar(attributes | ' ', stream);
+                        if (!flush_left) {
+                            while (field_width-- > 0) {
+                                count += addchar(attributes | (unsigned char)pad, stream);
+                            }
+                        }
+
+                        for (--bufptr; bufptr >= buf; --bufptr) {
+                            count += addchar(attributes | (unsigned char)*bufptr, stream);
+                        }
+
+                        if (flush_left) {
+                            while (field_width-- > 0) {
+                                count += addchar(attributes | ' ', stream);
+                            }
                         }
                     }
 
@@ -512,6 +564,8 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                 case 'u':
                     {
                         const char* numbers = "0123456789abcdef";
+                        const char* prefix = NULL;
+                        int len_prefix = 0;
 
                         switch (do_long) {
                             case INT_VAL:
@@ -546,6 +600,11 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
                                     }
 
+                                    if (ulonglongval == 0) {
+                                        /* no prefix if value is 0 */
+                                        hash = FALSE;
+                                    }
+
                                     do {
                                         *bufptr++     = numbers[ulonglongval % base];
                                         ulonglongval /= base;
@@ -565,7 +624,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
                         }
 
-                        if(bufptr == buf) {
+                        if (bufptr == buf) {
                             unsigned long base;
 
                             switch (fmt) {
@@ -587,6 +646,11 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
                             }
 
+                            if (ulongval == 0) {
+                                /* no prefix if value is 0 */
+                                hash = FALSE;
+                            }
+
                             do {
                                 *bufptr++ = numbers[ulongval % base];
                                 ulongval /= base;
@@ -597,10 +661,14 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                             switch (fmt) {
                                 case 'X':
                                 case 'x':
-                                    *bufptr++ = 'x';
+                                    prefix = "x0";
+                                    *(char*)prefix = fmt;
+                                    len_prefix = 2;
+                                    break;
 
                                 case 'o':
-                                    *bufptr++ = '0';
+                                    prefix = "0";
+                                    len_prefix = 1;
                                     break;
 
                                 default:
@@ -610,10 +678,66 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                         }
 
                         {
-                            int i = field_width - (int)(bufptr - buf);
+                            int num_zeros;
+                            int num_blanks;
+
+                            if (precision > 0) {
+                                num_zeros  = precision;
+                                num_blanks = field_width - num_zeros;
+                                pad        = ' ';
+
+                                if (num_blanks < 0) {
+                                    num_blanks = 0;
+                                }
+                            } else {
+                                if (pad == '0' && !flush_left) {
+                                    num_zeros  = field_width;
+                                    num_blanks = 0;
+                                } else {
+                                    num_zeros  = 0;
+                                    num_blanks = field_width;
+                                }
+                            }
+
+                            field_width = num_zeros + num_blanks;
+                            num_zeros  -= (int)(bufptr - buf);
+
+                            if (prefix != NULL && (fmt == 'o' || pad == '0')) {
+                                if (num_zeros > 0) {
+                                    num_zeros -= len_prefix;
+
+                                    if (num_blanks > 0) {
+                                        ++num_blanks;
+                                    }
+                                }
+                            }
+
+                            if (num_zeros > 0) {
+                                pad = '0';
+
+                                while (num_zeros-- > 0) {
+                                    *bufptr++ = pad;
+
+                                    if (num_zeros == 0) {
+                                        pad = ' ';
+
+                                        if (prefix != NULL) {
+                                            do {
+                                                *bufptr++ = *prefix++;
+                                            } while (*prefix != '\0');
+                                        }
+                                    }
+                                }
+                            } else if (prefix != NULL) {
+                                do {
+                                    *bufptr++ = *prefix++;
+                                } while (*prefix != '\0');
+                            }
+
+                            field_width -= (int)(bufptr - buf);
 
                             if (!flush_left) {
-                                while (i-- > 0) {
+                                while (field_width-- > 0) {
                                     count += addchar(attributes | (unsigned char)pad, stream);
                                 }
                             }
@@ -623,7 +747,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                             }
 
                             if (flush_left) {
-                                while (i-- > 0) {
+                                while (field_width-- > 0) {
                                     count += addchar(attributes | ' ', stream);
                                 }
                             }
