@@ -57,7 +57,7 @@ DIR *opendir(const char *uname)
                 *p = '\\';
 
         /* make sure the string ends in '\' */
-        if (p != name || *(p-1) != '\\')
+		if (p != name || ((p != name) && (*(p-1) != '\\')) )
         {
             *p++ = '\\';
         }
