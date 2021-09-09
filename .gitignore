@@ -7,3 +7,4 @@ Make.config.local
 *.d
 depend
 mapfile
+.vscode
