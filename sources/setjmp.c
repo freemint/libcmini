@@ -30,9 +30,9 @@ int setjmp(jmp_buf buf)
 
 void longjmp(jmp_buf buf, int val)
 {
-	register int d0 __asm__("%d0") = val;
+	register int d0 __asm__("%d0") = val ? val : 1;
 	register long *a0 __asm__("%a0") = buf;
-	
+
 	__asm__ __volatile__(
 		"\tmovem.l	(%[a0]),%%d2-%%d7/%%a1-%%a7\n"
 #ifdef __mcffpu__
