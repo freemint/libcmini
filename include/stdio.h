@@ -58,16 +58,6 @@ extern FILE *stderr;
 #define BUFSIZ          1024
 #define EOF             (-1)
 
-/*
- * access modes for open()
- */
-#define O_RDONLY        0x00    /* open read-only */
-#define O_WRONLY        0x01    /* open write-only (this doesn't work apparently on _all_ TOS versions */
-#define O_RDWR          0x02    /* open for reading and writing */
-#define O_APPEND        0x08    /* position file pointer to end of file before each write */
-#define O_CREAT         0x20    /* create file if it doesn't exist */
-#define O_TRUNC         0x40    /* truncate to zero size */
-#define O_EXCL          0x80    /* ? */
 
 #define SEEK_SET    0   /* Seek from beginning of file.  */
 #define SEEK_CUR    1   /* Seek from current position.  */
