@@ -479,6 +479,36 @@ __extension__								\
 	retvalue;							\
 })
 
+#define trap_13_wwlwwwl(n, a, b, c, d, e, f)				\
+__extension__								\
+({									\
+	register long __retvalue __asm__("d0");				\
+	short _a = (short)(a);			\
+	long  _b = (long) (b);			\
+	short _c = (short)(c);			\
+	short _d = (short)(d);			\
+	short _e = (short)(e);			\
+	long  _f = (long)(f);			\
+									\
+	__asm__ volatile						\
+	(								\
+		"movl	%7,%%sp@-\n\t"					\
+		"movw	%6,%%sp@-\n\t"					\
+		"movw	%5,%%sp@-\n\t"					\
+		"movw	%4,%%sp@-\n\t"					\
+		"movl	%3,%%sp@-\n\t"					\
+		"movw	%2,%%sp@-\n\t"					\
+		"movw	%1,%%sp@-\n\t"					\
+		"trap	#13\n\t"					\
+		"lea	%%sp@(18),%%sp"					\
+	: "=r"(__retvalue)			/* outputs */		\
+	: "g"(n), "r"(_a),						\
+	  "r"(_b), "r"(_c), "r"(_d), "r"(_e), "r"(_f) /* inputs  */	\
+	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc", "memory"			\
+	);								\
+	__retvalue;							\
+})
+
 #define trap_13_wwl(n, a, b)						\
 __extension__								\
 ({									\
@@ -1102,6 +1132,9 @@ __extension__								\
 #define	       Rwabs(rwflag,buf,n,sector,d)			\
        (long)trap_13_wwlwww((short)(0x04),(short)(rwflag),(long)(buf), \
 			     (short)(n),(short)(sector),(short)(d))
+#define	       Lrwabs(rwflag,buf,n,sector,d)			\
+       (long)trap_13_wwlwwwl((short)(0x04),(short)(rwflag),(long)(buf),\
+			     (short)(n),(short)(-1),(short)(d),(long)sector)
 #define	       Setexc(vnum,vptr) 				      \
        (void (*) (void))trap_13_wwl((short)(0x05),(short)(vnum),(long)(vptr))
 #define	       Tickcal()					       \
