@@ -49,4 +49,11 @@ void longjmp(jmp_buf buf, int val)
 	);
 	__builtin_unreachable();
 }
+
+
+int sigsetjmp(jmp_buf buf, int mask)
+{
+    return setjmp(buf);
+}
+
 #endif
