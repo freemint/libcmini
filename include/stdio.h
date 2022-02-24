@@ -58,16 +58,66 @@ extern FILE *stderr;
 #define BUFSIZ          1024
 #define EOF             (-1)
 
-/*
- * access modes for open()
- */
-#define O_RDONLY        0x00    /* open read-only */
-#define O_WRONLY        0x01    /* open write-only (this doesn't work apparently on _all_ TOS versions */
-#define O_RDWR          0x02    /* open for reading and writing */
-#define O_APPEND        0x08    /* position file pointer to end of file before each write */
-#define O_CREAT         0x20    /* create file if it doesn't exist */
-#define O_TRUNC         0x40    /* truncate to zero size */
-#define O_EXCL          0x80    /* ? */
+/* File access modes for `open' and `fcntl'.  */
+#define O_RDONLY    0   /* Open read-only.  */
+#define O_WRONLY    1   /* Open write-only.  */
+#define O_RDWR      2   /* Open read/write.  */
+
+
+/* Bits OR'd into the second argument to open.  */
+#define O_CREAT     0x200       /* create new file if needed */
+#define O_TRUNC     0x400       /* make file 0 length */
+#define O_EXCL      0x800       /* error if file exists */
+#define O_NOCTTY    0x4000      /* do not open new controlling tty */
+
+#ifdef __USE_GNU
+# define O_NOATIME  0x04        /* Do not set atime.  */
+# define O_DIRECTORY    0x10000     /* Must be a directory.  */
+# define O_NOFOLLOW 0x20000     /* Do not follow links.  */
+#endif
+
+/* File status flags for `open' and `fcntl'.  */
+#define O_APPEND    0x1000      /* position at EOF */
+#define O_NONBLOCK  0x100       /* Non-blocking I/O */
+
+#ifdef __USE_BSD
+# define O_NDELAY   O_NONBLOCK
+#endif
+
+/* Mask for file access modes.  This is system-dependent in case
+   some system ever wants to define some other flavor of access.  */
+#define O_ACCMODE   (O_RDONLY|O_WRONLY|O_RDWR)
+
+/* file sharing modes (not POSIX) */
+#define O_COMPAT    0x00    /* old TOS compatibility mode */
+#define O_DENYRW    0x10    /* deny both reads and writes */
+#define O_DENYW     0x20
+#define O_DENYR     0x30
+#define O_DENYNONE  0x40    /* don't deny anything */
+#define O_SHMODE    0x70    /* mask for file sharing mode */
+#define O_SYNC      0x00    /* sync after writes (not implemented) */
+
+/* Values for the second argument to `fcntl'.  */
+#define F_DUPFD     0   /* Duplicate file descriptor.  */
+#define F_GETFD     1   /* Get file descriptor flags.  */
+#define F_SETFD     2   /* Set file descriptor flags.  */
+#define F_GETFL     3   /* Get file status flags.  */
+#define F_SETFL     4   /* Set file status flags.  */
+#define F_GETLK     5   /* Get record locking info.  */
+#define F_SETLK     6   /* Set record locking info.  */
+#define F_SETLKW    7   /* Set record locking info, wait.  */
+#if defined __USE_BSD || defined __USE_XOPEN2K
+# define F_GETOWN   8   /* Get owner (receiver of SIGIO).  */
+# define F_SETOWN   9   /* Set owner (receiver of SIGIO).  */
+#endif
+
+/* File descriptor flags used with F_GETFD and F_SETFD.  */
+#define FD_CLOEXEC  1   /* Close on exec.  */
+
+#ifdef __USE_GNU
+# define F_DUPFD_CLOEXEC 1030   /* Duplicate file descriptor with
+                   close-on-exit set.  */
+#endif
 
 #define SEEK_SET    0   /* Seek from beginning of file.  */
 #define SEEK_CUR    1   /* Seek from current position.  */

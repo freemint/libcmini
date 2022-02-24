@@ -95,7 +95,7 @@ typedef struct {
   short	bpbs[1];		/* really 16 BPB's (bios parameter block) */
 } HDINFO;
 
-#define pun_ptr		((HDINFO *) 0x516L)
+#define pun_ptr		((HDINFO **) 0x516L)
 #define _p_cookies	((long **) 0x5A0L)
 
 /* os header */

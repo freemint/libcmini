@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <mint/osbind.h>
 #include <mint/mintbind.h>
-#include <fcntl.h>
 #include "lib.h"
 
 #ifndef _REALO_NOATIME
@@ -39,18 +38,9 @@
 #ifndef _REALO_SYNC
 #define _REALO_SYNC       0x000000       /* sync after writes (NYI) */
 #endif
-#ifndef O_NOATIME
-#define O_NOATIME       _REALO_NOATIME
-#endif
 #define __O_NOINHERIT   _REALO_NOINHERIT
 #undef _REALO_SHMODE
 #define _REALO_SHMODE(mode) (((mode) & (O_SHMODE)) >> 4)
-#ifndef __O_DIRECTORY
-#define __O_DIRECTORY   0x010000UL
-#endif
-#ifndef __O_NOFOLLOW
-#define __O_NOFOLLOW    0x020000UL
-#endif
 #ifndef __O_CLOEXEC
 #define __O_CLOEXEC     0x100000UL
 #endif
@@ -83,7 +73,7 @@ static long __real_omode(long iomode)
 		realmode |= _REALO_APPEND;
 	if (iomode & O_EXCL)
 		realmode |= _REALO_EXCL;
-	
+
 	if ((iomode & O_SHMODE) == O_COMPAT)
 		realmode |= _REALO_SHMODE(O_DENYNONE);
 	else
@@ -91,11 +81,11 @@ static long __real_omode(long iomode)
 
 	if (iomode & O_NOATIME)
 		realmode |= _REALO_NOATIME;
-	if (iomode & __O_DIRECTORY)
+    if (iomode & O_DIRECTORY)
 		realmode |= _REALO_DIRECTORY;
 	if (iomode & __O_NOINHERIT)
 		realmode |= _REALO_NOINHERIT;
-	
+
 	return realmode;
 }
 
@@ -133,7 +123,7 @@ static int _open_v(const char *_filename, int iomode, va_list argp)
 	realmode = __real_omode(iomode);
 
 	rv = -ENOSYS;
-	if (iomode & __O_NOFOLLOW)
+    if (iomode & O_NOFOLLOW)
 		rv = Fstat64(1, filename, &sb);
 	if (rv == -ENOSYS)
 	{
@@ -144,7 +134,7 @@ static int _open_v(const char *_filename, int iomode, va_list argp)
 
 	if (rv == 0)						/* file exists */
 	{
-		if (S_ISLNK(sb.st_mode) && (iomode & __O_NOFOLLOW))
+        if (S_ISLNK(sb.st_mode) && (iomode & O_NOFOLLOW))
 		{
 			__set_errno(ELOOP);
 			return -1;
@@ -155,7 +145,7 @@ static int _open_v(const char *_filename, int iomode, va_list argp)
 			__set_errno(EISDIR);
 		} else
 		{
-			if (iomode & __O_DIRECTORY)
+            if (iomode & O_DIRECTORY)
 			{
 				__set_errno(ENOTDIR);
 				return -1;
@@ -236,7 +226,7 @@ static int _open_v(const char *_filename, int iomode, va_list argp)
 		if ((fcbuf >= 0) && !(fcbuf & FD_CLOEXEC))
 			(void) Fcntl((int) rv, fcbuf | FD_CLOEXEC, F_SETFD);
 	}
-	
+
 	if (iomode & O_APPEND)
 		(void) Fseek(0L, (int) rv, SEEK_END);
 

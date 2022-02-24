@@ -260,7 +260,8 @@ endif
 ifneq (,$(PREFIX_FOR_STARTUP))
 install : install-startup
 install-startup:
-	cp -av $(STARTUPS) $(DESTDIR)/usr/lib
+	@mkdir -pv $(PREFIX_FOR_STARTUP)
+	@cp -av $(STARTUPS) $(PREFIX_FOR_STARTUP)
 endif
 
 ifneq (clean,$(MAKECMDGOALS))
