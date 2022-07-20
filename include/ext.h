@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <stddef.h>
+#include <unistd.h>
 
 extern int __text, __data, __bss;
 #define _text &__text
@@ -114,7 +115,6 @@ int kbhit(void);
 int getch(void);
 int getche(void);
 int putch(int c);
-int chdir(char *filename);
 
 int fstat(int handle, struct stat *buff);
 int stat(const char *path, struct stat *buff);

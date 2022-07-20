@@ -6,13 +6,13 @@
  */
 
 #include <ctype.h>
-#include <ext.h>
 #include <errno.h>
 #include <osbind.h>
+#include <unistd.h>
 #include "lib.h"
 
 
-int chdir(char* filename)
+int chdir(const char* filename)
 {
     if (filename == NULL)
     {
