@@ -29,7 +29,7 @@ STDIO_WITH_LONG_LONG=N
 
 ifneq (,$(filter $(COMPILE_ELF),Y yes))
 	CROSSPREFIX=m68k-elf-
-else 
+else
   	CROSSPREFIX=m68k-atari-mint-
 endif
 
@@ -57,9 +57,9 @@ endif
 
 STARTUP= \
 	$(SRCDIR)/crt0.S
-	
+
 CSRCS= $(wildcard $(SRCDIR)/*.c)
-	
+
 ASRCS= $(filter-out $(SRCDIR)/crt0.S $(SRCDIR)/minicrt0.S, $(wildcard $(SRCDIR)/*.S))
 
 SRCDIR=sources
@@ -108,7 +108,7 @@ TESTS:= $(shell ls tests | grep -E -v '^(CVS)$$')
 
 all: dirs libs startups tests
 libs: $(LIBS) $(LIBSIIO)
-	
+
 dirs::
 	$(Q)mkdir -p $(LIBDIRS) $(OBJDIRS)
 
@@ -216,10 +216,18 @@ printvars:
 
 install: all
 
+ifeq (,$(PREFIX))
 PREFIX =
+endif
+ifeq (,$(PREFIX_FOR_INCLUDE))
 PREFIX_FOR_INCLUDE =
+endif
+ifeq (,$(PREFIX_FOR_LIB))
 PREFIX_FOR_LIB =
+endif
+ifeq (,$(PREFIX_FOR_STARTUP))
 PREFIX_FOR_STARTUP =
+endif
 
 ifneq (,$(PREFIX)$(PREFIX_FOR_INCLUDE)$(PREFIX_FOR_LIB)$(PREFIX_FOR_STARTUP))
 	ifneq (,$(DESTDIR))
