@@ -8,6 +8,10 @@
 #ifndef _CTYPE_H_
 #define _CTYPE_H_
 
+#ifndef	_FEATURES_H
+# include <features.h>
+#endif
+
 int toupper(int c);
 int tolower(int c);
 int toascii(int c);
