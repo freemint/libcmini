@@ -16,5 +16,7 @@ char *strncpy(char *dst, const char *src, size_t max)
 	count = max;
 	while (--count >= 0 && (*dscan++ = *src++) != '\0')
 		continue;
+	while (--count >= 0)
+		*dscan++ = '\0';
 	return dst;
 }
