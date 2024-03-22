@@ -12,7 +12,15 @@ typedef unsigned long size_t;
 typedef signed long ptrdiff_t;
 
 #ifndef NULL
-#define NULL        ((void *)0)
+# ifndef __cplusplus
+#  define NULL  ((void *)0)
+# else
+#  if __cplusplus < 201103L
+#   define NULL  0
+#  else
+#   define NULL  nullptr
+#  endif
+# endif
 #endif
 
 /* Offset of member MEMBER in a struct of type TYPE.  */
