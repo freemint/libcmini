@@ -10,7 +10,7 @@ CROSSBINDIR_IS_Y=m68k-atari-mint-
 CROSSBINDIR_IS_N=
 
 BUILD_CF=N
-BUILD_FAST=N
+BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
 
 CROSSBINDIR=$(CROSSBINDIR_IS_$(CROSS))
 
@@ -55,22 +55,19 @@ COBJS=$(patsubst $(SRCDIR)/%.o,%.o,$(patsubst %.c,%.o,$(CSRCS)))
 AOBJS=$(patsubst $(SRCDIR)/%.o,%.o,$(patsubst %.S,%.o,$(ASRCS)))
 OBJS=$(COBJS) $(AOBJS)
 
-ifeq ($(BUILD_FAST), Y)
-ifeq ($(BUILD_CF), Y)
-TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
-else
-TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
-endif
-else
-ifeq ($(BUILD_CF), Y)
-TRGTDIRS=. ./m68020-60 ./m5475 ./mshort ./m68020-60/mshort ./m5475/mshort
-else
 TRGTDIRS=. ./m68020-60 ./mshort ./m68020-60/mshort
+ifeq ($(BUILD_FAST), Y)
+	TRGTDIRS += ./mfastcall ./m68020-60/mfastcall ./mshort/mfastcall ./m68020-60/mshort/mfastcall
 endif
+ifeq ($(BUILD_CF), Y)
+	TRGTDIRS += ./m5475 ./m5475/mshort
+	ifeq ($(BUILD_FAST), Y)
+	TRGTDIRS += ./m5475/mfastcall ./m5475/mshort/mfastcall
+	endif
 endif
 OBJDIRS=$(patsubst %,%/objs,$(TRGTDIRS))
 
-all: dirs $(APP)
+all: dirs $(patsubst %,%/$(APP),$(TRGTDIRS))
 
 dirs::
 	mkdir -p $(TRGTDIRS) $(OBJDIRS)
@@ -78,17 +75,17 @@ dirs::
 #
 # multilib flags. These must match m68k-atari-mint-gcc -print-multi-lib output
 #
-m68020-60/$(APP):CFLAGS += -m68020-60
-m5475/$(APP):CFLAGS += -mcpu=5475
-mshort/$(APP):CFLAGS += -mshort
+m68020-60/$(APP): CFLAGS += -m68020-60
+m5475/$(APP): CFLAGS += -mcpu=5475
+mshort/$(APP): CFLAGS += -mshort
 m68020-60/mshort/$(APP): CFLAGS += -m68020-60 -mshort
 m5475/mshort/$(APP): CFLAGS += -mcpu=5475 -mshort
-ifeq ($(BUILD_FAST), Y)
-mfastcall/$(APP):CFLAGS += -mfastcall
-m68020-60/mfastcall/$(APP):CFLAGS += -m68020-60 -mfastcall
-mshort/mfastcall/$(APP):CFLAGS += -mshort -mfastcall
+m5475/mshort/mfastcall/$(APP): CFLAGS += -mcpu=5475 -mshort -mfastcall
+m5475/mfastcall/$(APP): CFLAGS += -mcpu=5475 -mfastcall
+mfastcall/$(APP): CFLAGS += -mfastcall
+m68020-60/mfastcall/$(APP): CFLAGS += -m68020-60 -mfastcall
+mshort/mfastcall/$(APP): CFLAGS += -mshort -mfastcall
 m68020-60/mshort/mfastcall/$(APP): CFLAGS += -m68020-60 -mshort -mfastcall
-endif
 
 MULTILIBDIRECTORY = `$(CC) $$(CFLAGS) -print-multi-directory`
 
@@ -108,7 +105,6 @@ ctest: $(TEST_APP)
 
 endif
 
-all:$(patsubst %,%/$(APP),$(TRGTDIRS))
 #
 # generate pattern rules for multilib object files.
 #
