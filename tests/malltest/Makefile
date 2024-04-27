@@ -6,7 +6,11 @@ endif
 
 CROSS=Y
 
+ifneq (,$(filter $(COMPILE_ELF),Y yes))
+CROSSBINDIR_IS_Y=m68k-atari-mintelf-
+else
 CROSSBINDIR_IS_Y=m68k-atari-mint-
+endif
 CROSSBINDIR_IS_N=
 
 BUILD_CF=N
@@ -123,7 +127,7 @@ $(1)/%.o:$(SRCDIR)/%.S
 $(1)_OBJS=$(patsubst %,$(1)/objs/%,$(OBJS))
 $(1)/$(APP): $$($(1)_OBJS)
 	$$(Q)echo "CC $$(@)"
-	$$(Q)$(CC) $$(CFLAGS) -o $$@ ../../build/crt0.o $$($(1)_OBJS) -L../../build/$(MULTILIBDIRECTORY) $(LIBS)
+	$$(Q)$(CC) $$(CFLAGS) -o $$@ ../../build/$(1)/objs/crt0.o $$($(1)_OBJS) -L../../build/$(1) $(LIBS)
 endef
 $(foreach DIR,$(TRGTDIRS),$(eval $(call CC_TEMPLATE,$(DIR))))
 
