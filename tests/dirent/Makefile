@@ -4,7 +4,11 @@ else
 	Q=
 endif
 
+ifneq (,$(filter $(COMPILE_ELF),Y yes))
+CC=m68k-atari-mintelf-gcc
+else
 CC=m68k-atari-mint-gcc
+endif
 APP=dirent.tos
 
 BUILD_FAST=$(shell if $(CC) -mfastcall -E - < /dev/null >/dev/null 2>&1; then echo Y; else echo N; fi)
@@ -29,7 +33,7 @@ all: $(APP)
 
 $(APP): $(LIBDIR)/libcmini.a $(OBJS)
 	$(Q)echo "CC $(@)"
-	$(Q)$(CC) ../../build/crt0.o -s -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
+	$(Q)$(CC) ../../build/objs/crt0.o -s -o $(APP) $(OBJS) $(CFLAGS) $(LIBS)
 
 	
 clean:

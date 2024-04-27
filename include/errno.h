@@ -1,4 +1,6 @@
+#ifndef __ASSEMBLER__
 extern int errno;
+#endif
 
 #define ENODEV  15
 #define EINVAL  25
