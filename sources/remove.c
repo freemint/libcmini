@@ -8,7 +8,7 @@
 
 #include <errno.h>
 #include <stdio.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include "lib.h"
 
 int remove(const char *filename)

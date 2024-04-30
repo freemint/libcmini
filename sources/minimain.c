@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <mintbind.h>
+#include <mint/mintbind.h>
 #include "lib.h"
 
 extern int main (int, char **, char **);

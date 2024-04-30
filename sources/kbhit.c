@@ -6,7 +6,7 @@
  */
 
 #include <ext.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 
 
 int

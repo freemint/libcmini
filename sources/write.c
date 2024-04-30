@@ -1,4 +1,4 @@
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <unistd.h>
 #include "lib.h"
 

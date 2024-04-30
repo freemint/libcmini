@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <mint/arch/nf_ops.h>
 #include <mint/mintbind.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <sys/types.h>
 #include <errno.h>
 

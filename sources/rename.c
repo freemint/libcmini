@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include "lib.h"
 
 int rename(const char *oldname, const char *newname)

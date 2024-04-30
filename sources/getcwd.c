@@ -8,7 +8,7 @@
 #include <ext.h>
 #include <errno.h>
 #include <string.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include "lib.h"
 
 

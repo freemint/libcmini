@@ -13,8 +13,8 @@
 #include <limits.h>
 #include <dirent.h>
 #include <errno.h>
-#include <osbind.h>
-#include <mintbind.h>
+#include <mint/osbind.h>
+#include <mint/mintbind.h>
 #include <errno.h>
 #include "lib.h"
 

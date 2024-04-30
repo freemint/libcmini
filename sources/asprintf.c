@@ -1,6 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 
 
 #ifndef __USE_GNU

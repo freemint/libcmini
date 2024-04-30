@@ -1,6 +1,6 @@
 #include <string.h>
 #include <time.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <sys/time.h>
 
 

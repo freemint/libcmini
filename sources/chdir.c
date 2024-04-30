@@ -7,7 +7,7 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <unistd.h>
 #include "lib.h"
 

@@ -3,7 +3,7 @@
 #include <mint/arch/nf_ops.h>
 #include <mint/mintbind.h>
 #include <sys/types.h>
-#include <osbind.h>
+#include <mint/osbind.h>
 #include <errno.h>
 
 struct msgbuf {
