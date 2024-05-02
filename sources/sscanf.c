@@ -1,4 +1,3 @@
-#include <values.h>
 #include <stdarg.h>
 
 #ifndef __USE_ISOC99
