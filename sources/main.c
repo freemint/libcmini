@@ -48,6 +48,12 @@ static void _main (int _argc, char **_argv, char **_envp) {
 	exit(main(_argc, _argv, _envp));
 }
 
+/*
+ * A frame-pointer is useless here,
+ * because we change the stack inside those functions.
+ */
+#pragma GCC optimize "-fomit-frame-pointer"
+#pragma GCC optimize "-fno-defer-pop"
 
 void _crtinit(void) {
 
@@ -98,14 +104,33 @@ void _crtinit(void) {
 	if (((long)bp + m) > ((long)bp->p_hitpa - MINFREE))
 	    goto notenough;
 
-	/* set up the new stack to bp + m  */
-	_setstack((char *)bp + m);
-
-	/* shrink the TPA */
-	(void)Mshrink(bp, m);
-
 	/* keep length of program area */
 	_PgmSize = m;
+
+	/*
+	 * shrink the TPA,
+	 * and set up the new stack to bp + m.
+	 * Instead of calling Mshrink() and _setstack, this is done inline here,
+	 * because we cannot access the bp parameter after changing the stack anymore.
+	 */
+	__asm__ __volatile__(
+		"\tmovel    %0,%%d0\n"
+		"\taddl     %1,%%d0\n"
+		"\tsubl     #64,%%d0\n" /* push some unused space for buggy OS */
+		"\tmovel    %%d0,%%sp\n"/* set up the new stack to bp + m */
+		"\tmove.l   %1,-(%%sp)\n"
+		"\tmove.l   %0,-(%%sp)\n"
+		"\tclr.w    -(%%sp)\n"
+		"\tmove.w   #0x4a,-(%%sp)\n" /* Mshrink */
+		"\ttrap     #1\n"
+		"\tlea      12(%%sp),%%sp\n"
+		: /* no outputs */
+		: "r"(bp), "r"(m)
+		: "d0", "d1", "d2", "a0", "a1", "a2", "cc" AND_MEMORY
+	);
+
+	/* local variables must not be accessed after this point,
+	   because we just changed the stack */
 
 	/* establish handlers,  call the main routine */
 /*	_init_signal(); */

@@ -244,6 +244,7 @@ ifneq (,$(PREFIX)$(PREFIX_FOR_INCLUDE)$(PREFIX_FOR_LIB)$(PREFIX_FOR_STARTUP))
 		endif
 	endif
 else
+	PREFIX_FOR_INCLUDE = $(DESTDIR)/usr/include
 	PREFIX_FOR_LIB = $(DESTDIR)/usr/lib
 	PREFIX_FOR_STARTUP = $(DESTDIR)/usr/lib
 endif
