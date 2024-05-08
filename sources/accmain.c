@@ -63,6 +63,11 @@ void _acc_main(void) {
 	/* this is an accessory */
 	_app = 0;
 
+#ifdef __GCC_HAVE_INITFINI_ARRAY_SUPPORT
+	/* main() won't call __main() for global constructors, so do it here. */
+	__main();
+#endif
+
 	_main(__libc_argc, __libc_argv, NULL);
 	/*NOTREACHED*/
 }

@@ -132,6 +132,11 @@ void _crtinit(void) {
 	/* local variables must not be accessed after this point,
 	   because we just changed the stack */
 
+#ifdef __GCC_HAVE_INITFINI_ARRAY_SUPPORT
+	/* main() won't call __main() for global constructors, so do it here. */
+	__main();
+#endif
+
 	/* establish handlers,  call the main routine */
 /*	_init_signal(); */
 

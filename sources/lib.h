@@ -18,6 +18,9 @@
 #define MINKEEP (64L * 1024L)		/* keep at least this much mem on stack */
 void _setstack(char *);
 
+/* automagically called, either on entry to main(), or by use of .init_array */
+void __main (void);
+
 /* definitions needed in FILE related functions (fopen, fseek etc.) */
 
 #define FILE_SET_HANDLE(fp, H) (fp)->__cookie = ((void*)(long)(H))
