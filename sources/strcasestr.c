@@ -37,7 +37,7 @@ strcasestr(const char* s, const char* wanted)
 	firstc = *wanted;
 	len = strlen (wanted);
 	for (scan = s;
-	     toupper (*scan) != toupper (firstc) || strncmp(scan, wanted, len) != 0; )
+	     toupper (*scan) != toupper (firstc) || strncasecmp(scan, wanted, len) != 0; )
 		if (*scan++ == '\0')
 			return NULL;
 	return (char*) scan;
