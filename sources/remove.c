@@ -15,7 +15,7 @@ int remove(const char *filename)
 {
 	int ret = Ddelete(filename);
 
-	if (ret == ENOTDIR)
+	if (ret == -ENOTDIR)
 	{
 		ret = Fdelete(filename);
 	}
