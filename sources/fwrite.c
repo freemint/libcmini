@@ -10,8 +10,9 @@
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-#ifdef STDIO_MAP_NEWLINE
     long rc;
+
+#ifdef STDIO_MAP_NEWLINE
     int  fd = (int)FILE_GET_HANDLE(stream);
 
     if (stream->__mode.__binary)
@@ -30,13 +31,21 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
             register size_t put;
             register size_t got;
             size_t limit = (BUFSIZE > n) ? n : BUFSIZE;
+            long addcr = 0; /* count automatically added carriage returns */
 
             for (put = 0, got = 0; put < limit && got < n; put++, got++)
             {
                 if (str[got] == '\n')
+                {
                     if (got == 0 || str[got - 1] != '\r')
+                    {
                         if (got > 0 || stream->__last_char != '\r')
+                        {
                             buffer[put++] = '\r';
+                            ++addcr;
+                        }
+                    }
+                }
                 stream->__last_char = buffer[put] = str[got];
             }
 
@@ -51,7 +60,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
                     rc = count;
                     break;
                 } else
-                    rc += count;
+                    rc += count - addcr;
             }
 
             str += got;
@@ -59,7 +68,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
         }
     }
 #else
-    long rc = Fwrite((int)FILE_GET_HANDLE(stream), size * nmemb, ptr);
+    rc = Fwrite((int)FILE_GET_HANDLE(stream), size * nmemb, ptr);
 #endif /* defined STDIO_MAP_NEWLINE */
 
 	if (rc < 0)
