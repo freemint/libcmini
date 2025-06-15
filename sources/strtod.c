@@ -204,7 +204,7 @@ STRTOF(const char* string, char** endPtr)
     p = string;
     goto done;
     } else {
-    int frac1, frac2;
+    long frac1, frac2;
     frac1 = 0;
     for ( ; mantSize > 9; mantSize -= 1)
     {
