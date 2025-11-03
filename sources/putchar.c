@@ -2,5 +2,5 @@
 
 int putchar(int c)
 {
-	return fputc(c, stdout);
+	return putc(c, stdout);
 }

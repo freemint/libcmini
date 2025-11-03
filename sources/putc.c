@@ -9,6 +9,6 @@ int putc(int c, FILE *stream)
     uc = (unsigned char) c;
     ret = (int)fwrite(&uc, 1, 1, stream);
 
-    return (ret < 0 ? ret : uc);
+    return ret <= 0 ? EOF : uc;
 }
 int fputc(int c, FILE *stream) __attribute__((alias("putc")));
