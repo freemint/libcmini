@@ -44,11 +44,12 @@ size_t strftime(char *s, size_t smax, const char *fmt, const struct tm *tp)
 	{
 		if (*fmt == '%')
 		{
-			const char *addstr = NULL;
 			int addlen = -1;
 			char addval[80];
+			const char *addstr = addval;
 			int week;
 
+			addval[0] = '\0';
 			switch (*++fmt)
 			{
 			case 'a':
@@ -198,11 +199,6 @@ size_t strftime(char *s, size_t smax, const char *fmt, const struct tm *tp)
 				addval[1] = *fmt;
 				addval[2] = '\0';
 				break;
-			}
-
-			if (addstr == NULL)
-			{
-				addstr = addval;
 			}
 
 			if (*addstr != '\0')
