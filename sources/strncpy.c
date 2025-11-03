@@ -10,7 +10,7 @@
 char *strncpy(char *dst, const char *src, size_t max)
 {
 	char *dscan;
-	long count;
+	unsigned long count;
 
 	dscan = dst;
 	count = max;
