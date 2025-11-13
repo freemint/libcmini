@@ -11,7 +11,7 @@
 #ifdef __NO_CDECL
 typedef void *__mint_sighandler_t;
 #else
-typedef void (*__mint_sighandler_t) (long signum);
+typedef void __CDECL (*__mint_sighandler_t) (long signum);
 #endif
 #endif
 
@@ -33,7 +33,7 @@ typedef void (*__mint_sighandler_t) (long signum);
 
 static int sigsys;
 
-static void sigsys_handler(long sig)
+static void __CDECL sigsys_handler(long sig)
 {
 	UNUSED(sig);
 	sigsys = 1;
@@ -52,14 +52,14 @@ void nf_catch_sigsys(void)
 
 #if defined(__AHCC__)
 
-static long __asm__ _nf_get_id(const char *feature_name)
+static long __asm__ __CDECL _nf_get_id(const char *feature_name)
 {
 	dc.w NATFEAT_ID
 	rts
 }
 
 
-static long __asm__ _nf_call(long id, ...)
+static long __asm__ __CDECL _nf_call(long id, ...)
 {
 	dc.w NATFEAT_CALL
 	rts
@@ -109,14 +109,14 @@ static void __asm__ _nf_detect_mint(void)
 static long nf_get_id_instr(void) NATFEAT_ID;
 static long nf_call_instr(void) NATFEAT_CALL;
 
-static long _nf_get_id(const char *feature_name)
+static long __CDECL _nf_get_id(const char *feature_name)
 {
 	UNUSED(feature_name);
 	return nf_get_id_instr();
 }
 
 
-static long _nf_call(long id, ...)
+static long __CDECL _nf_call(long id, ...)
 {
 	UNUSED(id);
 	return nf_call_instr();
@@ -217,7 +217,7 @@ static void _nf_detect_mint(void)
 #define ASM_NATFEAT2(opcode) ASM_NATFEAT3(opcode)
 #define ASM_NATFEAT(n) ASM_NATFEAT2(n)
 
-static long __attribute__((noinline)) _nf_get_id(const char *feature_name)
+static long __attribute__((noinline)) __CDECL _nf_get_id(const char *feature_name)
 {
 	register long ret __asm__ ("d0");
 	UNUSED(feature_name);
@@ -231,7 +231,7 @@ static long __attribute__((noinline)) _nf_get_id(const char *feature_name)
 }
 
 
-static long __attribute__((noinline)) _nf_call(long id, ...)
+static long __attribute__((noinline)) __CDECL _nf_call(long id, ...)
 {
 	register long ret __asm__ ("d0");
 	UNUSED(id);

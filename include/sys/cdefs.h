@@ -55,6 +55,14 @@
 #define __EXITING volatile void
 #endif
 
+#ifndef __CDECL
+#ifdef __FASTCALL__
+#define __CDECL __attribute__((__cdecl__))
+#else
+#define __CDECL
+#endif
+#endif
+
 #else	/* Not GCC.  */
 
 # define __GNUC_PREREQ(maj, min) 0
@@ -68,6 +76,12 @@
 # define __const	const
 # define __signed	signed
 # define __volatile	volatile
+
+#ifndef __CDECL
+#if defined(__PUREC__) || defined(__AHCC__)
+#define __CDECL cdecl
+#endif
+#endif
 
 #endif	/* GCC.  */
 

@@ -22,8 +22,8 @@ struct nf_ops
 	void *get_id;
 	void *call;
 #else
-	long (*get_id)(const char *);
-	long (*call)(long id, ...);
+	long __CDECL (*get_id)(const char *);
+	long __CDECL (*call)(long id, ...);
 #endif
 	long res[3];
 };
@@ -57,6 +57,7 @@ struct nf_ops
 #define NF_ID_XHDI      "XHDI"
 #define NF_ID_SCSI      "NF_SCSIDRV"
 #define NF_ID_HOSTEXEC  "HOSTEXEC"
+#define NF_ID_CONFIG    "NF_CONFIG"
 
 
 __BEGIN_DECLS
