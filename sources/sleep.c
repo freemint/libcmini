@@ -5,15 +5,16 @@
  *      Author: og
  */
 
-#include <ext.h>
+#include <unistd.h>
 #include <time.h>
 
 
-void
+unsigned int
 sleep(unsigned int seconds)
 {
 	clock_t cycles = seconds * CLOCKS_PER_SEC;
 	clock_t start  = clock();
 
 	do {} while (clock() - start < cycles);
+	return 0;
 }

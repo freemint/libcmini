@@ -5,22 +5,22 @@
  *      Author: og
  */
 
-#include <ext.h>
+#include <unistd.h>
 #include <errno.h>
 #include <string.h>
 #include <mint/osbind.h>
 #include "lib.h"
 
 
-char* getcwd(char* buffer, int bufflen)
+char* getcwd(char* buffer, size_t bufflen)
 {
-    if (bufflen < 0)
+    if ((long)bufflen < 0)
     {
         __set_errno(ERANGE);
         buffer = NULL;
     } else
     {
-        char path[MAXPATH];
+        char path[128];
 
         if (buffer == NULL && bufflen > 0)
         {

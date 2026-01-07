@@ -91,7 +91,7 @@ struct dfree
 };
 
 int getcurdir(int drive, char *path);
-char *getcwd(char *buffer, int bufflen);
+char *getcwd(char *buffer, size_t bufflen);
 int getdisk(void);
 void getdfree(unsigned char drive, struct dfree *dtable);
 long setdisk(int drive);
@@ -109,7 +109,7 @@ int setftime(int handle, struct ftime *ftimep);
 struct tm* ftimtotm(struct ftime *f);
 
 void delay(unsigned long milliseconds);
-void sleep(unsigned int seconds);
+unsigned int sleep(unsigned int seconds);
 
 int kbhit(void);
 int getch(void);
