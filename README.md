@@ -1,4 +1,8 @@
-[![Build Status](https://travis-ci.org/freemint/libcmini.svg?branch=master)](https://travis-ci.org/freemint/libcmini)
+[![Build Status](https://github.com/freemint/libcmini/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/freemint/libcmini/actions) 
+
+* Latest snapshot: [Download (mint)](https://tho-otto.de/snapshots/libcmini/libcmini-mint-latest.tar.bz2)
+* Latest snapshot: [Download (mintelf)](https://tho-otto.de/snapshots/libcmini/libcmini-mintelf-latest.tar.bz2)
+* [Archive](https://tho-otto.de/snapshots/libcmini/)
 
 # libcmini
 
