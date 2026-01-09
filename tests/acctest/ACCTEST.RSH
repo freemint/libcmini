@@ -27,7 +27,7 @@
 #define STATE14 0x4000
 #define STATE15 0x8000
 
-static OBJECT rs_object[] =
+OBJECT rs_object[] =
 { 
   /******** Tree 0 MAIN ****************************************************/
   {      -1,        1,        2, G_BOX             ,   /* Object 0  */
@@ -41,6 +41,6 @@ static OBJECT rs_object[] =
    0x001F, 0x0007, 0x0008, 0x0001 }
 };
 
-static OBJECT *rs_trindex[] =
+OBJECT *rs_trindex[] =
 { &rs_object[0]    /* Tree  0 MAIN             */
 };
