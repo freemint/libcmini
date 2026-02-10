@@ -182,4 +182,6 @@ int unlink(const char *filename);
 int remove(const char *filename);
 int rename(const char *oldname, const char *newname);
 
+void perror(const char *s);
+
 #endif /* STDIO_H_ */
