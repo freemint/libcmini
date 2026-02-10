@@ -54,6 +54,9 @@ ifneq (,$(filter $(STDIO_WITH_LONG_LONG),Y yes))
 	CFLAGS+=-DSTDIO_WITH_LONG_LONG
 endif
 
+ifneq (,$(filter $(STDIO_MAP_NEWLINE),Y yes))
+	CFLAGS+=-DSTDIO_MAP_NEWLINE
+endif
 
 STARTUP= \
 	$(SRCDIR)/crt0.S
