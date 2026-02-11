@@ -104,12 +104,17 @@ FILE *fopen(const char *path, const char *mode)
 	return NULL;
 
 ok:
+	/*
+	 * when running on MiNT, we can always write in binary mode,
+	 * even if output goes to a tty, since that is then handled
+	 * by tty attributes
+	 */
+	if (__is_mint())
+		fp->__mode.__binary = 1;
 	fp->__magic = _IOMAGIC;
 	FILE_SET_HANDLE(fp, fd);
 	fp->__pushback = EOF;
-#ifdef STDIO_MAP_NEWLINE
-    fp->__last_char = EOF;
-#endif /* defined STDIO_MAP_NEWLINE */
+	fp->__last_char = EOF;
 	fp->__next = __stdio_head;
 	__stdio_head = fp;
 

@@ -32,6 +32,7 @@ extern short _app;
 extern unsigned long _PgmSize;
 extern long __libc_argc;
 extern char **__libc_argv;
+extern int __mint;
 
 struct _mem_stream { char *xstring; char *xestring; };
 
@@ -45,6 +46,7 @@ unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base
 void _acc_main(void);
 void _crtinit(void);
 void _crtinit_noargs(void);
+int __is_mint(void);
 
 extern FILE *__stdio_head;
 

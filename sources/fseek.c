@@ -29,9 +29,7 @@ int fseek(FILE *fp, long offset, int origin)
 	}
 	fp->__eof = 0;
 	fp->__pushback = EOF;
-#ifdef STDIO_MAP_NEWLINE
-    fp->__last_char = EOF;
-#endif /* defined STDIO_MAP_NEWLINE */
+	fp->__last_char = EOF;
 	return 0;
 }
 

@@ -92,7 +92,6 @@ Instead of 'Y', also 'yes' can be used:
   * `VERBOSE=Y` - Print all commands that are used to compile the library. This option can also be given as an environment variable. All other options must be given as arguments to the `make` command.
   * `COMPILE_ELF=Y` - Compile for 'elf' format instead of 'a.out'.
   * `ONLY_68K=Y` - Compile only for the 68000, not the other architectures.
-  * `COMPILE_ELF=Y` - Compile for the 'elf' format instead of 'a.out'.
   * `STDIO_WITH_LONG_LONG=Y` - Add code for `long long` to the `printf` family of functions. At the moment this fails.
   * `STDIO_MAP_NEWLINE=Y` - Add code to convert NL to CR NL on output to text files, and CR NL to NL on input. This was standard practice on TOS but not on Mint.
 

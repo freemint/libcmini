@@ -17,7 +17,7 @@ FILE *fdopen(int fd, const char *mode)
 	if (fp == NULL) {
 		return NULL;
 	} else {
-		register int i;
+		int i;
 
         switch (*mode) {
             case 'a':
@@ -72,12 +72,17 @@ FILE *fdopen(int fd, const char *mode)
         }
 	}
 
+	/*
+	 * when running on MiNT, we can always write in binary mode,
+	 * even if output goes to a tty, since that is then handled
+	 * by tty attributes
+	 */
+	if (__is_mint())
+		fp->__mode.__binary = 1;
     fp->__magic = _IOMAGIC;
     FILE_SET_HANDLE(fp, fd);
     fp->__pushback = EOF;
-#ifdef STDIO_MAP_NEWLINE
     fp->__last_char = EOF;
-#endif /* defined STDIO_MAP_NEWLINE */
     fp->__next = __stdio_head;
     fp->__eof = 0;
     fp->__error = 0;
