@@ -10,6 +10,10 @@
 #include <stdio.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* This prints an "Assertion failed" message and aborts.  */
 void __assert_fail (const char *__assertion,
 			   const char *__file,
@@ -21,6 +25,11 @@ void __assert_fail (const char *__assertion,
   ((void) ((expr) ? 0 :							      \
 	   (__assert_fail (#expr,				      \
 			   __FILE__, __LINE__, NULL), 0)))
+
+#ifdef __cplusplus
+}
+#endif
+
 #else
 #define assert(expr)
 #endif /* NDEBUG */

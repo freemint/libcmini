@@ -10,6 +10,10 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 char *strcat(char *dst, const char *src);
 char *strcpy(char *dst, const char *src);
 size_t strlen(const char *s);
@@ -63,5 +67,9 @@ char *dirname(char *filename);
 
 int strcoll(const char* __s1, const char* __s2);
 size_t strxfrm(char* __dest, const char* __src, size_t __n);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _STRING_H_ */

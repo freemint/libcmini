@@ -12,6 +12,10 @@
 #include <stdarg.h>
 #include <mint/osbind.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The mode of I/O, as given in the MODE argument to fopen, etc.  */
 typedef struct
 {
@@ -179,5 +183,9 @@ int remove(const char *filename);
 int rename(const char *oldname, const char *newname);
 
 void perror(const char *s);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STDIO_H_ */

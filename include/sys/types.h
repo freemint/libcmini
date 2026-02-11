@@ -5,6 +5,10 @@
 # include <features.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef signed char __int8_t;
 typedef unsigned char __uint8_t;
 typedef signed short int __int16_t;
@@ -88,6 +92,10 @@ typedef __time_t time_t;
 #ifndef __clock_t_defined
 typedef __clock_t clock_t;
 #define __clock_t_defined 1
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* _TYPES_H */

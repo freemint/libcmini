@@ -14,6 +14,10 @@
 
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int atoi(const char *c);
 long atol(const char *c);
 double atof(const char *c);
@@ -100,6 +104,10 @@ ldiv_t ldiv(long int __numer, long int __denom) __attribute__ ((__const__));
 
 #ifndef NULL
 # define NULL	((void *) 0)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* _STDLIB_H_ */

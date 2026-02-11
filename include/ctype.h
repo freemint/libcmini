@@ -12,6 +12,10 @@
 # include <features.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int toupper(int c);
 int tolower(int c);
 int toascii(int c);
@@ -75,5 +79,9 @@ extern unsigned char const __libc_ctype2[256];
      (unsigned char) (_c) == 255 ? 1 : __libc_ctype[(unsigned char)(_c)]&_IScntrl; })
 
 #endif /* GNU C */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CTYPE_H_ */

@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int __text, __data, __bss;
 #define _text &__text
 #define _data &__data
@@ -124,6 +128,8 @@ long filelength(int handle);
 
 size_t coreleft(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _EXT_H_ */
-
-

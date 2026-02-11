@@ -3,6 +3,10 @@
 # error "Never use <bits/dirent.h> directly; include <dirent.h> instead."
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef NAME_MAX
 # define NAME_MAX 255
 #endif
@@ -37,3 +41,7 @@ struct __dirstream {
 
 #define _DIRENT_HAVE_D_NAMLEN
 #define _DIRENT_HAVE_D_OFF
+
+#ifdef __cplusplus
+}
+#endif

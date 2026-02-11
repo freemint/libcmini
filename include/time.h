@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CLOCKS_PER_SEC 200
 #define CLK_TCK	       200
 
@@ -57,5 +61,9 @@ time_t mktime(struct tm *tm);
 struct tm* gmtime(const time_t* timep);
 struct tm* localtime(const time_t* timep);
 size_t strftime(char* s, size_t smax, const char* fmt, const struct tm* tp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _TIME_H_ */
