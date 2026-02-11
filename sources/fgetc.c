@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <mint/osbind.h>
+#include <errno.h>
 #include "lib.h"
 
 

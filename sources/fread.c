@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <errno.h>
 #include <mint/osbind.h>
 #include "lib.h"
 

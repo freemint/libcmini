@@ -121,8 +121,6 @@ extern FILE *stderr;
 #define SEEK_CUR    1   /* Seek from current position.  */
 #define SEEK_END    2   /* Seek from end of file.  */
 
-extern int errno;
-
 FILE *fopen(const char *path, const char *mode);
 FILE *freopen(const char *path, const char *mode, FILE *stream);
 FILE *fdopen(int fd, const char *mode);

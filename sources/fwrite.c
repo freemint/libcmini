@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <mint/osbind.h>
 #include <sys/types.h>
+#include <errno.h>
 #include "lib.h"
 
 #define BUFSIZE  8192
