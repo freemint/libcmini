@@ -42,7 +42,7 @@ unsigned long long __mul64 (long long in, long mul, char *overflow) {
 	".overfl:					\n"
 	"	scs		%2				\n"
 	".end:						\n"
-	: "=d"(ret_lo), "=d"(ret_hi),"+g"(*overflow), "+d"(in_lo), "+d"(in_hi),"+d"(mul)
+	: "=d"(ret_lo), "=d"(ret_hi),"+d"(*overflow), "+d"(in_lo), "+d"(in_hi),"+d"(mul)
 	);
 	return (unsigned long long)ret_hi<<32 | ret_lo;
 }
@@ -58,7 +58,7 @@ unsigned long long __add64 (long long in, long add, char *overflow) {
 	"	bcc		1f	\n"
 	"	st			%2				\n"
 	"1:				\n"
-	: "+d"(lo), "+d"(hi),"+g"(*overflow)
+	: "+d"(lo), "+d"(hi),"+d"(*overflow)
 	: "g"(add), "d"(zero)
 	);
 	return (unsigned long long)hi<<32 | lo;
