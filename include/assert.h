@@ -1,5 +1,4 @@
-#ifndef _ASSERT_H_
-#define _ASSERT_H_
+#undef assert
 
 #ifndef NDEBUG
 
@@ -25,5 +24,3 @@ void __assert_fail (const char *__assertion,
 #else
 #define assert(expr)
 #endif /* NDEBUG */
-#endif /* _ASSERT_H_ */
-
