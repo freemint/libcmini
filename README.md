@@ -93,7 +93,6 @@ Instead of 'Y', also 'yes' can be used:
   * `COMPILE_ELF=Y` - Compile for 'elf' format instead of 'a.out'.
   * `ONLY_68K=Y` - Compile only for the 68000, not the other architectures.
   * `STDIO_WITH_LONG_LONG=Y` - Add code for `long long` to the `printf` family of functions. At the moment this fails.
-  * `STDIO_MAP_NEWLINE=Y` - Add code to convert NL to CR NL on output to text files, and CR NL to NL on input. This was standard practice on TOS but not on Mint.
 
 The following options are on by default. They can be switched off with `OPTION=no` or `OPTION=N`.
 However, when `ONLY_68K=Y` is given, they are switched off and cannot be switched on again.
@@ -102,11 +101,12 @@ However, when `ONLY_68K=Y` is given, they are switched off and cannot be switche
   * `BUILD_SOFT_FLOAT=N` - Not sure what this means. Probably don't build for software floating point.
   * `BUILD_SHORT=N` - Don't include libraries for short ints (16 bit?)
   * `BUILD_FAST=N` - Don't use `-mfastcall` function calls. The default for this option is whether the compiler supports `-mfastcall`.
+  * `STDIO_MAP_NEWLINE=N` - Don't add code to convert NL to CR NL on output to text files, and CR NL to NL on input. This conversion is standard practice on TOS but not on Mint. If you don't want this then use `STDIO_MAP_NEWLINE=N`, but on TOS your console output may look weird unless you put `\r\n` in your print statements.
 
 Example `make` command:
 
 ```
-VERBOSE=yes make ONLY_68K=yes STDIO_MAP_NEWLINE=Y
+VERBOSE=yes make ONLY_68K=yes STDIO_MAP_NEWLINE=N
 ```
 
 ## Installation
