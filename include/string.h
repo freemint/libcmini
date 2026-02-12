@@ -69,6 +69,9 @@ int strcoll(const char* __s1, const char* __s2);
 size_t strxfrm(char* __dest, const char* __src, size_t __n);
 
 
+/*
+ * inline versions of some functions.
+ */
 extern __inline __attribute__((__gnu_inline__)) size_t __inline_strlen(const char *scan);
 extern __inline __attribute__((__gnu_inline__)) size_t __inline_strlen(const char *scan)
 {
@@ -81,6 +84,52 @@ extern __inline __attribute__((__gnu_inline__)) size_t __inline_strlen(const cha
 #ifdef __OPTIMIZE__
 #define strlen(s) __inline_strlen(s)
 #endif
+
+extern __inline __attribute__((__gnu_inline__)) int __inline_strcmp(const char *s1, const char *s2);
+extern __inline __attribute__((__gnu_inline__)) int __inline_strcmp(const char *s1, const char *s2)
+{
+#ifdef __mcoldfire__
+	unsigned long cmp;
+	unsigned long tmp;
+
+	__asm__ __volatile__(
+	   "1:\n"
+		" mvz.b 	(%[s2])+,%[tmp]\n"
+		" mvz.b 	(%[s1])+,%[cmp]\n"
+		" beq.s 	1f\n"
+		" cmp.l 	%[tmp],%[cmp]\n"
+		" beq.s 	1b\n"
+	   "1:\n"
+		" sub.l 	%[tmp],%[cmp]\n"
+	: [cmp]"=d"(cmp), [tmp]"=d"(tmp), [s1]"+a"(s1), [s2]"+a"(s2)
+	:
+	: "cc");
+	return cmp;
+#else
+	unsigned long cmp;
+	unsigned long tmp;
+
+	__asm__ __volatile__(
+		" moveq #0,%[tmp]\n"
+		" moveq #0,%[cmp]\n"
+	   "1:\n"
+		" move.b 	(%[s2])+,%[tmp]\n"
+		" move.b	(%[s1])+,%[cmp]\n"
+		" beq.s 	1f\n"
+		" cmp.b 	%[tmp],%[cmp]\n"
+		" beq.s 	1b\n"
+	   "1:\n"
+		" sub.l 	%[tmp],%[cmp]\n"
+	: [cmp]"=d"(cmp), [tmp]"=d"(tmp), [s1]"+a"(s1), [s2]"+a"(s2)
+	:
+	: "cc");
+	return cmp;
+#endif
+}
+#ifdef __OPTIMIZE__
+#define strcmp(s1, s2) __inline_strcmp(s1, s2)
+#endif
+
 
 #ifdef __cplusplus
 }
