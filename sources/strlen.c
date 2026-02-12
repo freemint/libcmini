@@ -6,13 +6,9 @@
  */
 
 #include <string.h>
+#undef strlen
 
 size_t strlen(const char *s)
 {
-	const char *start = s;
-
-	while (*s++)
-		;
-
-	return s - start - 1;
+	return __inline_strlen(s);
 }

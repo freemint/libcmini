@@ -68,6 +68,20 @@ char *dirname(char *filename);
 int strcoll(const char* __s1, const char* __s2);
 size_t strxfrm(char* __dest, const char* __src, size_t __n);
 
+
+extern __inline __attribute__((__gnu_inline__)) size_t __inline_strlen(const char *scan);
+extern __inline __attribute__((__gnu_inline__)) size_t __inline_strlen(const char *scan)
+{
+	const char *start = scan;
+
+	while (*scan++ != '\0')
+		continue;
+	return scan - start - 1;
+}
+#ifdef __OPTIMIZE__
+#define strlen(s) __inline_strlen(s)
+#endif
+
 #ifdef __cplusplus
 }
 #endif
