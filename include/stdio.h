@@ -47,6 +47,8 @@ extern FILE *stdout;
 extern FILE *stdin;
 extern FILE *stderr;
 
+#define _IOFBF	0
+#define _IOLBF	1
 #define _IONBF	2
 
 #ifndef NULL
