@@ -51,7 +51,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
     int  fmt;
     char pad           = ' ';
     int  flush_left    = FALSE;
-    register int field_width = 0;
+    int  field_width   = 0;
     int  precision     = UNLIMITED;
     int  hash          = FALSE;
     char space_or_sign = '\0';
@@ -775,12 +775,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             bufptr = "(nil)";
                         }
 
-                        {
-                            /* avoid calling strlen() */
-                            register char *s = bufptr;
-                            while (*s) ++s;
-                            field_width -= (int)(s - bufptr);
-                        }
+                        field_width -= (int)strlen(bufptr);
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
