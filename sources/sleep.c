@@ -9,12 +9,12 @@
 #include <time.h>
 
 
-unsigned int
-sleep(unsigned int seconds)
+unsigned int sleep(unsigned int seconds)
 {
 	clock_t cycles = seconds * CLOCKS_PER_SEC;
-	clock_t start  = clock();
+	clock_t end    = clock() + cycles;
 
-	do {} while (clock() - start < cycles);
+	do {} while (clock() < end);
+
 	return 0;
 }
