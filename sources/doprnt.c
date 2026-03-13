@@ -44,15 +44,14 @@ static int normalize_float(double* valptr, int round_to, int eformat);
 #define ISLOWER(c)  ((c) >= 'a' && (c) <= 'z')
 
 
-int
-doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
+int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list ap)
 {
     enum { INT_VAL, LONG_VAL, LONG_LONG_VAL };
 
     int  fmt;
     char pad           = ' ';
     int  flush_left    = FALSE;
-    int  field_width   = 0;
+    register int field_width = 0;
     int  precision     = UNLIMITED;
     int  hash          = FALSE;
     char space_or_sign = '\0';
@@ -83,49 +82,34 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
             unsigned long long ulonglongval;
         #endif /* STDIO_WITH_LONG_LONG */
 
-            int flag_found;
-
-            ++f; /* skip the % */
-
-            do {
-                flag_found = TRUE;
-
-                switch (*f) {
+            while (1) {
+                switch (*++f) {
                     case '-':
                         /* minus: flush left */
                         flush_left = TRUE;
-                        break;
-
+                        continue;
                     case '+':
                         /* plus: numbers always with sign */
                         space_or_sign = '+';
-                        break;
-
+                        continue;
                     case ' ':
                         /* space: numbers without sign start with space */
                         space_or_sign = ' ';
-                        break;
-
+                        continue;
                     case '0':
                         /* padding with 0 rather than blank */
                         pad = '0';
-                        break;
-
+                        continue;
                     case '#':
                         /* alternate form */
                         hash = TRUE;
-                        break;
-
+                        continue;
                     default:
-                        flag_found = FALSE;
                         break;
-
                 }
 
-                if (flag_found) {
-                    ++f;
-                }
-            } while (flag_found);
+                break;
+            }
 
             if (*f == '*') {
                 /* field width */
@@ -175,7 +159,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
             fmt = (unsigned char)*f;
 
-            if (fmt != 'S' && fmt != 'Q' && fmt != 'X' && fmt != 'E' && fmt != 'G' && ISUPPER(fmt)) {
+            if (ISUPPER(fmt) && fmt != 'S' && fmt != 'Q' && fmt != 'X' && fmt != 'E' && fmt != 'G') {
                 do_long = LONG_VAL;
                 fmt    |= 0x20 /* tolower */;
             }
@@ -376,7 +360,7 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
 
                         exponent = normalize_float(&floatval, precision, (fmt | 0x20 /* tolower */) == 'e');
 
-                        switch (tolower(fmt)) {
+                        switch (fmt | 0x20 /* tolower */) {
                             case 'e':
                                 use_exp_format = TRUE;
                                 break;
@@ -660,20 +644,19 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                         if(hash) {
                             switch (fmt) {
                                 case 'X':
-                                case 'x':
-                                    prefix = "x0";
-                                    *(char*)prefix = fmt;
+                                    prefix = "X0";
                                     len_prefix = 2;
                                     break;
-
+                                case 'x':
+                                    prefix = "x0";
+                                    len_prefix = 2;
+                                    break;
                                 case 'o':
                                     prefix = "0";
                                     len_prefix = 1;
                                     break;
-
                                 default:
                                     break;
-
                             }
                         }
 
@@ -792,7 +775,12 @@ doprnt(int (*addchar)(int, void*), void* stream, const char* sfmt, va_list ap)
                             bufptr = "(nil)";
                         }
 
-                        field_width -= (int)strlen(bufptr);
+                        {
+                            /* avoid calling strlen() */
+                            register char *s = bufptr;
+                            while (*s) ++s;
+                            field_width -= (int)(s - bufptr);
+                        }
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
