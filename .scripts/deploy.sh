@@ -11,7 +11,7 @@ fi
 
 toolsuffix=${CROSS_TOOL##*-}
 
-ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID}-${toolsuffix}.${DEPLOY_ARCHIVE}"
+ARCHIVE_NAME="${PROJECT_NAME}-${PROJECT_VERSION}-${LONG_ID}-${toolsuffix}.${DEPLOY_ARCHIVE}"
 ARCHIVE_PATH="${DEPLOY_DIR}/${ARCHIVE_NAME}"
 
 mkdir -p "${DEPLOY_DIR}"
@@ -67,5 +67,3 @@ link_file() {
 upload_file "$ARCHIVE_PATH" "${UPLOAD_DIR}/${PROJECT_DIR}/${ARCHIVE_NAME}"
 link_file "$ARCHIVE_NAME" "${PROJECT_DIR}-${toolsuffix}-latest.${DEPLOY_ARCHIVE}"
 
-echo ${PROJECT_NAME}-${PROJECT_VERSION}-${SHORT_ID} > .latest_version
-upload_file .latest_version "${UPLOAD_DIR}/${PROJECT_DIR}/.latest_version"

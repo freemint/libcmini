@@ -20,6 +20,9 @@ LONG_ID=$(echo ${GITHUB_SHA} | cut -c 1-8)
 echo "LONG_ID=$LONG_ID" >> $GITHUB_ENV
 BRANCH=$(echo "${GITHUB_REF}" | cut -d '/' -f 3)
 
+if test "$CPU_TARGET" != ""; then
+	echo "CPU_TARGET=$CPU_TARGET" >> $GITHUB_ENV
+fi
 CROSS_TOOL=${CROSS_TOOL:-m68k-atari-mint}
 echo "CROSS_TOOL=$CROSS_TOOL" >> $GITHUB_ENV
 
