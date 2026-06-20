@@ -14,11 +14,11 @@
    since it's easier to simly use timer C (200 Hz / 5 ms).
 */
 
-void
-delay(unsigned long milliseconds)
+void delay(unsigned long milliseconds)
 {
-	clock_t cycles = milliseconds / 5;
-	clock_t start  = clock();
+	clock_t cycles = milliseconds / (1000 / CLOCKS_PER_SEC);
+	clock_t end    = clock() + cycles;
 
-	do {} while (clock() - start < cycles);
+	do {} while (clock() < end);
+    ;
 }
