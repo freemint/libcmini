@@ -70,7 +70,7 @@
 #endif
 
 
-#define ISSPACE(c)  ((c) == ' ' || (c) == '\t')
+#define ISSPACE(c)  (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v'))
 #define ISDIGIT(c)  ((c) >= '0' && (c) <= '9')
 
 
