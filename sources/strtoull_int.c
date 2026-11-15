@@ -13,7 +13,7 @@
 # endif
 
 
-#define ISSPACE(c) ((c) == ' '||(c) == '\t')
+#define ISSPACE(c) (((c) == ' ') || ((c) == '\t') || ((c == '\n')) || ((c) == '\r') || ((c) == '\v'))
 #define ISDIGIT(c) ((c) >= '0' && (c) <= '9')
 
 static inline
@@ -29,7 +29,7 @@ unsigned long long __mul64 (long long in, long mul, char *overflow) {
 	".loop:						\n" /* }											*/
 	"	lsr.l		#1, %5		\n" /* mul >>= 1								*/
 	"	beq		.end			\n" /* if (mul == 0) goto end; 			*/
-	
+
 	"	add.l		%3, %3		\n" /* in <<= 1;								*/
 	"	addx.l	%4, %4		\n"
 	"	bcs		.overfl		\n" /* overflow?	goto overfl;			*/
@@ -70,18 +70,18 @@ unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base
 	int val;
 	short ret_ok=0;
 	char overflow=0;
-	
+
 	if(base!=0 && 2 > base && base > 36)
 		goto error;
 
 	while(*ptr && ISSPACE(*ptr)) ptr++; /* skip spaces */
-	
+
 	if( (*sign = (*ptr == '-')) )
 		ptr++;
 
 	if(!*ptr)
 		goto error;
-	
+
 	if(*ptr == '0') {
 		ret_ok = 1;
 		ptr++;
@@ -97,19 +97,19 @@ unsigned long long __strtoull_internal(const char *nptr, char **endptr, int base
 			ptr++;
 			break;
 		default:
-			if(base == 0) 
+			if(base == 0)
 				base = 8;
 			break;
 		}
 	} else if(base == 0)
 		base = 10;
-	
+
 	for( ;*ptr; ptr++) {
-		if(ISDIGIT(*ptr)) 
+		if(ISDIGIT(*ptr))
 			val = *ptr - '0';
 		else {
 			val = 10 + (*ptr&~0x20 /*TOUPPER*/) - 'A';
-			if(val < 10) val = 37;  
+			if(val < 10) val = 37;
 		}
 		ret_ok = 1;
 
