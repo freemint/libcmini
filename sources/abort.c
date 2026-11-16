@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <unistd.h>
 
 void abort(void)
 {
-	exit(-1);
+	/* abnormal termination: unlike exit(), atexit() handlers must not be called */
+	_exit(-1);
 }
