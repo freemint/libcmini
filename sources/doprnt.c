@@ -47,6 +47,13 @@ static int normalize_float(double* valptr, int round_to, int eformat);
 #define ISUPPER(c)  ((c) >= 'A' && (c) <= 'Z')
 #define ISLOWER(c)  ((c) >= 'a' && (c) <= 'z')
 
+/* remove trailing zeros behind a decimal point and the point itself */
+#define STRIP_TRAILING_ZEROS(p) \
+    do { \
+        while ((p)[-1] == '0') --(p); \
+        if ((p)[-1] == '.') --(p); \
+    } while (0)
+
 
 /*
  * Output the len characters of buf in reverse order. extra_zeros '0'
@@ -471,6 +478,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                         char*  tmpbufptr;
                         int    exponent;
                         int    use_exp_format = FALSE;
+                        int    strip_zeros    = FALSE;  /* %g without '#' */
                         double floatvalbak = floatval;
 
                         if (precision == UNLIMITED) {
@@ -494,25 +502,35 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             goto copy_float;
                         }
 
-                        exponent = normalize_float(&floatval, precision, (fmt | 0x20 /* tolower */) == 'e');
+                        if ((fmt | 0x20 /* tolower */) == 'g') {
+                            /*
+                             * the precision is the number of significant digits. With X being the
+                             * decimal exponent after rounding, use %f with precision P - 1 - X if
+                             * P > X >= -4, otherwise %e with precision P - 1. Unless '#' is given,
+                             * trailing zeros and a trailing decimal point are removed.
+                             */
+                            int x;
 
-                        switch (fmt | 0x20 /* tolower */) {
-                            case 'e':
+                            if (precision == 0) {
+                                precision = 1;
+                            }
+
+                            exponent = normalize_float(&floatval, precision - 1, 1);
+                            x        = (floatvalbak == 0.0) ? 0 : exponent - 1;
+
+                            if (x < -4 || x >= precision) {
                                 use_exp_format = TRUE;
-                                break;
+                                precision     -= 1;
+                            } else {
+                                precision = precision - 1 - x;
+                                floatval  = floatvalbak;
+                                exponent  = normalize_float(&floatval, precision, 0);
+                            }
 
-                            case 'g':
-                                if (exponent < -4 || exponent >= precision) {
-                                    use_exp_format = TRUE;
-                                    floatval       = floatvalbak;
-                                    exponent       = normalize_float(&floatval, precision, 1);
-                                }
-
-                                break;
-
-                            default:
-                                break;
-
+                            strip_zeros = !hash;
+                        } else {
+                            use_exp_format = (fmt | 0x20 /* tolower */) == 'e';
+                            exponent       = normalize_float(&floatval, precision, use_exp_format);
                         }
 
                         tmpbufptr = tmpbuf;
@@ -560,6 +578,10 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
 
                                     floatval = floatval * 10.0 - (double)digit;
                                 }
+                            }
+
+                            if (strip_zeros && precision > 0) {
+                                STRIP_TRAILING_ZEROS(tmpbufptr);
                             }
 
                             *tmpbufptr++ = ISLOWER(fmt) ? 'e' : 'E';
@@ -637,6 +659,10 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                     floatval     = floatval * 10.0 - (double)digit;
                                     ++places;
                                 }
+                            }
+
+                            if (strip_zeros && precision > 0) {
+                                STRIP_TRAILING_ZEROS(tmpbufptr);
                             }
 
                             /* zeros that did not fit follow the integer digits */
