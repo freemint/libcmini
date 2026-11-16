@@ -157,6 +157,11 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 }
             }
 
+            if (*f == '\0') {
+                /* incomplete conversion at the end of the format string */
+                break;
+            }
+
             fmt = (unsigned char)*f;
 
             if (ISUPPER(fmt) && fmt != 'S' && fmt != 'Q' && fmt != 'X' && fmt != 'E' && fmt != 'G') {
