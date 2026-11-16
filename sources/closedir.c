@@ -24,8 +24,6 @@
 
 int closedir(DIR *dirp)
 {
-    long r;
-
     /* The GNU libc closedir returns gracefully if a NULL pointer is
        passed.  We follow here.  */
     if (dirp == NULL)
@@ -36,5 +34,5 @@ int closedir(DIR *dirp)
 
     free(dirp->dirname);
     free(dirp);
-    return r;
+    return 0;
 }
