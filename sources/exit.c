@@ -15,9 +15,9 @@ int _num_at_exit = 0;
 
 void exit(int status)
 {
-    /* first: call all atexit-registered func's */
-    for(; _num_at_exit; --_num_at_exit)
-        (*_at_exit++) ();
+    /* first: call all atexit-registered func's, in reverse order of registration */
+    while (_num_at_exit > 0)
+        (*_at_exit[--_num_at_exit]) ();
 
     /* second: close all files */
     /* unneeded here, since handles are unbuffered */
