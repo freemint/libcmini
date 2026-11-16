@@ -5,7 +5,12 @@
 #include <errno.h>
 #include "lib.h"
 
-#define BUFSIZE  8192
+/*
+ * Size of the stack buffer used to insert carriage returns in text mode.
+ * Keep it small: programs may run with a small stack (_stksize), and the
+ * data is written in chunks of this size anyway.
+ */
+#define BUFSIZE  512
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
