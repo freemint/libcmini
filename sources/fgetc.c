@@ -36,4 +36,6 @@ int fgetc(FILE *stream)
 	}
 	return ch;
 }
+#ifdef __GNUC__
 int getc(FILE *stream) __attribute__((alias("fgetc")));
+#endif
