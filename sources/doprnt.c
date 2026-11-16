@@ -22,6 +22,10 @@
  */
 #define UNLIMITED                 -1
 #define PRINTF_BUFFER_SIZE        128
+#define PRINTF_BUFFER_RESERVE     8     /* room for sign and prefix behind leading zeros */
+
+/* leading zeros are only stored in buf while this is true, the rest is counted */
+#define BUFFER_HAS_ROOM(p)        ((p) < buf + PRINTF_BUFFER_SIZE - PRINTF_BUFFER_RESERVE)
 
 #define DEFAULT_DIGITS_REMAINDER  6
 #define MAX_DIGITS_REMAINDER      10
@@ -42,6 +46,36 @@ static int normalize_float(double* valptr, int round_to, int eformat);
 #define ISDIGIT(c)  ((c) >= '0' && (c) <= '9')
 #define ISUPPER(c)  ((c) >= 'A' && (c) <= 'Z')
 #define ISLOWER(c)  ((c) >= 'a' && (c) <= 'z')
+
+
+/*
+ * Output the len characters of buf in reverse order. extra_zeros '0'
+ * characters that did not fit into buf are inserted in front of the
+ * zero_pos lowest characters of buf.
+ */
+static int put_reversed(int (*addchar)(int, void*), void* stream, int attributes,
+                        const char* buf, int len, int zero_pos, int extra_zeros)
+{
+    int count = 0;
+
+    while (len > 0) {
+        if (len == zero_pos) {
+            while (extra_zeros > 0) {
+                count += addchar(attributes | '0', stream);
+                --extra_zeros;
+            }
+        }
+
+        count += addchar(attributes | (unsigned char)buf[--len], stream);
+    }
+
+    while (extra_zeros > 0) {
+        count += addchar(attributes | '0', stream);
+        --extra_zeros;
+    }
+
+    return count;
+}
 
 
 int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list ap)
@@ -69,6 +103,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
         } else {
             char  buf[PRINTF_BUFFER_SIZE];
             char* bufptr;
+            int   extra_zeros = 0;  /* zeros that did not fit into buf */
+            int   zero_pos    = 0;  /* where to insert them, see put_reversed() */
 
         #ifndef ONLY_INTEGER_IO
             double floatval;
@@ -279,14 +315,24 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             char* signptr;
 
                             while (num_zeros > 0) {
-                                *bufptr++ = pad;
+                                if (BUFFER_HAS_ROOM(bufptr)) {
+                                    *bufptr++ = pad;
+                                } else {
+                                    ++extra_zeros;
+                                }
 
                                 if (--num_zeros == 0) {
                                     pad = ' ';
                                 }
                             }
 
-                            signptr = sign_extra ? bufptr : (bufptr - 1);
+                            zero_pos = (int)(bufptr - buf);
+                            signptr  = sign_extra ? bufptr : (bufptr - 1);
+
+                            if (!sign_extra && (negative || space_or_sign != '\0')) {
+                                /* the sign replaces the highest zero */
+                                --zero_pos;
+                            }
 
                             if (negative) {
                                 *signptr++ = '-';
@@ -300,7 +346,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        field_width -= (int)(bufptr - buf);
+                        field_width -= (int)(bufptr - buf) + extra_zeros;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -308,9 +354,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        for (--bufptr; bufptr >= buf; --bufptr) {
-                            count += addchar(attributes | (unsigned char)*bufptr, stream);
-                        }
+                        count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -469,8 +513,10 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             } while (exponent > 0);
                         } else {
                             int places = 0;
+                            int int_places;
 
-                            while (exponent > 0) {
+                            /* stop before tmpbuf overflows, the remaining integer digits are output as zeros */
+                            while (exponent > 0 && places < PRINTF_BUFFER_SIZE - MAX_DIGITS_REMAINDER - PRINTF_BUFFER_RESERVE) {
                                 int digit = (int)(floatval * 10.0);
 
                                 if (digit == 10) {
@@ -486,9 +532,16 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 ++places;
                             }
 
+                            if (exponent > 0) {
+                                extra_zeros = exponent;
+                                exponent    = 0;
+                            }
+
                             if (places == 0) {
                                 *tmpbufptr++ = '0';
                             }
+
+                            int_places = (int)(tmpbufptr - tmpbuf);
 
                             if (hash || precision > 0) {
                                 *tmpbufptr++ = '.';
@@ -514,6 +567,9 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                     ++places;
                                 }
                             }
+
+                            /* zeros that did not fit follow the integer digits */
+                            zero_pos = (int)(tmpbufptr - tmpbuf) - int_places;
                         }
 
 copy_float:
@@ -531,7 +587,7 @@ copy_float:
 
 #endif /* ONLY_INTEGER_IO */
 
-                        field_width -= (int)(bufptr - buf);
+                        field_width -= (int)(bufptr - buf) + extra_zeros;
 
                         if (!flush_left) {
                             if (negative && pad == '0') {
@@ -544,9 +600,7 @@ copy_float:
                             }
                         }
 
-                        for (--bufptr; bufptr >= buf; --bufptr) {
-                            count += addchar(attributes | (unsigned char)*bufptr, stream);
-                        }
+                        count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -720,10 +774,15 @@ copy_float:
                                 pad = '0';
 
                                 while (num_zeros-- > 0) {
-                                    *bufptr++ = pad;
+                                    if (BUFFER_HAS_ROOM(bufptr)) {
+                                        *bufptr++ = pad;
+                                    } else {
+                                        ++extra_zeros;
+                                    }
 
                                     if (num_zeros == 0) {
-                                        pad = ' ';
+                                        pad      = ' ';
+                                        zero_pos = (int)(bufptr - buf);
 
                                         if (prefix != NULL) {
                                             do {
@@ -738,7 +797,7 @@ copy_float:
                                 } while (*prefix != '\0');
                             }
 
-                            field_width -= (int)(bufptr - buf);
+                            field_width -= (int)(bufptr - buf) + extra_zeros;
 
                             if (!flush_left) {
                                 while (field_width-- > 0) {
@@ -746,9 +805,7 @@ copy_float:
                                 }
                             }
 
-                            for (--bufptr; bufptr >= buf; --bufptr) {
-                                count += addchar(attributes | (unsigned char)*bufptr, stream);
-                            }
+                            count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                             if (flush_left) {
                                 while (field_width-- > 0) {
