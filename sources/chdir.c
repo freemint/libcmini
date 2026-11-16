@@ -14,6 +14,8 @@
 
 int chdir(const char* filename)
 {
+    int old_drv = -1;
+
     if (filename == NULL)
     {
         __set_errno(EFAULT);
@@ -29,6 +31,7 @@ int chdir(const char* filename)
         int drv;
 
         drv = toupper(filename[0]) - 'A';
+        old_drv = Dgetdrv();
         Dsetdrv(drv);
 
         filename += 2;
@@ -36,6 +39,12 @@ int chdir(const char* filename)
 
     if (Dsetpath(filename) < 0)
     {
+        if (old_drv >= 0)
+        {
+            /* a failing chdir() must not change the current drive */
+            Dsetdrv(old_drv);
+        }
+
 		__set_errno(ENOENT);
 		return -1;
 	}
