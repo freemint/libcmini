@@ -90,6 +90,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
     int  hash          = FALSE;
     char space_or_sign = '\0';
     int  do_long       = INT_VAL;
+    int  do_short      = 0;      /* 1: h, 2: hh */
+    int  do_long_double = FALSE;  /* L */
     int  negative      = FALSE;
     int  attributes    = 0;
     int  count         = 0;
@@ -171,7 +173,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 if (*f == '*') {
                     precision = va_arg(ap, int);
                     ++f;
-                } else if (ISDIGIT(*f)) {
+
+                    if (precision < 0) {
+                        /* a negative precision is taken as if it were omitted */
+                        precision = UNLIMITED;
+                    }
+                } else {
+                    /* a '.' without digits means a precision of 0 */
                     precision = atoi(f);
 
                     while (ISDIGIT(*f)) {
@@ -181,16 +189,54 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 }
             }
 
-            if (*f == 'l') {
-                /* long format */
-                ++do_long;
-                ++f;
-
-                if (*f == 'l') {
-                    /* long long format */
+            switch (*f) {
+                case 'l':
+                    /* long format */
                     ++do_long;
                     ++f;
-                }
+
+                    if (*f == 'l') {
+                        /* long long format */
+                        ++do_long;
+                        ++f;
+                    }
+
+                    break;
+
+                case 'h':
+                    /* short format, the argument is promoted to int */
+                    ++do_short;
+                    ++f;
+
+                    if (*f == 'h') {
+                        /* char format */
+                        ++do_short;
+                        ++f;
+                    }
+
+                    break;
+
+                case 'z':
+                case 't':
+                    /* size_t, ptrdiff_t */
+                    do_long = (sizeof(size_t) > sizeof(int)) ? LONG_VAL : INT_VAL;
+                    ++f;
+                    break;
+
+                case 'j':
+                    /* intmax_t */
+                    do_long = LONG_LONG_VAL;
+                    ++f;
+                    break;
+
+                case 'L':
+                    /* long double */
+                    do_long_double = TRUE;
+                    ++f;
+                    break;
+
+                default:
+                    break;
             }
 
             if (*f == '\0') {
@@ -214,6 +260,12 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                     switch (do_long) {
                         case INT_VAL:
                             longval = (long)va_arg(ap, int);
+
+                            if (do_short == 1) {
+                                longval = (short)longval;
+                            } else if (do_short > 1) {
+                                longval = (signed char)longval;
+                            }
                             break;
 
 #ifdef STDIO_WITH_LONG_LONG
@@ -239,6 +291,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 longval = longlongval;
                             }
 
+                            break;
+
+#else
+
+                        case LONG_LONG_VAL:
+                            /* no 64 bit output support, but consume the whole argument */
+                            longval = (long)va_arg(ap, long long);
                             break;
 
 #endif /* STDIO_WITH_LONG_LONG */
@@ -269,6 +328,11 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             *bufptr++ = (ulongval % 10) + '0';
                             ulongval  /= 10;
                         } while (ulongval > 0);
+
+                        if (longval == 0 && precision == 0) {
+                            /* the value 0 with precision 0 produces no digits */
+                            bufptr = buf;
+                        }
                     }
 
                     {
@@ -276,7 +340,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                         int num_blanks;
                         int sign_extra;
 
-                        if (precision > 0) {
+                        if (precision >= 0) {
                             num_zeros  = precision;
                             num_blanks = field_width - num_zeros;
                             sign_extra = TRUE;
@@ -382,12 +446,20 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
 
                         pad = ' ';
 
-                        (void)va_arg(ap, double);
+                        if (do_long_double) {
+                            (void)va_arg(ap, long double);
+                        } else {
+                            (void)va_arg(ap, double);
+                        }
 
 #else
 
                     /* this is actually more than stupid, but does work for now */
-                    floatval = va_arg(ap, double); /* beware: va_arg() extends float to double! */
+                    if (do_long_double) {
+                        floatval = (double)va_arg(ap, long double);
+                    } else {
+                        floatval = va_arg(ap, double); /* beware: va_arg() extends float to double! */
+                    }
 
                     if (floatval < 0) {
                         negative = TRUE;
@@ -503,14 +575,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 }
                             }
 
-                            if (exponent < 10) {
-                                *tmpbufptr++ = '0';
+                            /* at least two exponent digits, most significant first */
+                            if (exponent >= 100) {
+                                *tmpbufptr++ = '0' + (exponent / 100);
                             }
 
-                            do {
-                                *tmpbufptr++ = '0' + (exponent % 10);
-                                exponent    /= 10;
-                            } while (exponent > 0);
+                            *tmpbufptr++ = '0' + ((exponent / 10) % 10);
+                            *tmpbufptr++ = '0' + (exponent % 10);
                         } else {
                             int places = 0;
                             int int_places;
@@ -590,8 +661,9 @@ copy_float:
                         field_width -= (int)(bufptr - buf) + extra_zeros;
 
                         if (!flush_left) {
-                            if (negative && pad == '0') {
-                                count += addchar(attributes | '-', stream);
+                            if (pad == '0' && (negative || space_or_sign != '\0')) {
+                                /* the sign goes in front of the zeros */
+                                count += addchar(attributes | (unsigned char)(negative ? '-' : space_or_sign), stream);
                                 --field_width;
                             }
 
@@ -625,10 +697,17 @@ copy_float:
                         const char* numbers = "0123456789abcdef";
                         const char* prefix = NULL;
                         int len_prefix = 0;
+                        int no_digits  = FALSE;
 
                         switch (do_long) {
                             case INT_VAL:
                                 ulongval = (unsigned long)va_arg(ap, unsigned int);
+
+                                if (do_short == 1) {
+                                    ulongval = (unsigned short)ulongval;
+                                } else if (do_short > 1) {
+                                    ulongval = (unsigned char)ulongval;
+                                }
                                 break;
 
 #ifdef STDIO_WITH_LONG_LONG
@@ -674,6 +753,13 @@ copy_float:
 
                                 break;
 
+#else
+
+                            case LONG_LONG_VAL:
+                                /* no 64 bit output support, but consume the whole argument */
+                                ulongval = (unsigned long)va_arg(ap, unsigned long long);
+                                break;
+
 #endif /* STDIO_WITH_LONG_LONG */
 
                             case LONG_VAL:
@@ -706,6 +792,9 @@ copy_float:
                             }
 
                             if (ulongval == 0) {
+                                /* the value 0 with precision 0 produces no digits, except for "%#.0o" */
+                                no_digits = precision == 0 && !(hash && fmt == 'o');
+
                                 /* no prefix if value is 0 */
                                 hash = FALSE;
                             }
@@ -714,6 +803,10 @@ copy_float:
                                 *bufptr++ = numbers[ulongval % base];
                                 ulongval /= base;
                             } while (ulongval > 0);
+
+                            if (no_digits) {
+                                bufptr = buf;
+                            }
                         }
 
                         if(hash) {
@@ -739,7 +832,7 @@ copy_float:
                             int num_zeros;
                             int num_blanks;
 
-                            if (precision > 0) {
+                            if (precision >= 0) {
                                 num_zeros  = precision;
                                 num_blanks = field_width - num_zeros;
                                 pad        = ' ';
@@ -821,9 +914,8 @@ copy_float:
                     {
                         int ch = va_arg(ap, int);
 
-                        if (ch != '\0') {
-                            --field_width;
-                        }
+                        /* '\0' is output as well, so it takes up one position */
+                        --field_width;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -831,7 +923,7 @@ copy_float:
                             }
                         }
 
-                        count += addchar(attributes | ch, stream);
+                        count += addchar(attributes | (unsigned char)ch, stream);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -846,6 +938,7 @@ copy_float:
                 case 's':
                     {
                         register int i;
+                        int len = 0;
 
                         bufptr = va_arg(ap, char*);
 
@@ -853,7 +946,12 @@ copy_float:
                             bufptr = "(nil)";
                         }
 
-                        field_width -= (int)strlen(bufptr);
+                        /* with a precision the string need not be NUL terminated, so don't use strlen() */
+                        while ((precision == UNLIMITED || len < precision) && bufptr[len] != '\0') {
+                            ++len;
+                        }
+
+                        field_width -= len;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -861,7 +959,7 @@ copy_float:
                             }
                         }
 
-                        for (i = 0; *bufptr != '\0' && (precision == UNLIMITED || i < precision); ++i) {
+                        for (i = 0; i < len; ++i) {
                             count += addchar(attributes | (unsigned char)*bufptr++, stream);
                         }
 
@@ -888,6 +986,8 @@ copy_float:
             precision     = UNLIMITED;
             hash          = FALSE;
             do_long       = INT_VAL;
+            do_short      = 0;
+            do_long_double = FALSE;
             space_or_sign = '\0';
             negative      = FALSE;
             pad           = ' ';
@@ -937,7 +1037,15 @@ normalize_float(double* valptr, int round_to, int eformat)
         }
     }
 
-    *valptr = floatval + round;
+    floatval += round;
+
+    if (floatval >= 1.0) {
+        /* rounding carried into the next digit, e.g. 0.7 -> 1 with "%.0f" */
+        floatval *= 0.1;
+        ++exponent;
+    }
+
+    *valptr = floatval;
 
     return exponent;
 }
