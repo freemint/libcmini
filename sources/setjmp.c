@@ -51,9 +51,15 @@ void longjmp(jmp_buf buf, int val)
 }
 
 
-int sigsetjmp(jmp_buf buf, int mask)
-{
-    return setjmp(buf);
-}
+/*
+ * sigsetjmp() must not call setjmp(), otherwise the context of sigsetjmp()
+ * itself would be saved, which no longer exists when longjmp() is called.
+ * Signal masks are not supported, so the mask argument is simply ignored,
+ * which is safe with the caller-pops-arguments calling convention.
+ */
+#if __GNUC__ >= 8
+#pragma GCC diagnostic ignored "-Wattribute-alias"
+#endif
+int sigsetjmp(jmp_buf buf, int mask) __attribute__((alias("setjmp")));
 
 #endif
