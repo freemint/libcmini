@@ -40,7 +40,13 @@ int getopt(int argc, char * const argv[], const char *optstring)
 		if (print_errors) {
 			fprintf(stderr, "%s: illegal option -- %c\r\n", argv[0], c);
 		}
-		sp = 1;
+		/* skip the illegal option character, otherwise we would return '?' forever */
+		if (argv[optind][sp + 1] == '\0') {
+			optind++;
+			sp = 1;
+		} else {
+			sp++;
+		}
 		optopt = c;
 		return '?';
 	} else if (cp[1] == ':') {
