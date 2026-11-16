@@ -363,6 +363,21 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             precision = MAX_DIGITS_REMAINDER;
                         }
 
+                        if (floatval != floatval || floatval - floatval != 0.0) {
+                            /* NaN or infinity: normalize_float() would loop forever on infinity */
+                            const char* special = (floatval != floatval) ? "nan" : "inf";
+
+                            tmpbufptr = tmpbuf;
+
+                            while (*special != '\0') {
+                                *tmpbufptr++ = ISLOWER(fmt) ? *special : (*special & ~0x20);
+                                ++special;
+                            }
+
+                            pad = ' ';
+                            goto copy_float;
+                        }
+
                         exponent = normalize_float(&floatval, precision, (fmt | 0x20 /* tolower */) == 'e');
 
                         switch (fmt | 0x20 /* tolower */) {
@@ -501,6 +516,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
+copy_float:
                         while (tmpbufptr > tmpbuf) {
                             *bufptr++ = *--tmpbufptr;
                         }
