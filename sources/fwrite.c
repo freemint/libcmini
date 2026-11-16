@@ -20,6 +20,12 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
     n = size * nmemb;
 
+    if (stream->__mode.__append)
+    {
+        /* in append mode every write goes to the end of the file, even after fseek() */
+        (void)Fseek(0, (int)FILE_GET_HANDLE(stream), SEEK_END);
+    }
+
 #ifdef STDIO_MAP_NEWLINE
     if (stream->__mode.__binary)
     {
