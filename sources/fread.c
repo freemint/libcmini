@@ -5,8 +5,14 @@
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-	size_t bytes = size * nmemb;
-	long rc = Fread(FILE_GET_HANDLE(stream), bytes, ptr);
+	size_t bytes;
+	long rc;
+
+	if (size == 0 || nmemb == 0)
+		return 0;
+
+	bytes = size * nmemb;
+	rc = Fread(FILE_GET_HANDLE(stream), bytes, ptr);
 
 	if (rc < 0)
 	{
