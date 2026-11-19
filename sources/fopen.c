@@ -74,6 +74,18 @@ FILE *fopen(const char *path, const char *mode)
 		break;
 	}
 
+	if (fp->__mode.__exclusive && fp->__mode.__create && !fp->__mode.__append) {
+		/* "wx": fail if the file already exists instead of truncating it */
+		fd = Fopen(path, 0);
+
+		if (fd >= 0) {
+			Fclose(fd);
+			__set_errno(EEXIST);
+			free(fp);
+			return NULL;
+		}
+	}
+
 	if (fp->__mode.__append) {
 		fd = Fopen(path, fp->__mode.__write ? 1 + fp->__mode.__read : 0);
 
