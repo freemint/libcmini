@@ -9,8 +9,11 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 	unsigned short tos_date;
 	struct tm now;
 
-	tos_time = Tgettime();
-	tos_date = Tgetdate();
+	/* re-read if the date changed meanwhile (midnight rollover) */
+	do {
+		tos_date = Tgetdate();
+		tos_time = Tgettime();
+	} while (tos_date != Tgetdate());
 
 	now.tm_sec = (tos_time & 0x1f) * 2;
 	now.tm_min = (tos_time >> 5) & 0x3f;
@@ -29,7 +32,7 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 	if (tzp != NULL)
 	{
 		tzset();
-		tzp->tz_minuteswest = (int)(-timezone / 60);
+		tzp->tz_minuteswest = (int)(timezone / 60);
 		tzp->tz_dsttime = strcmp(tzname[0], tzname[1]);
 	}
 
