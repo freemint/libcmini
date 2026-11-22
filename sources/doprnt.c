@@ -22,6 +22,10 @@
  */
 #define UNLIMITED                 -1
 #define PRINTF_BUFFER_SIZE        128
+#define PRINTF_BUFFER_RESERVE     8     /* room for sign and prefix behind leading zeros */
+
+/* leading zeros are only stored in buf while this is true, the rest is counted */
+#define BUFFER_HAS_ROOM(p)        ((p) < buf + PRINTF_BUFFER_SIZE - PRINTF_BUFFER_RESERVE)
 
 #define DEFAULT_DIGITS_REMAINDER  6
 #define MAX_DIGITS_REMAINDER      10
@@ -44,6 +48,36 @@ static int normalize_float(double* valptr, int round_to, int eformat);
 #define ISLOWER(c)  ((c) >= 'a' && (c) <= 'z')
 
 
+/*
+ * Output the len characters of buf in reverse order. extra_zeros '0'
+ * characters that did not fit into buf are inserted in front of the
+ * zero_pos lowest characters of buf.
+ */
+static int put_reversed(int (*addchar)(int, void*), void* stream, int attributes,
+                        const char* buf, int len, int zero_pos, int extra_zeros)
+{
+    int count = 0;
+
+    while (len > 0) {
+        if (len == zero_pos) {
+            while (extra_zeros > 0) {
+                count += addchar(attributes | '0', stream);
+                --extra_zeros;
+            }
+        }
+
+        count += addchar(attributes | (unsigned char)buf[--len], stream);
+    }
+
+    while (extra_zeros > 0) {
+        count += addchar(attributes | '0', stream);
+        --extra_zeros;
+    }
+
+    return count;
+}
+
+
 int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list ap)
 {
     enum { INT_VAL, LONG_VAL, LONG_LONG_VAL };
@@ -56,6 +90,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
     int  hash          = FALSE;
     char space_or_sign = '\0';
     int  do_long       = INT_VAL;
+    int  do_short      = 0;      /* 1: h, 2: hh */
+    int  do_long_double = FALSE;  /* L */
     int  negative      = FALSE;
     int  attributes    = 0;
     int  count         = 0;
@@ -69,6 +105,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
         } else {
             char  buf[PRINTF_BUFFER_SIZE];
             char* bufptr;
+            int   extra_zeros = 0;  /* zeros that did not fit into buf */
+            int   zero_pos    = 0;  /* where to insert them, see put_reversed() */
 
         #ifndef ONLY_INTEGER_IO
             double floatval;
@@ -135,7 +173,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 if (*f == '*') {
                     precision = va_arg(ap, int);
                     ++f;
-                } else if (ISDIGIT(*f)) {
+
+                    if (precision < 0) {
+                        /* a negative precision is taken as if it were omitted */
+                        precision = UNLIMITED;
+                    }
+                } else {
+                    /* a '.' without digits means a precision of 0 */
                     precision = atoi(f);
 
                     while (ISDIGIT(*f)) {
@@ -145,16 +189,59 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 }
             }
 
-            if (*f == 'l') {
-                /* long format */
-                ++do_long;
-                ++f;
-
-                if (*f == 'l') {
-                    /* long long format */
+            switch (*f) {
+                case 'l':
+                    /* long format */
                     ++do_long;
                     ++f;
-                }
+
+                    if (*f == 'l') {
+                        /* long long format */
+                        ++do_long;
+                        ++f;
+                    }
+
+                    break;
+
+                case 'h':
+                    /* short format, the argument is promoted to int */
+                    ++do_short;
+                    ++f;
+
+                    if (*f == 'h') {
+                        /* char format */
+                        ++do_short;
+                        ++f;
+                    }
+
+                    break;
+
+                case 'z':
+                case 't':
+                    /* size_t, ptrdiff_t */
+                    do_long = (sizeof(size_t) > sizeof(int)) ? LONG_VAL : INT_VAL;
+                    ++f;
+                    break;
+
+                case 'j':
+                    /* intmax_t */
+                    do_long = LONG_LONG_VAL;
+                    ++f;
+                    break;
+
+                case 'L':
+                    /* long double */
+                    do_long_double = TRUE;
+                    ++f;
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (*f == '\0') {
+                /* incomplete conversion at the end of the format string */
+                break;
             }
 
             fmt = (unsigned char)*f;
@@ -173,6 +260,12 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                     switch (do_long) {
                         case INT_VAL:
                             longval = (long)va_arg(ap, int);
+
+                            if (do_short == 1) {
+                                longval = (short)longval;
+                            } else if (do_short > 1) {
+                                longval = (signed char)longval;
+                            }
                             break;
 
 #ifdef STDIO_WITH_LONG_LONG
@@ -198,6 +291,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 longval = longlongval;
                             }
 
+                            break;
+
+#else
+
+                        case LONG_LONG_VAL:
+                            /* no 64 bit output support, but consume the whole argument */
+                            longval = (long)va_arg(ap, long long);
                             break;
 
 #endif /* STDIO_WITH_LONG_LONG */
@@ -228,6 +328,11 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             *bufptr++ = (ulongval % 10) + '0';
                             ulongval  /= 10;
                         } while (ulongval > 0);
+
+                        if (longval == 0 && precision == 0) {
+                            /* the value 0 with precision 0 produces no digits */
+                            bufptr = buf;
+                        }
                     }
 
                     {
@@ -235,7 +340,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                         int num_blanks;
                         int sign_extra;
 
-                        if (precision > 0) {
+                        if (precision >= 0) {
                             num_zeros  = precision;
                             num_blanks = field_width - num_zeros;
                             sign_extra = TRUE;
@@ -274,14 +379,24 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             char* signptr;
 
                             while (num_zeros > 0) {
-                                *bufptr++ = pad;
+                                if (BUFFER_HAS_ROOM(bufptr)) {
+                                    *bufptr++ = pad;
+                                } else {
+                                    ++extra_zeros;
+                                }
 
                                 if (--num_zeros == 0) {
                                     pad = ' ';
                                 }
                             }
 
-                            signptr = sign_extra ? bufptr : (bufptr - 1);
+                            zero_pos = (int)(bufptr - buf);
+                            signptr  = sign_extra ? bufptr : (bufptr - 1);
+
+                            if (!sign_extra && (negative || space_or_sign != '\0')) {
+                                /* the sign replaces the highest zero */
+                                --zero_pos;
+                            }
 
                             if (negative) {
                                 *signptr++ = '-';
@@ -295,7 +410,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        field_width -= (int)(bufptr - buf);
+                        field_width -= (int)(bufptr - buf) + extra_zeros;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -303,9 +418,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        for (--bufptr; bufptr >= buf; --bufptr) {
-                            count += addchar(attributes | (unsigned char)*bufptr, stream);
-                        }
+                        count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -333,12 +446,20 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
 
                         pad = ' ';
 
-                        (void)va_arg(ap, double);
+                        if (do_long_double) {
+                            (void)va_arg(ap, long double);
+                        } else {
+                            (void)va_arg(ap, double);
+                        }
 
 #else
 
                     /* this is actually more than stupid, but does work for now */
-                    floatval = va_arg(ap, double); /* beware: va_arg() extends float to double! */
+                    if (do_long_double) {
+                        floatval = (double)va_arg(ap, long double);
+                    } else {
+                        floatval = va_arg(ap, double); /* beware: va_arg() extends float to double! */
+                    }
 
                     if (floatval < 0) {
                         negative = TRUE;
@@ -356,6 +477,21 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             precision = DEFAULT_DIGITS_REMAINDER;
                         } else if (precision > MAX_DIGITS_REMAINDER) {
                             precision = MAX_DIGITS_REMAINDER;
+                        }
+
+                        if (floatval != floatval || floatval - floatval != 0.0) {
+                            /* NaN or infinity: normalize_float() would loop forever on infinity */
+                            const char* special = (floatval != floatval) ? "nan" : "inf";
+
+                            tmpbufptr = tmpbuf;
+
+                            while (*special != '\0') {
+                                *tmpbufptr++ = ISLOWER(fmt) ? *special : (*special & ~0x20);
+                                ++special;
+                            }
+
+                            pad = ' ';
+                            goto copy_float;
                         }
 
                         exponent = normalize_float(&floatval, precision, (fmt | 0x20 /* tolower */) == 'e');
@@ -439,18 +575,19 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 }
                             }
 
-                            if (exponent < 10) {
-                                *tmpbufptr++ = '0';
+                            /* at least two exponent digits, most significant first */
+                            if (exponent >= 100) {
+                                *tmpbufptr++ = '0' + (exponent / 100);
                             }
 
-                            do {
-                                *tmpbufptr++ = '0' + (exponent % 10);
-                                exponent    /= 10;
-                            } while (exponent > 0);
+                            *tmpbufptr++ = '0' + ((exponent / 10) % 10);
+                            *tmpbufptr++ = '0' + (exponent % 10);
                         } else {
                             int places = 0;
+                            int int_places;
 
-                            while (exponent > 0) {
+                            /* stop before tmpbuf overflows, the remaining integer digits are output as zeros */
+                            while (exponent > 0 && places < PRINTF_BUFFER_SIZE - MAX_DIGITS_REMAINDER - PRINTF_BUFFER_RESERVE) {
                                 int digit = (int)(floatval * 10.0);
 
                                 if (digit == 10) {
@@ -466,9 +603,16 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 ++places;
                             }
 
+                            if (exponent > 0) {
+                                extra_zeros = exponent;
+                                exponent    = 0;
+                            }
+
                             if (places == 0) {
                                 *tmpbufptr++ = '0';
                             }
+
+                            int_places = (int)(tmpbufptr - tmpbuf);
 
                             if (hash || precision > 0) {
                                 *tmpbufptr++ = '.';
@@ -494,8 +638,12 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                     ++places;
                                 }
                             }
+
+                            /* zeros that did not fit follow the integer digits */
+                            zero_pos = (int)(tmpbufptr - tmpbuf) - int_places;
                         }
 
+copy_float:
                         while (tmpbufptr > tmpbuf) {
                             *bufptr++ = *--tmpbufptr;
                         }
@@ -510,11 +658,12 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
 
 #endif /* ONLY_INTEGER_IO */
 
-                        field_width -= (int)(bufptr - buf);
+                        field_width -= (int)(bufptr - buf) + extra_zeros;
 
                         if (!flush_left) {
-                            if (negative && pad == '0') {
-                                count += addchar(attributes | '-', stream);
+                            if (pad == '0' && (negative || space_or_sign != '\0')) {
+                                /* the sign goes in front of the zeros */
+                                count += addchar(attributes | (unsigned char)(negative ? '-' : space_or_sign), stream);
                                 --field_width;
                             }
 
@@ -523,9 +672,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        for (--bufptr; bufptr >= buf; --bufptr) {
-                            count += addchar(attributes | (unsigned char)*bufptr, stream);
-                        }
+                        count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -550,10 +697,17 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                         const char* numbers = "0123456789abcdef";
                         const char* prefix = NULL;
                         int len_prefix = 0;
+                        int no_digits  = FALSE;
 
                         switch (do_long) {
                             case INT_VAL:
                                 ulongval = (unsigned long)va_arg(ap, unsigned int);
+
+                                if (do_short == 1) {
+                                    ulongval = (unsigned short)ulongval;
+                                } else if (do_short > 1) {
+                                    ulongval = (unsigned char)ulongval;
+                                }
                                 break;
 
 #ifdef STDIO_WITH_LONG_LONG
@@ -599,6 +753,13 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
 
                                 break;
 
+#else
+
+                            case LONG_LONG_VAL:
+                                /* no 64 bit output support, but consume the whole argument */
+                                ulongval = (unsigned long)va_arg(ap, unsigned long long);
+                                break;
+
 #endif /* STDIO_WITH_LONG_LONG */
 
                             case LONG_VAL:
@@ -631,6 +792,9 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
 
                             if (ulongval == 0) {
+                                /* the value 0 with precision 0 produces no digits, except for "%#.0o" */
+                                no_digits = precision == 0 && !(hash && fmt == 'o');
+
                                 /* no prefix if value is 0 */
                                 hash = FALSE;
                             }
@@ -639,6 +803,10 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 *bufptr++ = numbers[ulongval % base];
                                 ulongval /= base;
                             } while (ulongval > 0);
+
+                            if (no_digits) {
+                                bufptr = buf;
+                            }
                         }
 
                         if(hash) {
@@ -664,7 +832,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             int num_zeros;
                             int num_blanks;
 
-                            if (precision > 0) {
+                            if (precision >= 0) {
                                 num_zeros  = precision;
                                 num_blanks = field_width - num_zeros;
                                 pad        = ' ';
@@ -699,10 +867,15 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 pad = '0';
 
                                 while (num_zeros-- > 0) {
-                                    *bufptr++ = pad;
+                                    if (BUFFER_HAS_ROOM(bufptr)) {
+                                        *bufptr++ = pad;
+                                    } else {
+                                        ++extra_zeros;
+                                    }
 
                                     if (num_zeros == 0) {
-                                        pad = ' ';
+                                        pad      = ' ';
+                                        zero_pos = (int)(bufptr - buf);
 
                                         if (prefix != NULL) {
                                             do {
@@ -717,7 +890,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 } while (*prefix != '\0');
                             }
 
-                            field_width -= (int)(bufptr - buf);
+                            field_width -= (int)(bufptr - buf) + extra_zeros;
 
                             if (!flush_left) {
                                 while (field_width-- > 0) {
@@ -725,9 +898,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                                 }
                             }
 
-                            for (--bufptr; bufptr >= buf; --bufptr) {
-                                count += addchar(attributes | (unsigned char)*bufptr, stream);
-                            }
+                            count += put_reversed(addchar, stream, attributes, buf, (int)(bufptr - buf), zero_pos, extra_zeros);
 
                             if (flush_left) {
                                 while (field_width-- > 0) {
@@ -743,9 +914,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                     {
                         int ch = va_arg(ap, int);
 
-                        if (ch != '\0') {
-                            --field_width;
-                        }
+                        /* '\0' is output as well, so it takes up one position */
+                        --field_width;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -753,7 +923,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        count += addchar(attributes | ch, stream);
+                        count += addchar(attributes | (unsigned char)ch, stream);
 
                         if (flush_left) {
                             while (field_width-- > 0) {
@@ -768,6 +938,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                 case 's':
                     {
                         register int i;
+                        int len = 0;
 
                         bufptr = va_arg(ap, char*);
 
@@ -775,7 +946,12 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             bufptr = "(nil)";
                         }
 
-                        field_width -= (int)strlen(bufptr);
+                        /* with a precision the string need not be NUL terminated, so don't use strlen() */
+                        while ((precision == UNLIMITED || len < precision) && bufptr[len] != '\0') {
+                            ++len;
+                        }
+
+                        field_width -= len;
 
                         if (!flush_left) {
                             while (field_width-- > 0) {
@@ -783,7 +959,7 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
                             }
                         }
 
-                        for (i = 0; *bufptr != '\0' && (precision == UNLIMITED || i < precision); ++i) {
+                        for (i = 0; i < len; ++i) {
                             count += addchar(attributes | (unsigned char)*bufptr++, stream);
                         }
 
@@ -810,6 +986,8 @@ int doprnt(int (*addchar)(int, void*), void *stream, const char *sfmt, va_list a
             precision     = UNLIMITED;
             hash          = FALSE;
             do_long       = INT_VAL;
+            do_short      = 0;
+            do_long_double = FALSE;
             space_or_sign = '\0';
             negative      = FALSE;
             pad           = ' ';
@@ -859,7 +1037,15 @@ normalize_float(double* valptr, int round_to, int eformat)
         }
     }
 
-    *valptr = floatval + round;
+    floatval += round;
+
+    if (floatval >= 1.0) {
+        /* rounding carried into the next digit, e.g. 0.7 -> 1 with "%.0f" */
+        floatval *= 0.1;
+        ++exponent;
+    }
+
+    *valptr = floatval;
 
     return exponent;
 }
